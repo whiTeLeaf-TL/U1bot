@@ -1,0 +1,18 @@
+from email.policy import default
+from tortoise import fields
+from tortoise.models import Model
+
+# 导入插件方法
+from nonebot_plugin_tortoise_orm import add_model
+
+
+add_model("src.plugins.today_yunshi.models")
+
+
+class MemberData(Model):
+    user_id = fields.IntField(pk=True)
+    luckid = fields.IntField(default=0)
+    time = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "today_yunshi_memberdata"
