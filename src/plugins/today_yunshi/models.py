@@ -10,7 +10,7 @@ add_model("src.plugins.today_yunshi.models")
 
 
 class MemberData(Model):
-    user_id = fields.IntField(pk=True)
+    user_id = fields.BigIntField(pk=True)
     luckid = fields.IntField(default=0)
     time = fields.DatetimeField(auto_now=True)
 
