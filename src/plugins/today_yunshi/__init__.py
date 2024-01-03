@@ -1,19 +1,23 @@
-from unittest import result
-from nonebot import on_command, logger
-from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent
-from pathlib import Path
-from nonebot.plugin import PluginMetadata
-from os import path
-import random
+"""
+这是一个今日运势插件，可以查看今日运势。
+"""
+
+
 import time
-from nonebot.matcher import Matcher
-from .models import MemberData
+import random
+from os import path
+from pathlib import Path
 from datetime import datetime
+from nonebot import on_command, logger
+from nonebot.matcher import Matcher
+from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent
+from nonebot.plugin import PluginMetadata
+from .models import MemberData
 
 
 try:
     import ujson as json
-except Exception:
+except ImportError:
     import json
 
 __plugin_meta__ = PluginMetadata(
@@ -22,28 +26,27 @@ __plugin_meta__ = PluginMetadata(
     usage='发送"今日运势"或"运势"',
 )
 
-luck = on_command("今日运势", aliases={"运势"})
+Luck = on_command("今日运势", aliases={"运势"})
 luckpath = Path(path.join(path.dirname(__file__), "Fortune.json"))
 with open(luckpath, "r", encoding="utf-8") as f:
     luckdata = json.load(f)
 
 
-@luck.handle()
+@Luck.handle()
 async def _(matcher: Matcher, event: MessageEvent):
     # 读取数据库
     member_model = await MemberData.get_or_none(user_id=str(event.user_id))
 
     if member_model is None:
         # 如果没有数据则创建数据
-        await MemberData.create(user_id=str(event.user_id))
-        result, luckid = randomluck(str(event.user_id), {})
+        result_text, luckid = randomluck(str(event.user_id), {})
         member_model = await MemberData.get(user_id=str(event.user_id))
         member_model.luckid = luckid
         await member_model.save()
         if isinstance(event, PrivateMessageEvent):
-            await matcher.finish(result)
+            await matcher.finish(result_text)
         else:
-            await matcher.finish("\n" + result, at_sender=True)
+            await matcher.finish("\n" + result_text, at_sender=True)
     else:
         # 如果有数据则判断是否是今天的数据
         if member_model.time.strftime("%Y-%m-%d") != time.strftime(
@@ -62,7 +65,10 @@ async def _(matcher: Matcher, event: MessageEvent):
         else:
             # 如果是今天的数据则返回今天的数据
             r = str(member_model.luckid)
-            result = f"----\n{luckdata[r]['运势']}\n{luckdata[r]['星级']}\n{luckdata[r]['签文']}\n{luckdata[r]['解签']}\n----"
+            result = (
+                f"----\n{luckdata[r]['运势']}\n{luckdata[r]['星级']}\n"
+                f"{luckdata[r]['签文']}\n{luckdata[r]['解签']}\n----"
+            )
             if isinstance(event, PrivateMessageEvent):
                 await matcher.finish(result)
             else:
@@ -70,6 +76,16 @@ async def _(matcher: Matcher, event: MessageEvent):
 
 
 def randomluck(arg, memberdata):
+    """
+    随机获取运势信息。
+
+    Args:
+        arg (str): 参数。
+        memberdata (dict): 成员数据。
+
+    Returns:
+        tuple: 运势信息和选择的运势编号。
+    """
     # 判断是否有在json文件中和是否有time键值
     if arg in memberdata and "time" in memberdata[arg]:
         if memberdata[arg]["time"] != time.strftime(
@@ -80,5 +96,8 @@ def randomluck(arg, memberdata):
             r = memberdata[arg]["id"]
     else:
         r = random.choice(list(luckdata.keys()))
-    result = f"----\n{luckdata[r]['运势']}\n{luckdata[r]['星级']}\n{luckdata[r]['签文']}\n{luckdata[r]['解签']}\n----"
-    return result, r
+    result_text = (
+        f"----\n{luckdata[r]['运势']}\n{luckdata[r]['星级']}\n"
+        f"{luckdata[r]['签文']}\n{luckdata[r]['解签']}\n----"
+    )
+    return result_text, r
