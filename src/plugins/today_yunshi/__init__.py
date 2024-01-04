@@ -39,9 +39,8 @@ async def _(matcher: Matcher, event: MessageEvent):
     if member_model is None:
         # 如果没有数据则创建数据
         result_text, luckid = randomluck(str(event.user_id), {})
-        member_model = await MemberData.get(user_id=str(event.user_id))
-        member_model.luckid = luckid
-        await member_model.save()
+        await MemberData.create(user_id=str(event.user_id), luckid=luckid, time=datetime.now())
+
         if isinstance(event, PrivateMessageEvent):
             await matcher.finish(result_text)
         else:

@@ -27,6 +27,13 @@ sqlalchemy = "^2.0.24"
 tortoise = "^0.1.1"
 nonebot-plugin-tortoise-orm = "^0.1.1"
 ujson = "^5.9.0"
+nonebot-plugin-apscheduler = "^0.3.0"
+httpx = "^0.26.0"
+pil-utils = "^0.1.8"
+faker = "^22.0.0"
+requests = "^2.31.0"
+nonebot-plugin-htmlrender = "^0.2.3"
+nonebot-plugin-addfriend = "^2.5.5"
 
 
 [build-system]
