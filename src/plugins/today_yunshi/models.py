@@ -1,4 +1,3 @@
-from email.policy import default
 from tortoise import fields
 from tortoise.models import Model
 
