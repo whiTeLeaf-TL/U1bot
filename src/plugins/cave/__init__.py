@@ -29,33 +29,7 @@ __plugin_meta__ = PluginMetadata(
 查看回声洞记录\n
 删除[序号]\n
 如：\n
-投稿""",
-    extra={
-        "menu_data": [
-            {
-                "func": "投稿",
-                "trigger_method": "投稿/回声洞投稿",
-                "trigger_condition": "仅私聊",
-                "brief_des": "投稿到回声洞",
-                "detail_des": "投稿\n" "将内容投稿到回声洞\n" "仅限私聊\n" "例如：\n" "投稿 内容",
-            },
-            {
-                "func": "查看回声洞记录",
-                "trigger_method": "查看回声洞记录/回声洞记录",
-                "trigger_condition": "群聊/私聊",
-                "brief_des": "查看回声洞的投稿记录（合并信息）",
-                "detail_des": "例如\n" "查看回声洞记录\n" "回声洞记录\n" "他是合并信息，不怕刷屏咯",
-            },
-            {
-                "func": "删除投稿",
-                "trigger_method": "删除[序号]",
-                "trigger_condition": "群聊/私聊",
-                "brief_des": "删除指定序号的投稿（仅限自己的投稿）",
-                "detail_des": "删除[序号]\n" "删除回声洞中指定序号的投稿\n" "群聊或私聊\n" "例如：\n" "删除1",
-            },
-        ],
-        "menu_template": "default",
-    },
+投稿"""
 )
 
 
@@ -63,7 +37,7 @@ cave_main = on_command("回声洞")
 cave_add = on_command("投稿", aliases={"回声洞投稿"})
 cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"})
 cave_view = on_command("查看")
-cave_del = on_command("删除", priority=1)
+cave_del = on_command("删除")
 
 
 def url_to_base64(image_url):
