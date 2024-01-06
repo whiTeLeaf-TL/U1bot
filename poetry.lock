@@ -513,6 +513,22 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "cachetools"
+version = "5.3.2"
+description = "Extensible memoizing collections and decorators"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "cachetools-5.3.2-py3-none-any.whl", hash = "sha256:861f35a13a451f94e301ce2bec7cac63e881232ccce7ed67fab9b5df4d3beaa1"},
+    {file = "cachetools-5.3.2.tar.gz", hash = "sha256:086ee420196f7b2ab9ca2db2520aca326318b68fe5ba8bc4d49cca91add450f2"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "caio"
 version = "0.9.13"
 description = "Asynchronous file IO for Linux MacOS or Windows."
@@ -1998,6 +2014,32 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "nonebot-plugin-memes-api"
+version = "0.2.1"
+description = "Nonebot2 plugin for making memes"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_memes_api-0.2.1-py3-none-any.whl", hash = "sha256:5a5c2f8fc1814bf42fdff04d26674c818a8cb7c4f20100534dea583e286f7029"},
+    {file = "nonebot_plugin_memes_api-0.2.1.tar.gz", hash = "sha256:5511ddca37dff44e7ed726c8e636aa61ddc524fb81bcf7e5426539886591d8c8"},
+]
+
+[package.dependencies]
+httpx = ">=0.20.0,<1.0.0"
+nonebot-plugin-alconna = ">=0.19.2,<1.0.0"
+nonebot-plugin-localstore = ">=0.5.0,<0.6.0"
+nonebot-plugin-send-anything-anywhere = ">=0.3.0,<1.0.0"
+nonebot-plugin-session = ">=0.2.0,<0.3.0"
+nonebot-plugin-userinfo = ">=0.1.2,<0.2.0"
+nonebot2 = {version = ">=2.0.0,<3.0.0", extras = ["fastapi"]}
+pypinyin = ">=0.44.0,<1.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "nonebot-plugin-orm"
 version = "0.6.2"
 description = "SQLAlchemy ORM support for nonebot"
@@ -2111,6 +2153,29 @@ files = [
 nonebot-plugin-localstore = ">=0.5.0"
 nonebot2 = ">=2.0.0"
 tortoise-orm = {version = ">=0.19.3", extras = ["asyncmy", "asyncodbc", "asyncpg"]}
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-userinfo"
+version = "0.1.3"
+description = "Nonebot2 用户信息获取插件"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_userinfo-0.1.3-py3-none-any.whl", hash = "sha256:e20b22c81e86e81f7953560bd8ce0a54559a87ad615358c613b78cb5a4918191"},
+    {file = "nonebot_plugin_userinfo-0.1.3.tar.gz", hash = "sha256:d0a4d64c612486df63cd16950446072f8dfd2063ea28f15d56305a585a6b0b6e"},
+]
+
+[package.dependencies]
+cachetools = ">=5.0.0,<6.0.0"
+emoji = ">=2.0.0,<3.0.0"
+httpx = ">=0.20.0,<1.0.0"
+nonebot2 = {version = ">=2.0.0,<3.0.0", extras = ["fastapi"]}
+strenum = ">=0.4.8,<0.5.0"
 
 [package.source]
 type = "legacy"
@@ -2616,6 +2681,22 @@ python-versions = ">=3.7,<4.0"
 files = [
     {file = "pypika-tortoise-0.1.6.tar.gz", hash = "sha256:d802868f479a708e3263724c7b5719a26ad79399b2a70cea065f4a4cadbebf36"},
     {file = "pypika_tortoise-0.1.6-py3-none-any.whl", hash = "sha256:2d68bbb7e377673743cff42aa1059f3a80228d411fbcae591e4465e173109fd8"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "pypinyin"
+version = "0.50.0"
+description = "汉字拼音转换模块/工具."
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4"
+files = [
+    {file = "pypinyin-0.50.0-py2.py3-none-any.whl", hash = "sha256:a6ff9a58b8c3ba4599e5ebccf7fab7850257114be70c05a7baab435d1208358f"},
+    {file = "pypinyin-0.50.0.tar.gz", hash = "sha256:72e77c4b9b78bad102aca5fefccebdb23439b02717c626039be14a78643980fb"},
 ]
 
 [package.source]
@@ -3742,4 +3823,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "011fd94b021e2d6773301ceb0c7c569dc92d2be41605e7d079bdce2982dddebc"
+content-hash = "88cf3f718267e561d20957509ef3c3365ce14f4c2ae86f7c415f83aa09ce9492"
