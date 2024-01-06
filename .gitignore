@@ -111,7 +111,6 @@ celerybeat.pid
 
 # Environments
 .venv
-.env
 env/
 venv/
 ENV/
@@ -145,3 +144,4 @@ ncm.png
 music/
 run.sh
 fix.sh
+.env.dev
