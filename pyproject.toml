@@ -9,7 +9,7 @@ requires-python = ">=3.8, <4.0"
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
 ]
-plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender"]
+plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna"]
 plugin_dirs = ["src/plugins"]
 builtin_plugins = []
 
@@ -24,7 +24,6 @@ readme = "README.md"
 python = "^3.10"
 nonebot2 = {extras = ["fastapi"], version = "^2.1.3"}
 sqlalchemy = "^2.0.24"
-tortoise = "^0.1.1"
 nonebot-plugin-tortoise-orm = "^0.1.1"
 ujson = "^5.9.0"
 nonebot-plugin-apscheduler = "^0.3.0"
@@ -39,6 +38,11 @@ aiofile = "^3.8.8"
 aiohttp = "^3.9.1"
 pyncm = "^1.6.13"
 tinydb = "^4.8.0"
+nonebot-plugin-alconna = "^0.35.1"
+nonebot-plugin-cesaa = "^0.3.0"
+jieba = "^0.42.1"
+emoji = "^2.9.0"
+wordcloud = "^1.9.3"
 
 
 [build-system]
