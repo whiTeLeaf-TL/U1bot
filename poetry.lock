@@ -1968,6 +1968,26 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "nonebot-plugin-eventexpiry"
+version = "0.1.1"
+description = "NoneBot2 event expiry filter"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "nonebot-plugin-eventexpiry-0.1.1.tar.gz", hash = "sha256:1a0d9da05d8e924910f1c52a89fa6e3ceb0d70afb792797ad2fd175e6d453490"},
+    {file = "nonebot_plugin_eventexpiry-0.1.1-py3-none-any.whl", hash = "sha256:64abf66abcfd0ea957023d523ad3335053572e653240ee1ea35397e0322f6205"},
+]
+
+[package.dependencies]
+nonebot-adapter-onebot = ">=2.2.3"
+nonebot2 = ">=2.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "nonebot-plugin-htmlrender"
 version = "0.2.3"
 description = "通过浏览器渲染图片"
@@ -3823,4 +3843,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "88cf3f718267e561d20957509ef3c3365ce14f4c2ae86f7c415f83aa09ce9492"
+content-hash = "6f35063895622bef3fcf039651f547caca9cf518cb08e379d216a551c9236b1d"
