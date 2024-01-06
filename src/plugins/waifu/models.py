@@ -1,6 +1,6 @@
 from tortoise import fields
 from tortoise.models import Model
-
+import json
 # 导入插件方法
 from nonebot_plugin_tortoise_orm import add_model
 
