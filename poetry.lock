@@ -178,26 +178,49 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
-name = "anyio"
-version = "4.2.0"
-description = "High level compatibility layer for multiple asynchronous event loop implementations"
+name = "alembic"
+version = "1.13.1"
+description = "A database migration tool for SQLAlchemy."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "anyio-4.2.0-py3-none-any.whl", hash = "sha256:745843b39e829e108e518c489b31dc757de7d2131d53fac32bd8df268227bfee"},
-    {file = "anyio-4.2.0.tar.gz", hash = "sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f"},
+    {file = "alembic-1.13.1-py3-none-any.whl", hash = "sha256:2edcc97bed0bd3272611ce3a98d98279e9c209e7186e43e75bbb1b2bdfdbcc43"},
+    {file = "alembic-1.13.1.tar.gz", hash = "sha256:4932c8558bf68f2ee92b9bbcb8218671c627064d5b08939437af6d77dc05e595"},
 ]
 
 [package.dependencies]
-exceptiongroup = {version = ">=1.0.2", markers = "python_version < \"3.11\""}
-idna = ">=2.8"
-sniffio = ">=1.1"
-typing-extensions = {version = ">=4.1", markers = "python_version < \"3.11\""}
+Mako = "*"
+SQLAlchemy = ">=1.3.0"
+typing-extensions = ">=4"
 
 [package.extras]
-doc = ["Sphinx (>=7)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypothesis (>=4.0)", "psutil (>=5.9)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (>=0.17)"]
-trio = ["trio (>=0.23)"]
+tz = ["backports.zoneinfo"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "anyio"
+version = "3.7.1"
+description = "High level compatibility layer for multiple asynchronous event loop implementations"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "anyio-3.7.1-py3-none-any.whl", hash = "sha256:91dee416e570e92c64041bd18b900d1d6fa78dff7048769ce5ac5ddad004fbb5"},
+    {file = "anyio-3.7.1.tar.gz", hash = "sha256:44a3c9aba0f5defa43261a8b3efb97891f2bd7d804e0e1f56419befa1adfc780"},
+]
+
+[package.dependencies]
+exceptiongroup = {version = "*", markers = "python_version < \"3.11\""}
+idna = ">=2.8"
+sniffio = ">=1.1"
+
+[package.extras]
+doc = ["Sphinx", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme (>=1.2.2)", "sphinxcontrib-jquery"]
+test = ["anyio[trio]", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=4)", "psutil (>=5.9)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (>=0.17)"]
+trio = ["trio (<0.22)"]
 
 [package.source]
 type = "legacy"
@@ -231,6 +254,50 @@ testing = ["pytest", "pytest-asyncio", "pytest-cov", "pytest-tornado5"]
 tornado = ["tornado (>=4.3)"]
 twisted = ["twisted"]
 zookeeper = ["kazoo"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "arclet-alconna"
+version = "1.7.41"
+description = "A High-performance, Generality, Humane Command Line Arguments Parser Library."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "arclet_alconna-1.7.41-py3-none-any.whl", hash = "sha256:2e929cc45183d052c818a1bfb8fe79d4c534b1ef42bd4a3dd8e13792d3f22e02"},
+    {file = "arclet_alconna-1.7.41.tar.gz", hash = "sha256:76bd862a91a205f51d90506ab67218cee4876de8fdcffade1c4b8fee9740cd2c"},
+]
+
+[package.dependencies]
+nepattern = ">=0.5.14,<0.6.0"
+tarina = ">=0.4.1"
+typing-extensions = ">=4.5.0"
+
+[package.extras]
+full = ["arclet-alconna-tools (>=0.2.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "arclet-alconna-tools"
+version = "0.6.10"
+description = "Builtin Tools for Alconna"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "arclet-alconna-tools-0.6.10.tar.gz", hash = "sha256:655e0b8ea76e6454dede4129513c3f40c38aeb60054139c2db2f2fa6f7c7c995"},
+    {file = "arclet_alconna_tools-0.6.10-py3-none-any.whl", hash = "sha256:21d7676d2f110f78d6570ad9f7e7f2ffd10bd2ec9bc502deb9a3cb4ce3fee8c0"},
+]
+
+[package.dependencies]
+arclet-alconna = ">=1.7.39"
+nepattern = ">=0.5.15"
 
 [package.source]
 type = "legacy"
@@ -399,22 +466,6 @@ async-timeout = {version = ">=4.0.3", markers = "python_version < \"3.12.0\""}
 [package.extras]
 docs = ["Sphinx (>=5.3.0,<5.4.0)", "sphinx-rtd-theme (>=1.2.2)", "sphinxcontrib-asyncio (>=0.3.0,<0.4.0)"]
 test = ["flake8 (>=6.1,<7.0)", "uvloop (>=0.15.3)"]
-
-[package.source]
-type = "legacy"
-url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
-reference = "tsinghua"
-
-[[package]]
-name = "atlastk"
-version = "0.13.3"
-description = "World's lightest toolkit to quickly and easily add a GUI to your Python programs and bring them online."
-optional = false
-python-versions = "*"
-files = [
-    {file = "atlastk-0.13.3-py3-none-any.whl", hash = "sha256:7d1ac1c9bffb63e09a2e55eb8ab2795e0bf79252805c84493bf0e30bab6879a1"},
-    {file = "atlastk-0.13.3.tar.gz", hash = "sha256:17808075d5fbada776e8c2f7479fecb6373af9df33f23d7485556106cef871fc"},
-]
 
 [package.source]
 type = "legacy"
@@ -738,6 +789,25 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "emoji"
+version = "2.9.0"
+description = "Emoji for Python"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "emoji-2.9.0-py2.py3-none-any.whl", hash = "sha256:17b0d53e1d9f787307a4c65aa19badb0a1ffdbc89b3a3cd851fc77821cdaced2"},
+    {file = "emoji-2.9.0.tar.gz", hash = "sha256:5f4a15b7caa9c67fc11be9d90a822e3fa26aeb4e5b7bd2ded754b394d9c47869"},
+]
+
+[package.extras]
+dev = ["coverage", "coveralls", "pytest"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.0"
 description = "Backport of PEP 654 (exception groups)"
@@ -793,6 +863,21 @@ typing-extensions = ">=4.8.0"
 
 [package.extras]
 all = ["email-validator (>=2.0.0)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)", "jinja2 (>=2.11.2)", "orjson (>=3.2.1)", "pydantic-extra-types (>=2.0.0)", "pydantic-settings (>=2.0.0)", "python-multipart (>=0.0.5)", "pyyaml (>=5.3.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0)", "uvicorn[standard] (>=0.12.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "fleep"
+version = "1.0.1"
+description = "File format determination library"
+optional = false
+python-versions = ">=3.1"
+files = [
+    {file = "fleep-1.0.1.tar.gz", hash = "sha256:c8f62b258ee5364d7f6c1ed1f3f278e99020fc3f0a60a24ad1e10846e31d104c"},
+]
 
 [package.source]
 type = "legacy"
@@ -1176,6 +1261,26 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "importlib-resources"
+version = "6.1.1"
+description = "Read resources from Python packages"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "importlib_resources-6.1.1-py3-none-any.whl", hash = "sha256:e8bf90d8213b486f428c9c39714b920041cb02c184686a3dee24905aaa8105d6"},
+    {file = "importlib_resources-6.1.1.tar.gz", hash = "sha256:3893a00122eafde6894c59914446a512f728a0c1a45f9bb9b63721b6bacf0b4a"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff", "zipp (>=3.17)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "iso8601"
 version = "1.1.0"
 description = "Simple module to parse ISO 8601 dates"
@@ -1184,6 +1289,21 @@ python-versions = ">=3.6.2,<4.0"
 files = [
     {file = "iso8601-1.1.0-py3-none-any.whl", hash = "sha256:8400e90141bf792bce2634df533dc57e3bee19ea120a87bebcd3da89a58ad73f"},
     {file = "iso8601-1.1.0.tar.gz", hash = "sha256:32811e7b81deee2063ea6d2e94f8819a86d1f3811e49d23623a41fa832bef03f"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "jieba"
+version = "0.42.1"
+description = "Chinese Words Segmentation Utilities"
+optional = false
+python-versions = "*"
+files = [
+    {file = "jieba-0.42.1.tar.gz", hash = "sha256:055ca12f62674fafed09427f176506079bc135638a14e23e25be909131928db2"},
 ]
 
 [package.source]
@@ -1348,6 +1468,30 @@ win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 dev = ["Sphinx (==7.2.5)", "colorama (==0.4.5)", "colorama (==0.4.6)", "exceptiongroup (==1.1.3)", "freezegun (==1.1.0)", "freezegun (==1.2.2)", "mypy (==v0.910)", "mypy (==v0.971)", "mypy (==v1.4.1)", "mypy (==v1.5.1)", "pre-commit (==3.4.0)", "pytest (==6.1.2)", "pytest (==7.4.0)", "pytest-cov (==2.12.1)", "pytest-cov (==4.1.0)", "pytest-mypy-plugins (==1.9.3)", "pytest-mypy-plugins (==3.0.0)", "sphinx-autobuild (==2021.3.14)", "sphinx-rtd-theme (==1.3.0)", "tox (==3.27.1)", "tox (==4.11.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "mako"
+version = "1.3.0"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "Mako-1.3.0-py3-none-any.whl", hash = "sha256:57d4e997349f1a92035aa25c17ace371a4213f2ca42f99bee9a602500cfd54d9"},
+    {file = "Mako-1.3.0.tar.gz", hash = "sha256:e3a9d388fd00e87043edbe8792f45880ac0114e9c4adc69f6e9bfb2c55e3b11b"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=0.9.2"
+
+[package.extras]
+babel = ["Babel"]
+lingua = ["lingua"]
+testing = ["pytest"]
 
 [package.source]
 type = "legacy"
@@ -1660,6 +1804,26 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "nepattern"
+version = "0.5.15"
+description = "a complex pattern, support typing"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "nepattern-0.5.15-py3-none-any.whl", hash = "sha256:c68fc7c0c9b7835c956a89e0f91fd380b8e07880e183414871e83ef4a9fa0dbd"},
+    {file = "nepattern-0.5.15.tar.gz", hash = "sha256:3b04b91b5856b9826b61737933911f570a75ba8116b9e2ff8fa83b4aa0211203"},
+]
+
+[package.dependencies]
+tarina = ">=0.3.3"
+typing-extensions = ">=4.5.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "nonebot-adapter-onebot"
 version = "2.3.1"
 description = "OneBot(CQHTTP) adapter for nonebot2"
@@ -1701,6 +1865,29 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "nonebot-plugin-alconna"
+version = "0.35.1"
+description = "Alconna Adapter for Nonebot"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "nonebot_plugin_alconna-0.35.1-py3-none-any.whl", hash = "sha256:70dd86b477642dc1d154aef1ceb142e5350475852f87f4b3413dfc0c7d929d87"},
+    {file = "nonebot_plugin_alconna-0.35.1.tar.gz", hash = "sha256:0940af2ddfd8cedde59123b2e3dc77aacb4efab1751d9744091d6baa69920e94"},
+]
+
+[package.dependencies]
+arclet-alconna = ">=1.7.38,<2.0.0"
+arclet-alconna-tools = ">=0.6.7,<0.7.0"
+fleep = ">=1.0.1"
+nepattern = ">=0.5.14,<0.6.0"
+nonebot2 = ">=2.1.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "nonebot-plugin-apscheduler"
 version = "0.3.0"
 description = "APScheduler Support for NoneBot2"
@@ -1714,6 +1901,50 @@ files = [
 [package.dependencies]
 apscheduler = ">=3.7.0,<4.0.0"
 nonebot2 = ">=2.0.0,<3.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-cesaa"
+version = "0.3.0"
+description = "为 chatrecorder 添加 send-anything-anywhere 的 PlatformTarget 支持"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_cesaa-0.3.0-py3-none-any.whl", hash = "sha256:7172b4b0c551e5f3169ca5754946d264580123bdbe397aeaa169b2c39c54167a"},
+    {file = "nonebot_plugin_cesaa-0.3.0.tar.gz", hash = "sha256:557031b79588a26c161b04eda972eb70f4cf2d1460773c9184a6e0c50d4ebd75"},
+]
+
+[package.dependencies]
+nonebot-plugin-chatrecorder = ">=0.5.0,<0.6.0"
+nonebot-plugin-send-anything-anywhere = ">=0.3.0,<0.4.0"
+nonebot2 = ">=2.0.1,<3.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-chatrecorder"
+version = "0.5.1"
+description = "适用于 Nonebot2 的聊天记录插件"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_chatrecorder-0.5.1-py3-none-any.whl", hash = "sha256:514646c133b97ca3b7833dcdbd4dba7eda0950ac0d3eb5fe55dca07504931641"},
+    {file = "nonebot_plugin_chatrecorder-0.5.1.tar.gz", hash = "sha256:76c04b0d2ad3ce438fd8712468c732284b92938f9419044251ffc3a35652d50d"},
+]
+
+[package.dependencies]
+nonebot-plugin-localstore = ">=0.5.0,<0.6.0"
+nonebot-plugin-orm = ">=0.3.0,<1.0.0"
+nonebot-plugin-session = ">=0.2.0,<0.3.0"
+nonebot-plugin-session-orm = ">=0.1.1,<0.2.0"
+nonebot2 = {version = ">=2.0.1,<3.0.0", extras = ["fastapi"]}
 
 [package.source]
 type = "legacy"
@@ -1760,6 +1991,105 @@ files = [
 [package.dependencies]
 nonebot2 = ">=2.0.0,<3.0.0"
 typing-extensions = ">=4.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-orm"
+version = "0.6.2"
+description = "SQLAlchemy ORM support for nonebot"
+optional = false
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "nonebot_plugin_orm-0.6.2-py3-none-any.whl", hash = "sha256:4cf0fe274e899bac5ee190ccf2d1d6ba9819570d74411d4927234bb3a6d79463"},
+    {file = "nonebot_plugin_orm-0.6.2.tar.gz", hash = "sha256:49c7fb66e4490390a46bfdf1566362fd6e68dc240080931a24978f5586f62147"},
+]
+
+[package.dependencies]
+alembic = ">=1.12,<2.0"
+click = ">=8.1,<9.0"
+importlib-resources = {version = ">=6.1,<7.0", markers = "python_version < \"3.12\""}
+nonebot-plugin-localstore = ">=0.5,<1.0"
+nonebot2 = ">=2.1,<3.0"
+sqlalchemy = ">=2.0,<3.0"
+typing-extensions = {version = ">=4.8,<5.0", markers = "python_version < \"3.11\""}
+
+[package.extras]
+aiomysql = ["aiomysql (>=0.2,<1.0)"]
+aiosqlite = ["aiosqlite (>=0.19,<1.0)"]
+asyncmy = ["asyncmy (>=0.2,<1.0)"]
+asyncpg = ["asyncpg (>=0.28,<1.0)"]
+default = ["aiosqlite (>=0.19,<1.0)"]
+mysql = ["aiomysql (>=0.2,<1.0)"]
+postgresql = ["psycopg[binary] (>=3.1,<4.0)"]
+psycopg = ["psycopg[binary] (>=3.1,<4.0)"]
+sqlite = ["aiosqlite (>=0.19,<1.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-send-anything-anywhere"
+version = "0.3.2"
+description = "An adaptor for nonebot2 adaptors"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_send_anything_anywhere-0.3.2-py3-none-any.whl", hash = "sha256:2dac60653f49aa25f3a08eb75544ecb155e30b2496f1f7a16e27ddc76ff09796"},
+    {file = "nonebot_plugin_send_anything_anywhere-0.3.2.tar.gz", hash = "sha256:19a54c8f69d01f2000b1f2536eea4076acd8fe219f7f0d9060a8120bd7052d52"},
+]
+
+[package.dependencies]
+anyio = ">=3.6.2,<4.0.0"
+nonebot2 = ">=2.0.0,<3.0.0"
+pydantic = ">=1.10.5,<2.0.0"
+strenum = ">=0.4.8,<0.5.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-session"
+version = "0.2.3"
+description = "Nonebot2 会话信息提取与会话id定义"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_session-0.2.3-py3-none-any.whl", hash = "sha256:5f652a0c082231c1cea72deb994a81e50f77ba532e14d30fdec09772f69079fd"},
+    {file = "nonebot_plugin_session-0.2.3.tar.gz", hash = "sha256:33af37400f5005927c4ff861e593774bedc314fba00cfe06f482e582d9f447b7"},
+]
+
+[package.dependencies]
+nonebot2 = ">=2.0.0,<3.0.0"
+strenum = ">=0.4.8,<0.5.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "nonebot-plugin-session-orm"
+version = "0.1.1"
+description = "session 插件 orm 扩展"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "nonebot_plugin_session_orm-0.1.1-py3-none-any.whl", hash = "sha256:7c6d4b33109ab851db9f440ff6efcb12309fb6666c1e698b030826d27bb63e0c"},
+    {file = "nonebot_plugin_session_orm-0.1.1.tar.gz", hash = "sha256:cb1b83c95b3a006125f02ae9d6ba855d0579ce9cb07da568c88b7ba6a0b86e24"},
+]
+
+[package.dependencies]
+nonebot-plugin-orm = ">=0.3.0,<1.0.0"
+nonebot-plugin-session = ">=0.2.0,<0.3.0"
+nonebot2 = {version = ">=2.0.1,<3.0.0", extras = ["fastapi"]}
 
 [package.source]
 type = "legacy"
@@ -2647,6 +2977,82 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "strenum"
+version = "0.4.15"
+description = "An Enum that inherits from str."
+optional = false
+python-versions = "*"
+files = [
+    {file = "StrEnum-0.4.15-py3-none-any.whl", hash = "sha256:a30cda4af7cc6b5bf52c8055bc4bf4b2b6b14a93b574626da33df53cf7740659"},
+    {file = "StrEnum-0.4.15.tar.gz", hash = "sha256:878fb5ab705442070e4dd1929bb5e2249511c0bcf2b0eeacf3bcd80875c82eff"},
+]
+
+[package.extras]
+docs = ["myst-parser[linkify]", "sphinx", "sphinx-rtd-theme"]
+release = ["twine"]
+test = ["pylint", "pytest", "pytest-black", "pytest-cov", "pytest-pylint"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "tarina"
+version = "0.4.2"
+description = "A collection of common utils for Arclet"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "tarina-0.4.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:c46b2b827a4d14f521c5f323e1cb8ed5350d3d9bf8e7828100265903526b9907"},
+    {file = "tarina-0.4.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:dc78a3c653fdea3f2ae642584a6a55cf26856b4858875068a7cfca92b13bca6b"},
+    {file = "tarina-0.4.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:c1943cabd1707e52b1bfc478c33c48c04d6c0d3ef9425ad808265d7965142c3b"},
+    {file = "tarina-0.4.2-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:872507bc155412ab71f202a9b28ee170bd395c7cf8dbee63bfe78845265717a2"},
+    {file = "tarina-0.4.2-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:61aab6935092373fd53565ec7ba894ff9567e4620535a26362aeb66826f6d0d7"},
+    {file = "tarina-0.4.2-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:5ae2ccd7aa409d33ea14944533b93f15cee71a1a7f4547f0cfef1ad6153ed142"},
+    {file = "tarina-0.4.2-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:ee72b6a55215ad6acc1d50fbd227d972138adacc9f7c6a3f1c63080780d968ed"},
+    {file = "tarina-0.4.2-cp310-cp310-win32.whl", hash = "sha256:4f417bb80c18d5f87f27bcb1e70d5eaae125578440c6bbe4c5275c6c633a7475"},
+    {file = "tarina-0.4.2-cp310-cp310-win_amd64.whl", hash = "sha256:e54de934c6a754e27daf64a04d6ca287303f7b7e6f8ecee6cb8162577ffc2a6c"},
+    {file = "tarina-0.4.2-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:30ec63fce2556f9e63d8d774a74ef688d9c46dd04f198d3b9a653cd5c539fd5e"},
+    {file = "tarina-0.4.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:03718dd5630daa7ee84f31ae258c979f168f4b58149a0647af706bff64268321"},
+    {file = "tarina-0.4.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:8d49030aefd8486fdb5b91e72c188451de216fb71c636cbd33a7eee5e6c73daf"},
+    {file = "tarina-0.4.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4ad962153c9f63ad1e89acd3d9bbbcee21b5ea07ee0e8dac06c6d2471ee8337d"},
+    {file = "tarina-0.4.2-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9e2a8a9bfd4a9a5907c2c64e163c374eaed24b1e0df3fe9d0bd7d52a9f730daa"},
+    {file = "tarina-0.4.2-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:50a2bea62c32cf9a6cd89f7eb1b2a1a5a5ca3b7533960abdcc77956121267de1"},
+    {file = "tarina-0.4.2-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:0c6c16b01783797cbd12eeef042a7ed96a5531b01b931e50ac5afb3d9d4d1634"},
+    {file = "tarina-0.4.2-cp311-cp311-win32.whl", hash = "sha256:c4b54ebdfeb63f9a60ca4c70014784eb50c00ad892e9ad8211527e2d57108abb"},
+    {file = "tarina-0.4.2-cp311-cp311-win_amd64.whl", hash = "sha256:b613afb8e3381f64e2ede5ad17b7c013515f601b8ce335dead5403aa5ac58281"},
+    {file = "tarina-0.4.2-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:a95da4a609cdf7e888e1688c0d332acf9c62633f81a40cf851ce3649c3fb9283"},
+    {file = "tarina-0.4.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:a3cb636ec94d5f7a6bb7a7bfc451e484c6e8ea7bc04144eb4662d692923ca8ca"},
+    {file = "tarina-0.4.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:b1f4a76784f47a89e7e2bb44136fe8e07a636f50fbc4b24f0d8da63cc28ebf78"},
+    {file = "tarina-0.4.2-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:45348f4ecfa21b84c103ef021b161020637c7a6aa02e02440fbe3418cc4a5654"},
+    {file = "tarina-0.4.2-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1848011cf5707aad0899236bcc972f86ef5554ec4799a8ddf15ef53aea784ff"},
+    {file = "tarina-0.4.2-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:494ccf76d4428de18c59464f5a9e1c8b6d0bf598941a8b0d9f407729f81e0a95"},
+    {file = "tarina-0.4.2-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:0086c91358536549f61a6ac24861764ef1a607a91bd82a2dbd574392de26dff0"},
+    {file = "tarina-0.4.2-cp38-cp38-win32.whl", hash = "sha256:c30618a7c8586719ff46c12b653d52e969c0a5105698f3fdbff8e5293b135b63"},
+    {file = "tarina-0.4.2-cp38-cp38-win_amd64.whl", hash = "sha256:6b7b3bff3cbf0901f55c87739af297fd6692f53d3d3a55d0de12e7e41e4e7ff4"},
+    {file = "tarina-0.4.2-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:af75e381a0ae7481741f37221fa721816d78c6e34791ac14a29d41f148bfae49"},
+    {file = "tarina-0.4.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:938fe8e9fe950eb4ab1824f72d55973cae98aaeacba1bf6ce2f6e5729f9b8555"},
+    {file = "tarina-0.4.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:46737007a43cfef9ba20409230beb49a6754de498930eb1105edf0687ce4d6d8"},
+    {file = "tarina-0.4.2-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:dbbbdd2aee142d3c0888ebce2481ad15e4d505c040fee1b9c7809bf3c9e83649"},
+    {file = "tarina-0.4.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0b4781c783266e2d4eccc975ba79e1e0b4b465d267e616b5b44f32981a289a7a"},
+    {file = "tarina-0.4.2-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:01d1b3b0e0079e5f372111b149815d70d4a063a83f1a656d6acd91e67fa9c862"},
+    {file = "tarina-0.4.2-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:d493c5492a27964aa4f8fa65ac6eab172624b8d25718b1a5e2261102ac363b26"},
+    {file = "tarina-0.4.2-cp39-cp39-win32.whl", hash = "sha256:df510f8d8a2cb5e684f2412d98a3f2654986e40c2a697be686f0b27f51ea7c36"},
+    {file = "tarina-0.4.2-cp39-cp39-win_amd64.whl", hash = "sha256:646f74e7426acf2644461a2077b72677d964b5c064f6cb2df8c60c77580e1f89"},
+    {file = "tarina-0.4.2-py3-none-any.whl", hash = "sha256:08650c08b1950e7346b13f20ff695d3d3d0d7a9d240521a7544c433ba326a736"},
+    {file = "tarina-0.4.2.tar.gz", hash = "sha256:a719c31c1e65c5fb68c12fbacffe802f160678d2e6a9745d1241b924e9283791"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4.4.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "tinydb"
 version = "4.8.0"
 description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
@@ -2672,25 +3078,6 @@ files = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
-
-[package.source]
-type = "legacy"
-url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
-reference = "tsinghua"
-
-[[package]]
-name = "tortoise"
-version = "0.1.1"
-description = "Turtle graphics on the web."
-optional = false
-python-versions = "*"
-files = [
-    {file = "tortoise-0.1.1-py3-none-any.whl", hash = "sha256:bcb58a56d6796cad0db330104450df2caf2ea9e98d844bb2906274bd15c12804"},
-    {file = "tortoise-0.1.1.tar.gz", hash = "sha256:a4ebd69b152d266174b3b0f2a22e3fb8995101eb749d3114813a98f405ab10bb"},
-]
-
-[package.dependencies]
-atlastk = "*"
 
 [package.source]
 type = "legacy"
@@ -3162,6 +3549,89 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "wordcloud"
+version = "1.9.3"
+description = "A little word cloud generator"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "wordcloud-1.9.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:5fce423a24e6ca1b89b2770a7c6917d6e26f04bcfefa601cf61819b2fc0770c4"},
+    {file = "wordcloud-1.9.3-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3b6adfc1465b9176b8bc602745dd3ed8ea782b006a81cb59eab3dde92ad9f94c"},
+    {file = "wordcloud-1.9.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ad6db37a6f5abeba51a5d503228ea320d4f2fa774864103e7b24acd9dd86fd0e"},
+    {file = "wordcloud-1.9.3-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5e74ac99e9582873d7ee28bd03e125dcf73ae46666d55fb4c13e82e90c0e074a"},
+    {file = "wordcloud-1.9.3-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:4001317c0e3b5cb6fd106228ddcd27524d1caf9ae468b3c2c2fc571c6ce56b22"},
+    {file = "wordcloud-1.9.3-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:5f86042e5ce12e2795798033a56f0246906b4d7d9027d554b6cd951ce2fd342a"},
+    {file = "wordcloud-1.9.3-cp310-cp310-win32.whl", hash = "sha256:3b90f0390c0a05ba4b4580fb765a3d45d8d21519b50ca5006d6dbdc2a0b86507"},
+    {file = "wordcloud-1.9.3-cp310-cp310-win_amd64.whl", hash = "sha256:6f7977285df9254b8704d3f895c06814a6183c6c89e140d6281848c076635e91"},
+    {file = "wordcloud-1.9.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:7ced0d5c946d82cfc778febafe3eedeb0bae07dd57ea4f21fe06b9ec8225ab31"},
+    {file = "wordcloud-1.9.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6f5499e6360219e61808dc0d2b00cd5104f78a82d2ae8f7986df04731713835f"},
+    {file = "wordcloud-1.9.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cb1e8bb7d60f7a90fa8439c7b56dd1df60766115fd57480ac0d83ca5204e0117"},
+    {file = "wordcloud-1.9.3-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:6e33328044db5c01487f2a3a023b5476947942dacd6a5dc8c217fa039f6c5bd9"},
+    {file = "wordcloud-1.9.3-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:998dc0dc8fcbff88f566f17cb5e0eb3bb21fcafd387b0670be6c14feacaf4cdc"},
+    {file = "wordcloud-1.9.3-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:e1a1c3cfa86b605a19711ec58920ccb694dca9d5c9d00b373f4d5952d63793e9"},
+    {file = "wordcloud-1.9.3-cp311-cp311-win32.whl", hash = "sha256:f504e3291256c0b6fca044602f8f0e5cb56b7c33724cde9d279c4077fa5b6d27"},
+    {file = "wordcloud-1.9.3-cp311-cp311-win_amd64.whl", hash = "sha256:103c9b0465e1cf5b7a38b49ab1c3a0b0301762fa56602ac79287f9d22b46ade3"},
+    {file = "wordcloud-1.9.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:dfea303fc1dec4811e4a5671a8021a89724b6fa70639d059ad30c492932be447"},
+    {file = "wordcloud-1.9.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:512f3c9a2e8579269a33ac9219d042fd0cc5a3a524ee68079238a3e4efe2b879"},
+    {file = "wordcloud-1.9.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d00d916509a17b432032161d492ed7f30b2ebd921303090fe1d2b57011a49cc0"},
+    {file = "wordcloud-1.9.3-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d5e0e7bbd269a62baa63ea2175faea4d74435c0ad828f3d5999fa4c33ebe0629"},
+    {file = "wordcloud-1.9.3-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:483aa4f8d17b9744a3b238269593d1794b962fc757a72a9e7e8468c2665cffb7"},
+    {file = "wordcloud-1.9.3-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:64b342a79553970fa04083761d041067323219ad62b5550a496e42436d23cbb3"},
+    {file = "wordcloud-1.9.3-cp312-cp312-win32.whl", hash = "sha256:419acfe0b1d1227b9e3e14ec1bb6c40fd7fa652df4adf81f0ba3e00daca500b5"},
+    {file = "wordcloud-1.9.3-cp312-cp312-win_amd64.whl", hash = "sha256:2061a9978a6243107ce1a8a9fa24f421b03a0f7e620769b6f5075857e75aa615"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:21f47fabe189f39532378759300a624ae166519dfafbd6a22cfe65b14a7d104d"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:524065f8a5a79e00748f45efbeacd25ac1d15850e0d0588753b17a8b2de2a6a7"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5b2bb53492bc8663ba90a300bbd2da7be5059f9ad192ed1150e9bbbda8016c9a"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-musllinux_1_1_i686.whl", hash = "sha256:643243474faee460e7d08944d3e529c58d0cbf8be11626fbb918ee8ccb913a23"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:d95f44739a6972abfb97c12656999952dd28ed03700ee8b6efe35d688d489b36"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-win32.whl", hash = "sha256:e56364c8829d399397a649501f834c12751ab106cba488ba8d86d532889b528c"},
+    {file = "wordcloud-1.9.3-cp37-cp37m-win_amd64.whl", hash = "sha256:78f4a3fd3526884e4f526ae070bcb47401766c48c9cb6488933f608f810fadae"},
+    {file = "wordcloud-1.9.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:0058cf08573c99283fe189e93354d20ca8c9a8aac7207d96e74b93aedd02cdcc"},
+    {file = "wordcloud-1.9.3-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:47d6918381a8a816141bdd391376bff703ec5aa3a6bd88631097a5e2963ebd1a"},
+    {file = "wordcloud-1.9.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:05aa3269c5af573cfb11e269de0fe73c2c72aefdd90cdb41368744e7d8bc7507"},
+    {file = "wordcloud-1.9.3-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d74e206f42af172db4d3c0054853523bf46070b12f0626493a56599957dd2196"},
+    {file = "wordcloud-1.9.3-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:1932726635c8ed12bb74201d2a6b07f18c2f732aecadb9ae915832485241991f"},
+    {file = "wordcloud-1.9.3-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:038de1701e7853c41850644453f1c9e69f878e480d42efae154684a47fd59f1a"},
+    {file = "wordcloud-1.9.3-cp38-cp38-win32.whl", hash = "sha256:19aa05f60d9261301e4942fd1b1c4b458d903f24c12d2bd1c6ecbb752697a2f3"},
+    {file = "wordcloud-1.9.3-cp38-cp38-win_amd64.whl", hash = "sha256:ab5bae12cf27d8de986e4d4518d4778f2b56c660b250b631ff805024038311a1"},
+    {file = "wordcloud-1.9.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:888d088f54a897b8597da2fae3954d74b1f7251f7d311bbcc30ec3c6987d3605"},
+    {file = "wordcloud-1.9.3-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:daa6cfa11ce24e7eb4e42dc896dae4f74ae2166cf90ec997996300566e6811d1"},
+    {file = "wordcloud-1.9.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:387dc2bd528ff6bb661451f2a9fd4ccf74b86072d7a2c868285d4c0cf26abeb4"},
+    {file = "wordcloud-1.9.3-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:40c32a324319db610b40f387a2a0b42d091817958a5272e0a4c4eb6a158588b5"},
+    {file = "wordcloud-1.9.3-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:8078c6c58db4ccb893f120354e7e08bc48a5a5aac3e764f9008bc96a769b208c"},
+    {file = "wordcloud-1.9.3-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:81f15eb60abc1676808bb85e2edfdbdc0a9011383f2a729c1c2a0cb941516768"},
+    {file = "wordcloud-1.9.3-cp39-cp39-win32.whl", hash = "sha256:1d1680bf6c3d1b2f8e3bd02ccfa868fee2655fe13cf5b9e9905251050448fbbd"},
+    {file = "wordcloud-1.9.3-cp39-cp39-win_amd64.whl", hash = "sha256:c0f458681e4d49be36064f21bfb1dc8d8c3021fe30e474ee634666b4f84fd851"},
+    {file = "wordcloud-1.9.3-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:baea9ac88ec1ab317461c75834b64ad5dad12a02c4f2384dd546eac3c316dbbb"},
+    {file = "wordcloud-1.9.3-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e6956b9f0d0eb14a12f46d41aebb4e7ad2d4c2ec417cc7c586bebd2ddc9c8311"},
+    {file = "wordcloud-1.9.3-pp310-pypy310_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d221b4d0d1d2a1d79286c41d8a4c0ce70065488f153e5d81cc0be7fb494ff10f"},
+    {file = "wordcloud-1.9.3-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:db39dbe91dd31ffb667edcd496f4eeb85ceea397fef4ad51d0766ab934088cc7"},
+    {file = "wordcloud-1.9.3-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:a6ae5db43807ca10f5c77dd2d22c78f8f9399758cc5ac6afd7f3c19e58b75d66"},
+    {file = "wordcloud-1.9.3-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2a1c431f20ee28a8840f2552a89bd8332c455c318f4de7b6c2ca3159b76df4f0"},
+    {file = "wordcloud-1.9.3-pp37-pypy37_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:1847ca4466e2b1588478dd8eb87fa7baa28515b37ab7926471595e8ac81e6578"},
+    {file = "wordcloud-1.9.3-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:7b0e14e4dfcff7dee331df7880a2031e352e95a7d30e74ff152f162488b04179"},
+    {file = "wordcloud-1.9.3-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:f1c0cff6037a3dc46437537a31925f3895d742fb6d67af71194149763de16a76"},
+    {file = "wordcloud-1.9.3-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8a36788c5c79604653327675023cbd97c68813640887b51ce651bb4f5c28c88b"},
+    {file = "wordcloud-1.9.3-pp38-pypy38_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3e3907c6496e197a9c4be76770c5ff8a03eddbdfe5a151a55e4eedeaa45ab3ad"},
+    {file = "wordcloud-1.9.3-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:65e6f6b68eecb85c326ae19729dd4151fcdebffc2142c9ee882dc2de955210d0"},
+    {file = "wordcloud-1.9.3-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:0c8e18c4afa025819332efffe8008267a83a9c54fe72ae1bc889ddce0eec470d"},
+    {file = "wordcloud-1.9.3-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4df25cb5dd347e43d53e02a009418f5776e7651063aff991865da8f6336bf193"},
+    {file = "wordcloud-1.9.3-pp39-pypy39_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:53489ad22d58be3896ec16ed47604832e393224c89f7d7eed040096b07141ac4"},
+    {file = "wordcloud-1.9.3-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:61de4a5f3bfd33e0cb013cce6143bcf71959f3cd8536650b90134d745a553c2c"},
+    {file = "wordcloud-1.9.3.tar.gz", hash = "sha256:a9aa738d63ed674a40f0cc31adb83f4ca5fc195f03a6aff6e010d1f5807d1c58"},
+]
+
+[package.dependencies]
+matplotlib = "*"
+numpy = ">=1.6.1"
+pillow = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "yarl"
 version = "1.9.4"
 description = "Yet another URL library"
@@ -3272,4 +3742,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5e67cbc028387b9ca034bfd3c805f9ba7e868dd5e2e819990ad5acf4c52b7d54"
+content-hash = "011fd94b021e2d6773301ceb0c7c569dc92d2be41605e7d079bdce2982dddebc"
