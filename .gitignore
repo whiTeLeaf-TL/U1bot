@@ -110,7 +110,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -145,3 +144,4 @@ ncm.png
 music/
 run.sh
 fix.sh
+.env
