@@ -1,4 +1,5 @@
 import random
+from venv import logger
 import nonebot
 from nonebot.plugin.on import on_command, on_message
 from nonebot.permission import SUPERUSER
@@ -23,10 +24,18 @@ __plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=
 
 global_config = nonebot.get_driver().config
 waifu_config = Config.parse_obj(global_config.dict())
+waifu_cd_bye = waifu_config.waifu_cd_bye
+waifu_save = waifu_config.waifu_save
+waifu_reset = waifu_config.waifu_reset
 last_sent_time_filter = waifu_config.waifu_last_sent_time_filter
 HE = waifu_config.waifu_he
 BE = HE + waifu_config.waifu_be
 NTR = waifu_config.waifu_ntr
+yinpa_HE = waifu_config.yinpa_he
+yinpa_BE = yinpa_HE + waifu_config.yinpa_be
+yinpa_CP = waifu_config.yinpa_cp
+yinpa_CP = yinpa_HE if yinpa_CP == 0 else yinpa_CP
+
 no_waifu = [
     "你没有娶到群友，强者注定孤独，加油！",
     "找不到对象.jpg",
@@ -103,12 +112,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         + random.choice(happy_end)
                         + MessageSegment.image(file=await user_img(waifu_id))
                     )
-                    if waifu := await Waifu.get_or_none(group_id=group_id):
-                        waifu = waifu.waifu
-                    else:
-                        waifu = []
 
-                    if user_id in waifu:
+                    if user_id in await Waifu.get_or_create(group_id=group_id):
                         waifulock, _ = await WaifuLock.get_or_create(
                             message_id=group_id
                         )
@@ -201,7 +206,10 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             record_CP.affect[user_id] = user_id
         else:
             rec.pop(waifu_cp)
-            record_waifu.waifu.discard(waifu_cp)
+            try:
+                record_waifu.waifu.remove(waifu_cp)
+            except:
+                pass
             await waifu.send(msg + "\n但是...", at_sender=True)
             await asyncio.sleep(1)
     record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
@@ -217,3 +225,80 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     await record_CP.save()
     await record_waifu.save()
     await waifu.finish(msg, at_sender=True)
+
+
+async def check_divorce_rule(event):
+    if isinstance(event, GroupMessageEvent):
+        waifu_cp_instance = await WaifuCP.get_or_none(group_id=event.group_id)
+        if waifu_cp_instance:
+            user_affect = waifu_cp_instance.affect.get(
+                str(event.user_id), event.user_id
+            )
+            return user_affect != event.user_id
+    return False
+
+
+# 分手
+if waifu_cd_bye > -1:
+    global cd_bye
+    cd_bye = {}
+    bye = on_command(
+        "离婚",
+        aliases={"分手"},
+        rule=lambda event: check_divorce_rule(event),
+        priority=90,
+        block=True,
+    )
+
+    @bye.handle()
+    async def _(event: GroupMessageEvent):
+        group_id = str(event.group_id)
+        user_id = event.user_id
+        cd_bye.setdefault(group_id, {})
+        T, N, A = cd_bye[group_id].setdefault(user_id, [0, 0, 0])
+        Now = event.time
+        cd = T - Now
+        if Now > T:
+            cd_bye[group_id][user_id] = [Now + waifu_cd_bye, 0, 0]
+            rec = await WaifuCP.get(group_id=group_id)
+            waifu_set, _ = await Waifu.get_or_create(group_id=group_id)
+            waifu_id = rec.affect[str(user_id)]
+            rec.affect.pop(str(user_id))
+            rec.affect.pop(str(waifu_id))
+            try:
+                waifu_set.waifu.remove(user_id)
+                waifu_set.waifu.remove(waifu_id)
+            except:
+                pass
+            record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
+            if group_id in record_lock.lock:
+                if waifu_id in record_lock.lock:
+                    del record_lock.lock[waifu_id]
+                if user_id in record_lock.lock[group_id]:
+                    del record_lock.lock[user_id]
+                await record_lock.save()
+            await waifu_set.save()
+            await rec.save()
+            if random.randint(1, 2) == 1:
+                await bye.finish(random.choice(("嗯。", "...", "好。", "哦。", "行。")))
+            else:
+                await bye.finish(Message(f"[CQ:poke,qq={event.user_id}]"))
+        else:
+            if A > Now:
+                A = Now
+                N = 0
+            else:
+                N += 1
+            if N == 1:
+                msg = f"你的cd还有{round(cd/60,1)}分钟。"
+            elif N == 2:
+                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60,1)}分钟。"
+            elif N < 6:
+                T += 10
+                msg = f"还问！罚时！你的cd还有{round(cd/60,1)}+10分钟。"
+            elif random.randint(0, 2) == 0:
+                await bye.finish("哼！")
+            else:
+                await bye.finish()
+            cd_bye[group_id][user_id] = [T, N, A]
+            await bye.finish(msg, at_sender=True)
