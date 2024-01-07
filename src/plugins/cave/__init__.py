@@ -98,7 +98,7 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
         await matcher.finish("请输入正确的序号")
     try:
         data = await cave_models.get(id=key)
-    except:
+    except Exception:
         await matcher.finish("没有这个序号的投稿")
     # 判断是否是超级用户或者是投稿人
     if str(event.user_id) in SUPERUSER:
@@ -109,7 +109,7 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
                     f"你的投稿{key}已经被{event.user_id}删除了！\n内容为：\n{data.details}\n原因：{reason}"
                 ),
             )
-        except:
+        except Exception:
             logger.error(f"回声洞删除投稿私聊通知失败，投稿人id：{data.user_id}")
     elif event.user_id == data.user_id:
         await data.delete()
