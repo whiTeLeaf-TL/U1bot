@@ -3,6 +3,7 @@ import re
 import json
 import base64
 from datetime import datetime
+import time
 from nonebot import logger
 import requests
 from nonebot.adapters.onebot.v11 import (
@@ -41,32 +42,25 @@ cave_del = on_command("删除")
 
 
 def url_to_base64(image_url):
-    response = requests.get(image_url)
+    response = requests.get(image_url, timeout=5)
     image_data = response.content
-    base64_data = base64.b64encode(image_data).decode("utf-8")
-    return base64_data
+    return base64.b64encode(image_data).decode("utf-8")
 
 
 def process_message(original_message):
-    # 使用正则表达式提取图片URL
-    url_match = re.search(
+    if url_match := re.search(
         r"\[CQ:image,file=\w+\.image,url=([^\]]+)\]", original_message
-    )
-
-    if url_match:
-        image_url = url_match.group(1)
+    ):
+        image_url = url_match[1]
 
         # 将图片URL转换为Base64
         base64_image = url_to_base64(image_url)
 
-        # 构建新的消息
-        new_message = re.sub(
+        return re.sub(
             r"\[CQ:image,file=\w+\.image,url=([^\]]+)\]",
             f"[CQ:image,file=base64://{base64_image}]",
             original_message,
         )
-
-        return new_message
     else:
         return original_message
 
@@ -104,7 +98,7 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
         await matcher.finish("请输入正确的序号")
     try:
         data = await cave_models.get(id=key)
-    except Exception:
+    except:
         await matcher.finish("没有这个序号的投稿")
     # 判断是否是超级用户或者是投稿人
     if str(event.user_id) in SUPERUSER:
@@ -115,16 +109,14 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
                     f"你的投稿{key}已经被{event.user_id}删除了！\n内容为：\n{data.details}\n原因：{reason}"
                 ),
             )
-        except Exception:
+        except:
             logger.error(f"回声洞删除投稿私聊通知失败，投稿人id：{data.user_id}")
     elif event.user_id == data.user_id:
         await data.delete()
         await data.save()
         await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}")
-    elif event.user_id != data.user_id:
-        await matcher.finish("你不是投稿人，也不是作者的，你想干咩？")
     else:
-        await matcher.finish("你是谁？")
+        await matcher.finish("你不是投稿人，也不是作者的，你想干咩？")
     result = data.details
     await data.delete()
     await data.save()
@@ -171,14 +163,14 @@ async def _(matcher: Matcher, args: Message = CommandArg()):
 async def _(bot: Bot, event: MessageEvent):
     # 查询userid写所有数据
     all_caves = await cave_models.all()
-    msg_list = ["回声洞记录如下："]
-    msg_list.extend(
-        Message(
-            f"----------------------\n编号：{i.id}\n内容：\n{i.details}\n投稿时间：{i.time}\n----------------------"
-        )
-        for i in all_caves
-        if i.user_id == event.user_id
-    )
+    msg_list = [
+        "回声洞记录如下：",
+        *[
+            f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time}\n----------------------"
+            for i in all_caves
+            if i.user_id == event.user_id
+        ],
+    ]
     await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, msg_list)
 
 
@@ -189,6 +181,20 @@ async def send_forward_msg(
     uin: str,
     msgs: list,
 ) -> dict:
+    """
+    发送转发消息的异步函数。
+
+    参数:
+        bot (Bot): 机器人实例
+        event (MessageEvent): 消息事件
+        name (str): 转发消息的名称
+        uin (str): 转发消息的 UIN
+        msgs (list): 转发的消息列表
+
+    返回:
+        dict: API 调用结果
+    """
+
     def to_json(msg: Message):
         return {"type": "node", "data": {"name": name, "uin": uin, "content": msg}}
 
@@ -204,12 +210,24 @@ async def send_forward_msg(
 
 
 def extract_deletion_reason(text):
-    # 正则表达式模式，匹配"删除"后面的内容
+    """
+    从文本中提取删除原因。
+
+    Args:
+        text (str): 包含删除原因的文本。
+
+    Returns:
+        list: 包含删除原因的字典列表，每个字典包含序号和原因。
+
+    Example:
+        >>> text = "删除1原因1\n删除2原因2\n删除3"
+        >>> extract_deletion_reason(text)
+        [{'序号': 1, '原因': '原因1'}, {'序号': 2, '原因': '原因2'}, {'序号': 3, '原因': '作者删除'}]
+    """
     pattern = r"删除(\d+)(.*?)$"
     matches = re.findall(pattern, text, re.MULTILINE)
     results = []
     for match in matches:
-        # 如果原因部分是空的或者只包含空格，可以忽略该原因
         if match[1].strip():
             results.append({"序号": int(match[0]), "原因": match[1].strip()})
         else:
