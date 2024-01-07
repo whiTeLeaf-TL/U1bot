@@ -1861,26 +1861,6 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
-name = "nonebot-plugin-addfriend"
-version = "2.5.5"
-description = "一个基于NoneBot2的插件，用于处理被请求加QQ好友和QQ群的请求.A plugin based on nonebot2, which is used to process requests to add QQ friends and QQ requests."
-optional = false
-python-versions = ">=3.7,<4.0"
-files = [
-    {file = "nonebot_plugin_addfriend-2.5.5-py3-none-any.whl", hash = "sha256:eb852b6714203d6637d55d3eadd2245aa51ff9a7a52becfdd5c0cb927617da12"},
-    {file = "nonebot_plugin_addfriend-2.5.5.tar.gz", hash = "sha256:250f3697867fff96e6df080f36815ba2d540a4460c03d188def79972fec2b875"},
-]
-
-[package.dependencies]
-nonebot-adapter-onebot = ">=2.0.0-beta.1"
-nonebot2 = ">=2.0.0-beta.1"
-
-[package.source]
-type = "legacy"
-url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
-reference = "tsinghua"
-
-[[package]]
 name = "nonebot-plugin-alconna"
 version = "0.35.1"
 description = "Alconna Adapter for Nonebot"
@@ -3843,4 +3823,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6f35063895622bef3fcf039651f547caca9cf518cb08e379d216a551c9236b1d"
+content-hash = "afb1f2be6e8cabdd6510701b17fa85fd190920df2788432d32b96a95558389fa"
