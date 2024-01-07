@@ -114,7 +114,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             member = await bot.get_group_member_info(
                 group_id=group_id, user_id=waifu_id
             )
-        except:
+        except Exception:
             member = None
             waifu_id = user_id
         if member:
