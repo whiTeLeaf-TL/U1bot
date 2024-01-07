@@ -95,21 +95,20 @@ async def music_reply_rule(event: Union[GroupMessageEvent, PrivateMessageEvent])
 # ============Matcher=============
 ncm_set = on_command("ncm",
                      rule=Rule(music_set_rule),
-                     priority=1, block=False)
+                     block=False)
 '''功能设置'''
 music_regex = on_regex("(song|url)\?id=([0-9]+)(|&)",
-                       priority=2, block=False)
+                        block=False)
 '''歌曲id识别'''
 playlist_regex = on_regex("playlist\?id=([0-9]+)&",
-                          priority=2, block=False)
+                           block=False)
 '''歌单识别'''
-music_reply = on_message(priority=2,
+music_reply = on_message(
                          rule=Rule(music_reply_rule),
                          block=False)
 '''回复下载'''
 search = on_command("点歌",
-                    rule=Rule(check_search),
-                    priority=2, block=False)
+                    rule=Rule(check_search), block=False)
 '''点歌'''
 
 

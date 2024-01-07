@@ -7,7 +7,7 @@ from nonebot.exception import IgnoredException
 from .import blacklist
 
 superusers = get_driver().config.superusers
-report = on_command("反馈开发者", priority=50)
+report = on_command("反馈开发者")
 
 
 @report.handle()
