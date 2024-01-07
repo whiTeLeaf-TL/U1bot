@@ -1,0 +1,494 @@
+{
+    "1": {
+        "name": "娶群友",
+        "description": "纯爱 双向奔赴版",
+        "usage": "如下：",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "娶群友",
+                    "trigger_method": "指令：娶群友",
+                    "trigger_condition": "开头匹配[@人]",
+                    "brief_des": "可以娶群友咯",
+                    "detail_des": "例如：\n娶群友\n娶群友 @人\n每天刷新一次，两个人会互相抽到对方。"
+                },
+                {
+                    "func": "分手！离婚！",
+                    "trigger_method": "指令：分手|离婚",
+                    "trigger_condition": "全字匹配",
+                    "brief_des": "可以分手咯(花心！)",
+                    "detail_des": "无，但是你是真的花心！"
+                },
+                {
+                    "func": "群友卡池",
+                    "trigger_method": "指令：群友卡池",
+                    "trigger_condition": "全字匹配",
+                    "brief_des": "查看当前群可以娶到的群友列表",
+                    "detail_des": "查看当前群可以娶到的群友列表"
+                },
+                {
+                    "func": "对群友涩涩",
+                    "trigger_method": "指令：透群友",
+                    "trigger_condition": "全字匹配",
+                    "brief_des": "对群友涩涩",
+                    "detail_des": "对群友涩涩"
+                },
+                {
+                    "func": "涩涩记录",
+                    "trigger_method": "指令：涩涩记录",
+                    "trigger_condition": "全字匹配",
+                    "brief_des": "查看涩涩记录",
+                    "detail_des": "查看当前群的群友今日透群友次数和被透的次数，记录是跨群的。也就是说群友在别的群挨透也会在记录里显示出来\n群友背地里玩的挺花（bushi）"
+                }
+            ]
+        }
+    },
+    "2": {
+        "name": "成分姬",
+        "description": "查询B站用户关注的VTuber成分",
+        "usage": "查成分 B站用户名/UID",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "查成分",
+                    "trigger_method": "指令：查成分",
+                    "trigger_condition": "开头匹配[查成分]",
+                    "brief_des": "查询B站用户关注的VTuber成分",
+                    "detail_des": "例如：\n查成分 413417479\n查成分 name_tag"
+                }
+            ]
+        }
+    },
+    "3": {
+        "name": "词云图",
+        "description": "利用群消息生成词云",
+        "usage": "方法如下",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "获取今天的词云",
+                    "trigger_method": "今日词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取今天的词云",
+                    "detail_des": "获取今天的词云\n命令：今日词云\n权限：所有人"
+                },
+                {
+                    "func": "获取昨天的词云",
+                    "trigger_method": "昨日词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取昨天的词云",
+                    "detail_des": "获取昨天的词云\n命令：昨日词云\n权限：所有人"
+                },
+                {
+                    "func": "获取本周的词云",
+                    "trigger_method": "本周词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取本周的词云",
+                    "detail_des": "获取本周的词云\n命令：本周词云\n权限：所有人"
+                },
+                {
+                    "func": "获取上周的词云",
+                    "trigger_method": "上周词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取上周的词云",
+                    "detail_des": "获取上周的词云\n命令：上周词云\n权限：所有人"
+                },
+                {
+                    "func": "获取本月的词云",
+                    "trigger_method": "本月词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取本月的词云",
+                    "detail_des": "获取本月的词云\n命令：本月词云\n权限：所有人"
+                },
+                {
+                    "func": "获取上月的词云",
+                    "trigger_method": "上月词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取上月的词云",
+                    "detail_des": "获取上月的词云\n命令：上月词云\n权限：所有人"
+                },
+                {
+                    "func": "获取年度词云",
+                    "trigger_method": "年度词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取年度词云",
+                    "detail_des": "获取年度词云\n命令：年度词云\n权限：所有人"
+                },
+                {
+                    "func": "获取指定日期的词云",
+                    "trigger_method": "历史词云 [日期]",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取指定日期的词云",
+                    "detail_des": "获取指定日期的词云\n命令：历史词云 [日期]\n权限：所有人\n示例：历史词云 2022-01-01"
+                },
+                {
+                    "func": "获取指定时间段的词云",
+                    "trigger_method": "历史词云 [起始时间结束时间]",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取指定时间段的词云",
+                    "detail_des": "获取指定时间段的词云\n命令：历史词云 [起始时间结束时间]\n权限：所有人\n示例：历史词云 2022-01-012022-02-22\n历史词云 2022-02-22T11:11:112022-02-22T22:22:22"
+                },
+                {
+                    "func": "获取自己的今日词云",
+                    "trigger_method": "我的今日词云",
+                    "trigger_condition": "所有人",
+                    "brief_des": "获取自己的今日词云",
+                    "detail_des": "获取自己的今日词云\n命令：我的今日词云\n权限：所有人"
+                },
+                {
+                    "func": "设置词云形状",
+                    "trigger_method": "设置词云形状",
+                    "trigger_condition": "超级用户/群主/管理员",
+                    "brief_des": "设置词云形状",
+                    "detail_des": "设置词云形状\n命令：设置词云形状\n权限：所有人"
+                },
+                {
+                    "func": "删除词云形状",
+                    "trigger_method": "删除词云形状",
+                    "trigger_condition": "超级用户/群主/管理员",
+                    "brief_des": "删除词云形状",
+                    "detail_des": "删除词云形状\n命令：删除词云形状\n权限：所有人"
+                },
+                {
+                    "func": "设置默认词云形状",
+                    "trigger_method": "设置词云默认形状",
+                    "trigger_condition": "超级用户",
+                    "brief_des": "设置默认词云形状",
+                    "detail_des": "设置默认词云形状\n命令：设置词云默认形状\n权限：超级用户"
+                },
+                {
+                    "func": "删除默认词云形状",
+                    "trigger_method": "删除词云默认形状",
+                    "trigger_condition": "超级用户",
+                    "brief_des": "删除默认词云形状",
+                    "detail_des": "删除默认词云形状\n命令：删除词云默认形状\n权限：超级用户"
+                },
+                {
+                    "func": "设置定时发送每日词云",
+                    "trigger_method": "词云每日定时发送状态",
+                    "trigger_condition": "超级用户/群主/管理员",
+                    "brief_des": "设置定时发送每日词云",
+                    "detail_des": "设置定时发送每日词云\n命令：词云每日定时发送状态\n权限：所有人"
+                },
+                {
+                    "func": "开启定时发送每日词云",
+                    "trigger_method": "开启词云每日定时发送 [时间]",
+                    "trigger_condition": "超级用户/群主/管理员",
+                    "brief_des": "开启定时发送每日词云",
+                    "detail_des": "开启定时发送每日词云\n命令：开启词云每日定时发送 [时间]\n权限：所有人\n示例：开启词云每日定时发送 23:59"
+                },
+                {
+                    "func": "关闭定时发送每日词云",
+                    "trigger_method": "关闭词云每日定时发送",
+                    "trigger_condition": "超级用户/群主/管理员",
+                    "brief_des": "关闭定时发送每日词云",
+                    "detail_des": "关闭定时发送每日词云\n命令：关闭词云每日定时发送\n权限：所有人"
+                }
+            ]
+        }
+    },
+    "4": {
+        "name": "答案之书",
+        "description": "愿一切无解都有解！解除你的迷惑，终结你的纠结！",
+        "usage": "翻看答案 + 问题\n问题 + 翻看答案\n数据来源于吉林美术出版社2018年9月第1版的《神奇的答案之书》，数据著作权为原作者张权所有。",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "翻看答案",
+                    "trigger_method": "指令：翻看答案/答案之书 + 问题",
+                    "trigger_condition": "开头匹配[翻看答案/答案之书]",
+                    "brief_des": "翻看答案",
+                    "detail_des": "无"
+                }
+            ]
+        }
+    },
+    "5": {
+        "name": "疯狂星期四",
+        "description": "持续疯狂！KFC疯狂星期四",
+        "usage": "KFC疯狂星期四\n[疯狂星期X]随机输出KFC疯狂星期四文案\n[狂乱X曜日]随机输出KFC疯狂星期四文案",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "疯狂星期X/狂乱X曜日",
+                    "trigger_method": "指令：疯狂星期X",
+                    "trigger_condition": "开头匹配[疯狂星期X/狂乱X曜日]",
+                    "brief_des": "疯狂星期X",
+                    "detail_des": "列如:\n疯狂星期四\n疯狂星期六"
+                }
+            ]
+        }
+    },
+    "6": {
+        "name": "回声洞",
+        "description": "看看别人的投稿，也可以自己投稿~",
+        "usage": "投稿\n查看回声洞记录\n删除[序号]\n如：\n投稿",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "投稿",
+                    "trigger_method": "投稿/回声洞投稿",
+                    "trigger_condition": "仅私聊",
+                    "brief_des": "投稿到回声洞",
+                    "detail_des": "投稿\n将内容投稿到回声洞\n仅限私聊\n例如：\n投稿 内容"
+                },
+                {
+                    "func": "查看回声洞记录",
+                    "trigger_method": "查看回声洞记录/回声洞记录",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "查看回声洞的投稿记录（合并信息）",
+                    "detail_des": "例如\n查看回声洞记录\n回声洞记录\n他是合并信息，不怕刷屏咯"
+                },
+                {
+                    "func": "删除投稿",
+                    "trigger_method": "删除[序号]",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "删除指定序号的投稿（仅限自己的投稿）",
+                    "detail_des": "删除[序号]\n删除回声洞中指定序号的投稿\n群聊或私聊\n例如：\n删除1"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "7": {
+        "name": "今日运势",
+        "description": "看看今天的运势吧",
+        "usage": "发送\"今日运势\"或\"运势\"",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "今日运势",
+                    "trigger_method": "命令：今日运势",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "看看你今天的运势会怎么样吧！",
+                    "detail_des": "发送\"今日运势\"或\"运势\"\n看看你今天的运势会怎么样吧！"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "8": {
+        "name": "今天吃什么？",
+        "description": "What to Eat/Drink",
+        "usage": "看下面，注意不要带问号！！！",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "吃什么",
+                    "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]吃[什么|啥|点啥]",
+                    "trigger_condition": "私聊、群聊",
+                    "brief_des": "查看吃什么，建议看详细说明",
+                    "detail_des": "列如：\n今天晚上吃什么\n明天中午吃啥\n后天早上吃点啥"
+                },
+                {
+                    "func": "喝什么",
+                    "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]喝[什么|啥|点啥]",
+                    "trigger_condition": "私聊、群聊",
+                    "brief_des": "查看喝什么，建议看详细说明",
+                    "detail_des": "列如：\n今天晚上喝什么\n明天中午喝啥\n后天早上喝点啥"
+                },
+                {
+                    "func": "查看全部菜单",
+                    "trigger_method": "命令：查[看|寻]全部(菜[单|品]|饮[料|品])",
+                    "trigger_condition": "私聊、群聊",
+                    "brief_des": "查看已存的全部菜单，建议看详细说明",
+                    "detail_des": "例如：\n查看全部菜单\n查看全部饮料\n查看全部菜品\n查看全部菜单\n查看全部饮料\n查寻全部菜品\n查寻全部饮料\n查寻全部菜单\n利用合并消息进行发送，不会刷屏哒！"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "9": {
+        "name": "历史上的今天",
+        "description": "让我们看看今天在过去都发生了什么吧!",
+        "usage": "指令:历史上的今天",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "历史上的今天",
+                    "trigger_method": "命令:历史上的今天",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "查看历史上的今天",
+                    "detail_des": "无"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "10": {
+        "name": "涩图",
+        "description": "给群友涩涩",
+        "usage": "指令: 色图|涩图|来点色色|色色|来点色图",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "涩图",
+                    "trigger_method": "指令: 色图|涩图|来点色色|色色|来点色图",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "给群友涩涩",
+                    "detail_des": "无"
+                },{
+                    "func": "setu开关",
+                    "trigger_method": "指令：setu开关",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "开关本群的涩图功能",
+                    "detail_des": "权限:管理员/超管/群主"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "11": {
+        "name": "天气",
+        "description": "来看看今天的天气吧！",
+        "usage": "天气+地名 / 地名+天气",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "天气",
+                    "trigger_method": "指令：天气+地名 / 地名+天气",
+                    "trigger_condition": "开头匹配[天气]",
+                    "brief_des": "查看天气",
+                    "detail_des": "例如：\n天气北京\n北京天气"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "12": {
+        "name": "网抑云",
+        "description": "12点啦，该网抑云啦！[哭]",
+        "usage": "指令：网抑云|网易云热评  随机一条网易云热评",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "网抑云",
+                    "trigger_method": "指令：网抑云|网易云热评",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "随机一条网易云热评",
+                    "detail_des": "无"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "13": {
+        "name": "网易云点歌",
+        "description": "网易云无损音乐下载/点歌",
+        "usage": "如下：",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "点歌",
+                    "trigger_method": "指令：点歌 歌名",
+                    "trigger_condition": "开头匹配[点歌]",
+                    "brief_des": "点歌",
+                    "detail_des": "权限：所有人\n例如：\n点歌 世界第一等"
+                },
+                {
+                    "func": "开启下载",
+                    "trigger_method": "指令：ncm t",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "开启下载",
+                    "detail_des": "权限:管理员/超管/群主"
+                },
+                {
+                    "func": "关闭下载",
+                    "trigger_method": "指令：ncm f",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "关闭下载",
+                    "detail_des": "权限:管理员/超管/群主"
+                },
+                {
+                    "func": "下载",
+                    "trigger_method": "回复分享消息 + 文字`下载`",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "下载music",
+                    "detail_des": "权限:所有人\n前提许开启下载"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },
+    "14":{
+        "name": "伪造信息",
+        "description": "伪造身份信息",
+        "usage": "指令：伪造信息",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "伪造信息",
+                    "trigger_method": "指令：伪造信息",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "伪造身份信息",
+                    "detail_des": "无"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },"15":{
+        "name": "字符画",
+        "description": "画一幅好看的字符画吧！",
+        "usage": "字符画 <图片>（可GIF）",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "字符画",
+                    "trigger_method": "字符画 <图片>",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "合成字符画，但输出的是图片（哭），可以用GIF啊！",
+                    "detail_des": "字符画 <图片>\n根据提供的图片生成相应的字符画\n群聊或私聊\n例如：\n字符画 图片"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },"16":{
+        "name": "表情包制作",
+        "description": "制作各种沙雕表情包",
+        "usage": "发送“表情包制作”查看表情包列表",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "表情包制作",
+                    "trigger_method": "命令：表情包制作",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "制作各种沙雕表情包",
+                    "detail_des": "发送“表情包制作”查看表情包列表"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },"17":{
+        "name": "Github card",
+        "description": "展示github仓库卡片",
+        "usage": "github仓库卡片\n发出 github.com/用户名/仓库名 的格式即可自动检测",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "Github card",
+                    "trigger_method": "github仓库卡片",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "展示github仓库卡片",
+                    "detail_des": "github仓库卡片\n发出 github.com/用户名/仓库名 的格式即可自动检测"
+                }
+            ],
+            "menu_template": "default"
+        }
+    },"18":{
+        "name": "识别动漫",
+        "description": "查询图片中的人物",
+        "usage": "#识别动漫\n回复图片即可",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "识别动漫",
+                    "trigger_method": "#识别动漫\n回复图片即可",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "返回识别结果",
+                    "detail_des": "回复图片即可"
+                }
+            ],
+            "menu_template": "default"
+        }
+    }
+}
