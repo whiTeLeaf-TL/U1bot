@@ -245,6 +245,13 @@
                     "trigger_condition": "群聊/私聊",
                     "brief_des": "删除指定序号的投稿（仅限自己的投稿）",
                     "detail_des": "删除[序号]\n删除回声洞中指定序号的投稿\n群聊或私聊\n例如：\n删除1"
+                },
+                {
+                    "func": "查看",
+                    "trigger_method": "查看[序号]",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "查看指定序号的投稿",
+                    "detail_des": "查看[序号]\n群聊或私聊\n例如：\n查看1"
                 }
             ],
             "menu_template": "default"
