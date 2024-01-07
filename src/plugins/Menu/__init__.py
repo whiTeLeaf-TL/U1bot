@@ -1,7 +1,12 @@
 import base64
 import traceback
-from typing import Union
+import re
 import jinja2
+import aiofiles
+from nonebot.log import logger
+from pathlib import Path
+from typing import Union
+from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
@@ -9,14 +14,8 @@ from nonebot.adapters.onebot.v11 import Message as V11Msg
 from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
 from nonebot.adapters.onebot.v12 import Bot as V12Bot
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
-from nonebot.log import logger
-from nonebot.matcher import Matcher
-from pathlib import Path
 from nonebot_plugin_htmlrender import html_to_pic
-import aiofiles
 
-# import aiohttp
-import re
 import json
 
 dir_path = Path(__file__).parent
@@ -55,7 +54,7 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
 
     if not msg:  # 参数为空，主菜单
         img_bytes = await async_open_file(dir_path / "main.png")
-        base64_str = "base64://" + base64.b64encode(img_bytes).decode()
+        base64_str = f"base64://{base64.b64encode(img_bytes).decode()}"
         await matcher.finish(V11MsgSeg.image(base64_str))
 
     match_result = re.match(r"^(?P<name>.*?)$", msg)
@@ -73,20 +72,17 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
         if not plugin_dict:
             await matcher.finish("插件序号不存在")
     else:
-        plugin_dict = {}
-        for key, value in plugin_list.items():
-            # 模糊搜索
-            if plugin_name in value["name"]:
-                plugin_dict[key] = value
+        plugin_dict = {
+            key: value
+            for key, value in plugin_list.items()
+            if plugin_name in value["name"]
+        }
         if not plugin_dict:
             await matcher.finish("插件名过于模糊或不存在")
 
     try:
-        if plugin_dict:
-            result = await get_reply(plugin_dict)
-        else:
-            result = "插件名过于模糊或不存在"
-    except Exception as e:
+        result = await get_reply(plugin_dict) if plugin_dict else "插件名过于模糊或不存在"
+    except Exception:
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")
 

@@ -117,9 +117,8 @@ async def _(
         #     await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")0
         # 检测开关是否开启，如果为none则默认开启，如果为false则关闭
         record = await SetuSwitch.get_or_none(group_id=event.group_id)
-        if not record is None:
-            if not record.switch:
-                await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")
+        if record is not None and not record.switch:
+            await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")
     setu_total_timer = PerfTimer("Image request total")
     args = list(regex_group)
     logger.debug(f"args={args}")
@@ -188,9 +187,6 @@ async def _(
                     await autorevoke_send(
                         bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME
                     )
-                """
-                发送成功
-                """
                 send_timer.stop()
                 global_speedlimiter.send_success()
                 if SETU_PATH is None:  # 未设置缓存路径，删除缓存

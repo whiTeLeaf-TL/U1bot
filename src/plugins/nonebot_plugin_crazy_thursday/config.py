@@ -63,11 +63,7 @@ async def kfc_post_check() -> None:
             data = json.load(f)
             cur_version = data.get("version", 0)
 
-    if crazy_config.crazy_auto_update:
-        response = await download_url()
-    else:
-        response = None
-
+    response = await download_url() if crazy_config.crazy_auto_update else None
     if response is None:
         if not json_path.exists():
             logger.warning("Crazy Thursday resource missing! Please check!")
@@ -75,11 +71,11 @@ async def kfc_post_check() -> None:
     else:
         try:
             version: float = response.get("version", 0)
-        except KeyError:
+        except KeyError as e:
             logger.warning(
                 "KFC post text resource downloaded incompletely! Please check!"
             )
-            raise DownloadError
+            raise DownloadError from e
 
         # Update when there is a newer version
         if version > cur_version:

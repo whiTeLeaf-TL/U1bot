@@ -42,22 +42,21 @@ __plugin_meta__ = PluginMetadata(
 config: Config = Config.parse_obj(get_driver().config)
 
 
-async def _cmd_check(bot: Bot, event: MessageEvent):
+async def _cmd_check(event: MessageEvent):
     txt_msg = event.message.extract_plain_text().strip()
-    if config.animetrace_cmd in txt_msg:
-        return True
+    return config.animetrace_cmd in txt_msg
 
 
 acg_trace = on_keyword(
     config.animetrace_keyword,
-    rule=Rule(_cmd_check),
+    rule=_cmd_check,
     priority=config.animetrace_priority,
     block=True,
 )
 
 
 @acg_trace.handle()
-async def _(bot: Bot, event: MessageEvent, matcher: Matcher, state: T_State):
+async def _(event: MessageEvent, matcher: Matcher, state: T_State):
     # 选择模型
     txt_msg = event.message.extract_plain_text().strip()
     if "gal" in txt_msg:
@@ -143,7 +142,7 @@ async def main(bot: Bot, event: Event, state: T_State):
     # 发送消息
     try:
         nickname = config.nickname[0]
-    except:
+    except Exception:
         nickname = "anime trace"
     try:
         msgs = [

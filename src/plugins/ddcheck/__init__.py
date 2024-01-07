@@ -49,7 +49,7 @@ async def _(
 
     try:
         result = await get_reply(text)
-    except:
+    except Exception:
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")
 
@@ -62,5 +62,3 @@ async def _(
         resp = await bot.upload_file(type="data", name="ddcheck", data=result)
         file_id = resp["file_id"]
         await matcher.finish(V12MsgSeg.image(file_id))
-
-# 

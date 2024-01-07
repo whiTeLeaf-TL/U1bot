@@ -18,7 +18,7 @@ async def download_avatar(user_id: int) -> bytes:
 
 async def download_url(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
-        for i in range(3):
+        for _ in range(3):
             try:
                 resp = await client.get(url, timeout=20)
                 resp.raise_for_status()
@@ -71,8 +71,4 @@ def get_message_at(message: Message) -> list:
     """
     获取at列表
     """
-    qq_list = []
-    for msg in message:
-        if msg.type == "at":
-            qq_list.append(int(msg.data["qq"]))
-    return qq_list
+    return [int(msg.data["qq"]) for msg in message if msg.type == "at"]

@@ -75,7 +75,7 @@ def randomKFC(day: str) -> str:
         return "给个准确时间，OK?"
 
     # Get the weekday group index
-    idx: int = int(tb.index(day) / 3) * 3
+    idx: int = tb.index(day) // 3 * 3
 
     # json数据存放路径
     path: Path = crazy_config.crazy_path / "post.json"

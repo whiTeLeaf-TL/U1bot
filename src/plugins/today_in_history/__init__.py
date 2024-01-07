@@ -37,8 +37,7 @@ async def _(event: MessageEvent):
         f"is_list={isinstance(plugin_config.history_inform_time,list)}")
     await config_test.send(
         f"is_str={isinstance(plugin_config.history_inform_time,str)}")
-    await config_test.send(f"is_None={plugin_config.history_inform_time==None}"
-                           )
+    await config_test.send(f"is_None={plugin_config.history_inform_time is None}")
 
 
 history_matcher = on_fullmatch("历史上的今天")
@@ -89,8 +88,7 @@ def text_handle(text: str) -> json:
                                                                 2:]
         address_head = address_end
 
-    data = json.loads(text)
-    return data
+    return json.loads(text)
 
 
 # 信息获取
@@ -100,22 +98,22 @@ async def get_history_info() -> MessageSegment:
         day = date.today().strftime("%d")
         url = f"https://baike.baidu.com/cms/home/eventsOnHistory/{month}.json"
         r = await client.get(url)
-        if r.status_code == 200:
-            r.encoding = "unicode_escape"
-            data = text_handle(r.text)
-            today = f"{month}{day}"
-            s = f"历史上的今天 {today}\n"
-            len_max = len(data[month][month + day])
-            for i in range(0, len_max):
-                str_year = data[month][today][i]["year"]
-                str_title = data[month][today][i]["title"]
-                if i == len_max - 1:
-                    s = s + f"{str_year} {str_title}"  # 去除段末空行
-                else:
-                    s = s + f"{str_year} {str_title}\n"
-            return MessageSegment.image(await text_to_pic(s))
-        else:
+        if r.status_code != 200:
             return MessageSegment.text("获取失败，请重试")
+        r.encoding = "unicode_escape"
+        data = text_handle(r.text)
+        today = f"{month}{day}"
+        s = f"历史上的今天 {today}\n"
+        len_max = len(data[month][month + day])
+        for i in range(len_max):
+            str_year = data[month][today][i]["year"]
+            str_title = data[month][today][i]["title"]
+            s = (
+                f"{s}{str_year} {str_title}"
+                if i == len_max - 1
+                else f"{s}{str_year} {str_title}\n"
+            )
+        return MessageSegment.image(await text_to_pic(s))
 
 
 # 消息发送

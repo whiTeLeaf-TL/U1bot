@@ -125,9 +125,7 @@ def image_segment_convert(img: Union[Path, Image.Image, bytes]) -> MessageSegmen
             return MessageSegment.image(img)
     elif isinstance(img, bytes):
         img = Image.open(BytesIO(img))
-    elif isinstance(img, Image.Image):
-        pass
-    else:
+    elif not isinstance(img, Image.Image):
         raise ValueError(f"Unsopported image type: {type(img)}")
     image_bytesio = BytesIO()
     save_timer = PerfTimer.start(f"Save bytes {img.width} x {img.height}")

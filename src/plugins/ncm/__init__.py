@@ -13,11 +13,12 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, RegexGroup, Arg
 from nonebot.rule import Rule
+from nonebot.plugin import PluginMetadata
 
 from .data_source import nncm, ncm_config, setting, Q, cmd
 
 # =======nonebot-plugin-help=======
-__plugin_meta__ = nonebot.plugin.PluginMetadata(
+__plugin_meta__ = PluginMetadata(
     name='网易云点歌',
     description='网易云无损音乐下载/点歌',
     usage=(
@@ -41,45 +42,35 @@ ADMIN = ["owner", "admin", "member"]
 # ===============Rule=============
 async def song_is_open(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> bool:
     if isinstance(event, GroupMessageEvent):
-        info = setting.search(Q["group_id"] == event.group_id)
-        if info:
+        if info := setting.search(Q["group_id"] == event.group_id):
             return info[0]["song"]
-        else:
-            setting.insert({"group_id": event.group_id, "song": False, "list": False})
-            return False
+        setting.insert({"group_id": event.group_id, "song": False, "list": False})
+        return False
     elif isinstance(event, PrivateMessageEvent):
-        info = setting.search(Q["user_id"] == event.user_id)
-        if info:
+        if info := setting.search(Q["user_id"] == event.user_id):
             return info[0]["song"]
-        else:
-            setting.insert({"user_id": event.user_id, "song": True, "list": True})
-            return True
+        setting.insert({"user_id": event.user_id, "song": True, "list": True})
+        return True
 
 
 async def playlist_is_open(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> bool:
     if isinstance(event, GroupMessageEvent):
-        info = setting.search(Q["group_id"] == event.group_id)
-        if info:
+        if info := setting.search(Q["group_id"] == event.group_id):
             return info[0]["list"]
-        else:
-            setting.insert({"group_id": event.group_id, "song": False, "list": False})
-            return False
+        setting.insert({"group_id": event.group_id, "song": False, "list": False})
+        return False
     elif isinstance(event, PrivateMessageEvent):
-        info = setting.search(Q["user_id"] == event.user_id)
-        if info:
+        if info := setting.search(Q["user_id"] == event.user_id):
             return info[0]["list"]
-        else:
-            setting.insert({"user_id": event.user_id, "song": True, "list": True})
-            return True
+        setting.insert({"user_id": event.user_id, "song": True, "list": True})
+        return True
 
 
 async def check_search() -> bool:
-    info = setting.search(Q["global"] == "search")
-    if info:
+    if info := setting.search(Q["global"] == "search"):
         return info[0]["value"]
-    else:
-        setting.insert({"global": "search", "value": True})
-        return True
+    setting.insert({"global": "search", "value": True})
+    return True
 
 
 async def music_set_rule(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> bool:
@@ -202,15 +193,12 @@ async def set_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEv
         if len(args) == 1:
             mold = args[0]
             if isinstance(event, GroupMessageEvent):
-                info = setting.search(Q["group_id"] == event.group_id)
-                # logger.info(info)
-                if info:
+                if info := setting.search(Q["group_id"] == event.group_id):
                     if mold in TRUE:
                         info[0]["song"] = True
                         info[0]["list"] = True
                         setting.update(info[0], Q["group_id"] == event.group_id)
-                        msg = "已开启自动下载功能"
-                        await bot.send(event=event, message=Message(MessageSegment.text(msg)))
+                        await bot.send(event=event, message=Message(MessageSegment.text("已开启自动下载功能")))
                     elif mold in FALSE:
                         info[0]["song"] = False
                         info[0]["list"] = False
@@ -218,21 +206,17 @@ async def set_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEv
                         msg = "已关闭自动下载功能"
                         await bot.send(event=event, message=Message(MessageSegment.text(msg)))
                     logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
-                else:
-                    if mold in TRUE:
-                        setting.insert({"group_id": event.group_id, "song": True, "list": True})
-                    elif mold in FALSE:
-                        setting.insert({"group_id": event.group_id, "song": False, "list": False})
+                elif mold in TRUE:
+                    setting.insert({"group_id": event.group_id, "song": True, "list": True})
+                elif mold in FALSE:
+                    setting.insert({"group_id": event.group_id, "song": False, "list": False})
             elif isinstance(event, PrivateMessageEvent):
-                info = setting.search(Q["user_id"] == event.user_id)
-                # logger.info(info)
-                if info:
+                if info := setting.search(Q["user_id"] == event.user_id):
                     if mold in TRUE:
                         info[0]["song"] = True
                         info[0]["list"] = True
                         setting.update(info[0], Q["user_id"] == event.user_id)
-                        msg = "已开启下载功能"
-                        await bot.send(event=event, message=Message(MessageSegment.text(msg)))
+                        await bot.send(event=event, message=Message(MessageSegment.text("已开启下载功能")))
                     elif mold in FALSE:
                         info[0]["song"] = False
                         info[0]["list"] = False
@@ -240,37 +224,31 @@ async def set_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEv
                         msg = "已关闭下载功能"
                         await bot.send(event=event, message=Message(MessageSegment.text(msg)))
                     logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
-                else:
-                    if mold in TRUE:
-                        setting.insert({"user_id": event.user_id, "song": True, "list": True})
-                    elif mold in FALSE:
-                        setting.insert({"user_id": event.user_id, "song": False, "list": False})
+                elif mold in TRUE:
+                    setting.insert({"user_id": event.user_id, "song": True, "list": True})
+                elif mold in FALSE:
+                    setting.insert({"user_id": event.user_id, "song": False, "list": False})
         elif len(args) == 2 and args[0] == "search":
             mold = args[1]
-            info = setting.search(Q["global"] == "search")
-            if info:
+            if info := setting.search(Q["global"] == "search"):
                 if mold in TRUE:
                     info[0]["value"] = True
                     setting.update(info[0], Q["global"] == "search")
-                    msg = "已开启点歌功能"
-                    await bot.send(event=event, message=Message(MessageSegment.text(msg)))
+                    await bot.send(event=event, message=Message(MessageSegment.text("已开启点歌功能")))
                 elif mold in FALSE:
                     info[0]["value"] = False
                     setting.update(info[0], Q["global"] == "search")
                     msg = "已关闭点歌功能"
                     await bot.send(event=event, message=Message(MessageSegment.text(msg)))
                 logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
-            else:
-                if mold in TRUE:
-                    setting.insert({"global": "search", "value": True})
-                elif mold in FALSE:
-                    setting.insert({"global": "search", "value": False})
+            elif mold in TRUE:
+                setting.insert({"global": "search", "value": True})
+            elif mold in FALSE:
+                setting.insert({"global": "search", "value": False})
         elif len(args) == 3 and args[0] == "private":
             qq = args[1]
             mold = args[2]
-            info = setting.search(Q["user_id"] == qq)
-            # logger.info(info)
-            if info:
+            if info := setting.search(Q["user_id"] == qq):
                 if mold in TRUE:
                     info[0]["song"] = True
                     info[0]["list"] = True
@@ -284,11 +262,10 @@ async def set_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEv
                     msg = f"已关闭用户{qq}的下载功能"
                     await bot.send(event=event, message=Message(MessageSegment.text(msg)))
                 logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
-            else:
-                if mold in TRUE:
-                    setting.insert({"user_id": event.user_id, "song": True, "list": True})
-                elif mold in FALSE:
-                    setting.insert({"user_id": event.user_id, "song": False, "list": False})
+            elif mold in TRUE:
+                setting.insert({"user_id": event.user_id, "song": True, "list": True})
+            elif mold in FALSE:
+                setting.insert({"user_id": event.user_id, "song": False, "list": False})
     else:
         msg = f"{cmd}ncm:获取命令菜单\r\n说明:网易云歌曲分享到群内后回复机器人即可下载\r\n" \
               f"{cmd}ncm t:开启解析\r\n{cmd}ncm f:关闭解析\n{cmd}点歌 歌名:点歌"
