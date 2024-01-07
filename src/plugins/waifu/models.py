@@ -1,6 +1,7 @@
 from tortoise import fields
 from tortoise.models import Model
 import json
+
 # 导入插件方法
 from nonebot_plugin_tortoise_orm import add_model
 
@@ -46,3 +47,19 @@ class WaifuLock(Model):
 
     class Meta:
         table = "waifu_lock"
+
+
+class Waifuyinppa1(Model):
+    user_id = fields.BigIntField(pk=True)
+    count = fields.IntField(default=0)
+
+    class Meta:
+        table = "waifu_yinppa1"
+
+
+class Waifuyinppa2(Model):
+    user_id = fields.BigIntField(pk=True)
+    count = fields.IntField(default=0)
+
+    class Meta:
+        table = "waifu_yinppa2"

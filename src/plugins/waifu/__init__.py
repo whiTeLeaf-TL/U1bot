@@ -364,3 +364,86 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await cp_list.finish(
         MessageSegment.image(text_to_png("本群CP：\n——————————————\n" + msg[:-1]))
     )
+
+
+# 透群友
+async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
+    """
+    规则：透群友
+    """
+    msg = event.message.extract_plain_text()
+    if not msg.startswith("透群友"):
+        return False
+    group_id = event.group_id
+    user_id = event.user_id
+    protect_list, _ = await WaifuProtect.get_or_create(group_id=group_id)
+    protect_set = protect_list.user_id
+    if user_id in protect_set:
+        return False
+    at = get_message_at(event.message)
+    yinpa_id = None
+    tips = "伱的涩涩对象是、"
+    if at:
+        at = at[0]
+        if at in protect_set:
+            return False
+        if at == user_id:
+            msg = f"恭喜你涩到了你自己！" + MessageSegment.image(file=await user_img(user_id))
+            await bot.send(event, msg, at_sender=True)
+            return False
+        X = random.randint(1, 100)
+        record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
+        if at == record_CP.affect.get(str(user_id), 0):
+            if 0 < X <= yinpa_CP:
+                yinpa_id = at
+                tips = "恭喜你涩到了你的老婆！"
+            else:
+                await bot.send(event, "你的老婆拒绝和你涩涩！", at_sender=True)
+                return False
+        elif 0 < X <= yinpa_HE:
+            yinpa_id = at
+            tips = "恭喜你涩到了群友！"
+        elif yinpa_HE < X <= yinpa_BE:
+            yinpa_id = user_id
+    if not yinpa_id:
+        member_list = await bot.get_group_member_list(group_id=group_id)
+        lastmonth = event.time - last_sent_time_filter
+        yinpa_ids = [
+            user_id
+            for member in member_list
+            if (user_id := member["user_id"]) not in protect_set
+            and member["last_sent_time"] > lastmonth
+        ]
+        if yinpa_ids:
+            yinpa_id = random.choice(yinpa_ids)
+        else:
+            return False
+    state["yinpa"] = yinpa_id, tips
+    return True
+
+
+yinpa = on_message(rule=yinpa_rule, priority=90, block=True)
+
+
+@yinpa.handle()
+async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
+    group_id = event.group_id
+    user_id = event.user_id
+    yinpa_id, tips = state["yinpa"]
+    if yinpa_id == user_id:
+        await yinpa.finish("不可以涩涩！", at_sender=True)
+    else:
+        record_yinpa1, _ = await Waifuyinppa1.get_or_create(user_id=user_id)
+        record_yinpa1.count += 1
+        await record_yinpa1.save()
+        record_yinpa2, _ = await Waifuyinppa2.get_or_create(user_id=yinpa_id)
+        record_yinpa2.count += 1
+        await record_yinpa2.save()
+        member = await bot.get_group_member_info(group_id=group_id, user_id=yinpa_id)
+        msg = (
+            tips
+            + MessageSegment.image(file=await user_img(yinpa_id))
+            + f"『{(member['card'] or member['nickname'])}』！"
+        )
+        await yinpa.finish(msg, at_sender=True)
+
