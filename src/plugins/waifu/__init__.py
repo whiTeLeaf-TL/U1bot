@@ -274,8 +274,8 @@ if waifu_cd_bye > -1:
             waifu_id = rec.affect[str(user_id)]
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
-            waifu_set.waifu.remove(waifu_id)
             with contextlib.suppress(Exception):
+                waifu_set.waifu.remove(waifu_id)
                 waifu_set.waifu.remove(user_id)
             record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
             if group_id in record_lock.lock:
