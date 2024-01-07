@@ -254,7 +254,7 @@ if waifu_cd_bye > -1:
     bye = on_command(
         "离婚",
         aliases={"分手"},
-        rule=lambda event: check_divorce_rule(event),
+        rule=check_divorce_rule,
         priority=90,
         block=True,
     )
