@@ -265,10 +265,10 @@ if waifu_cd_bye > -1:
             waifu_id = rec.affect[str(user_id)]
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
+            waifu_set.waifu.remove(waifu_id)
             try:
-                del waifu_set.waifu[user_id]
-                del waifu_set.waifu[waifu_id]
-            except KeyError:
+                waifu_set.waifu.remove(user_id)
+            except:
                 pass
             record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
             if group_id in record_lock.lock:
@@ -302,3 +302,65 @@ if waifu_cd_bye > -1:
                 await bye.finish()
             cd_bye[group_id][user_id] = [T, N, A]
             await bye.finish(msg, at_sender=True)
+
+
+# 查看娶群友卡池
+
+waifu_list = on_command("查看群友卡池", aliases={"群友卡池"}, priority=90, block=True)
+
+
+@waifu_list.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    group_id = event.group_id
+    member_list = await bot.get_group_member_list(group_id=group_id)
+    lastmonth = event.time - last_sent_time_filter
+    protect_list, _ = await WaifuProtect.get_or_create(group_id=group_id)
+    rule_out = protect_list.user_id
+    member_list = [
+        member
+        for member in member_list
+        if member["user_id"] not in rule_out and member["last_sent_time"] > lastmonth
+    ]
+    member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
+    if member_list:
+        msg = "卡池：\n——————————————\n"
+        for member in member_list[:80]:
+            msg += f"{member['card'] or member['nickname']}\n"
+        await waifu_list.finish(MessageSegment.image(text_to_png(msg[:-1])))
+    else:
+        await waifu_list.finish("群友已经被娶光了。下次早点来吧。")
+
+
+# 查看本群CP
+
+cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
+
+
+@cp_list.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    group_id = event.group_id
+    record_waifu, _ = await Waifu.get_or_create(group_id=group_id)
+    if record_waifu.waifu:
+        await cp_list.finish("本群暂无cp哦~")
+    record_CP = await WaifuCP.get_or_none(group_id=group_id)
+    rec = record_CP.affect
+    msg = ""
+    for waifu_id in record_waifu.waifu:
+        user_id = rec[str(waifu_id)]
+        try:
+            member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
+            niknameA = member["card"] or member["nickname"]
+        except:
+            niknameA = ""
+        try:
+            member = await bot.get_group_member_info(
+                group_id=group_id, user_id=waifu_id
+            )
+            niknameB = member["card"] or member["nickname"]
+        except:
+            niknameB = ""
+
+        msg += f"♥ {niknameA} | {niknameB}\n"
+    await cp_list.finish(
+        MessageSegment.image(text_to_png("本群CP：\n——————————————\n" + msg[:-1]))
+    )
