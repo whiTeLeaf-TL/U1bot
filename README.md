@@ -1,6 +1,8 @@
 # U1bot
 > 欢迎大家pr，有任何问题可以提issue，代码写的很烂，欢迎大家指正，部分原创功能，部分为修改源代码，感谢大家的开源精神，太多无法列出，如有侵权请联系我删除。
-
+<div align="left">
+  <img src="./pic1.png" width="500" />
+</div>
 ## How to start
 
 1. 安装 poetry `pip install poetry`
