@@ -72,13 +72,27 @@ happy_end = [
 ]
 
 
+# 重置记录
+async def reset_record():
+    today = datetime.now()
+    yesterday = today - timedelta(days=1)
+    await WaifuCP.filter(created_at__lt=yesterday).delete()
+    await Waifu.filter(created_at__lt=yesterday).delete()
+    await WaifuLock.filter(created_at__lt=yesterday).delete()
+    await Waifuyinppa1.filter(created_at__lt=yesterday).delete()
+    await Waifuyinppa2.filter(created_at__lt=yesterday).delete()
+
+
+from nonebot import require
+
+scheduler = require("nonebot_plugin_apscheduler").scheduler
+scheduler.add_job(reset_record, "cron", hour=0, misfire_grace_time=120)
+
+
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
     """
     规则：娶群友
     """
-    today = datetime.now()
-    yesterday = today - timedelta(days=1)
-    await WaifuCP.filter(created_at__lt=yesterday).delete()
     msg = event.message.extract_plain_text()
     if not msg.startswith("娶群友"):
         return False
@@ -447,3 +461,99 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         )
         await yinpa.finish(msg, at_sender=True)
 
+
+# 查看涩涩记录
+
+yinpa_list = on_command("涩涩记录", aliases={"色色记录"}, priority=90, block=True)
+
+
+@yinpa_list.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    group_id = event.group_id
+    msg_list = []
+    # 输出卡池
+    member_list = await bot.get_group_member_list(group_id=event.group_id)
+    lastmonth = event.time - last_sent_time_filter
+    protect_set, _ = await WaifuProtect.get_or_create(group_id=group_id)
+    member_list = [
+        member
+        for member in member_list
+        if member["user_id"] not in protect_set.user_id
+        and member["last_sent_time"] > lastmonth
+    ]
+    member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
+    msg = "卡池：\n——————————————\n"
+    msg += "\n".join(
+        [(member["card"] or member["nickname"]) for member in member_list[:80]]
+    )
+    msg_list.append(
+        {
+            "type": "node",
+            "data": {
+                "name": "卡池",
+                "uin": event.self_id,
+                "content": MessageSegment.image(text_to_png(msg)),
+            },
+        }
+    )
+
+    # 输出透群友记录
+
+    record = [
+        ((member["card"] or member["nickname"]), times.count)
+        for member in member_list
+        if (times := await Waifuyinppa1.get_or_none(user_id=member["user_id"]))
+    ]
+    record.sort(key=lambda x: x[1], reverse=True)
+    msg = "\n".join(
+        [
+            f"[align=left]{nickname}[/align][align=right]今日透群友 {times} 次[/align]"
+            for nickname, times in record
+        ]
+    )
+    if msg:
+        msg_list.append(
+            {
+                "type": "node",
+                "data": {
+                    "name": "记录①",
+                    "uin": event.self_id,
+                    "content": MessageSegment.image(
+                        bbcode_to_png("涩涩记录①：\n——————————————\n" + msg)
+                    ),
+                },
+            }
+        )
+
+    # 输出被透记录
+
+    record = [
+        ((member["card"] or member["nickname"]), times.count)
+        for member in member_list
+        if (times := await Waifuyinppa2.get_or_none(user_id=member["user_id"]))
+    ]
+    record.sort(key=lambda x: x[1], reverse=True)
+
+    msg = "涩涩记录②：\n——————————————\n"
+    msg = "\n".join(
+        [
+            f"[align=left]{nickname}[/align][align=right]今日被透 {times} 次[/align]"
+            for nickname, times in record
+        ]
+    )
+    if msg:
+        msg_list.append(
+            {
+                "type": "node",
+                "data": {
+                    "name": "记录②",
+                    "uin": event.self_id,
+                    "content": MessageSegment.image(
+                        bbcode_to_png("涩涩记录②：\n——————————————\n" + msg)
+                    ),
+                },
+            }
+        )
+
+    await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_list)
+    await yinpa_list.finish()

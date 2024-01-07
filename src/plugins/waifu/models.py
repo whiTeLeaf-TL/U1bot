@@ -52,6 +52,7 @@ class WaifuLock(Model):
 class Waifuyinppa1(Model):
     user_id = fields.BigIntField(pk=True)
     count = fields.IntField(default=0)
+    created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "waifu_yinppa1"
@@ -60,6 +61,7 @@ class Waifuyinppa1(Model):
 class Waifuyinppa2(Model):
     user_id = fields.BigIntField(pk=True)
     count = fields.IntField(default=0)
+    created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:
         table = "waifu_yinppa2"
