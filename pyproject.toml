@@ -38,6 +38,7 @@ wordcloud = "^1.9.3"
 nonebot-plugin-memes-api = "^0.2.1"
 nonebot-plugin-eventexpiry = "^0.1.1"
 imageio = "^2.33.1"
+pillow = "^9.0.0"
 
 
 [build-system]
