@@ -1,7 +1,7 @@
 # U1bot
 > 欢迎大家pr，有任何问题可以提issue，代码写的很烂，欢迎大家指正，部分原创功能，部分为修改源代码，感谢大家的开源精神，太多无法列出，如有侵权请联系我删除。
 <div align="left">
-  <img src="./pic1.png" width="500" />
+  <img src="https://image.thum.io/get/width/1280/crop/640/viewportWidth/1280/png/noanimate/https://socialify.git.ci/wling-art/U1bot/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&language=1&name=1&owner=1&pattern=Charlie%20Brown&pulls=1&stargazers=1&theme=Dark" width="500" />
 </div>
 ## How to start
 
