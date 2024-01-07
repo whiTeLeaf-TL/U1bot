@@ -266,9 +266,9 @@ if waifu_cd_bye > -1:
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
             try:
-                waifu_set.waifu.remove(user_id)
-                waifu_set.waifu.remove(waifu_id)
-            except:
+                del waifu_set.waifu[user_id]
+                del waifu_set.waifu[waifu_id]
+            except KeyError:
                 pass
             record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
             if group_id in record_lock.lock:

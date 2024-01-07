@@ -3,7 +3,7 @@ from nonebot.config import BaseConfig
 
 class Config(BaseConfig):
     # 命令符
-    animetrace_cmd: str = ""
+    animetrace_cmd: str = "#"
     # 命令关键字
     animetrace_keyword: set[str] = {"识别", "角色", "人物"}
     # 响应优先级
