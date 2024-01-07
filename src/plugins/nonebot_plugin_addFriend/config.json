@@ -1,0 +1,37 @@
+{
+  "agreeAutoApprove": { "friend": 1, "group": 0 },
+  "numControl": { "maxNum": 5, "time": 2, "unit": "h" },
+  "maxViewNum": 20,
+  "recipientList": ["1990248284"],
+  "forwardSet": 0,
+  "blackDict": {
+    "friend": { "text": [], "id": [] },
+    "group": { "text": [], "id": [] },
+    "forward": {}
+  },
+  "warnDict": {
+    "friend": { "text": [], "id": [] },
+    "group": { "text": [], "id": [] },
+    "forward": {}
+  },
+  "allowAddFriednText": [],
+  "botName": "姚奕",
+  "friend_msg": {
+    "notice_msg": "请求添加好友,验证消息为",
+    "welcome_msg": "你吼，我是姚奕！我的信息都会在我的说说更新，绝对不会骚扰到你滴！\n同时，如果有疑问，可以发送help哦"
+  },
+  "group_msg": {
+    "notice_msg": "发送群邀请,验证消息为",
+    "welcome_msg": "很高兴有你的邀请，但要等我一下！"
+  },
+  "statusDict": {
+    "blackDict": {
+      "friend": { "status": "拉黑QQ,已拒绝,仅作提示" },
+      "group": { "status": "拉黑群聊,已拒绝,仅作提示" }
+    },
+    "warnDict": {
+      "friend": { "status": "警告QQ,手动同意,是否同意" },
+      "group": { "status": "警告群聊,手动同意,是否同意" }
+    }
+  }
+}
