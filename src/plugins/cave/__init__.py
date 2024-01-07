@@ -29,7 +29,7 @@ __plugin_meta__ = PluginMetadata(
 查看回声洞记录\n
 删除[序号]\n
 如：\n
-投稿"""
+投稿""",
 )
 
 
@@ -68,7 +68,7 @@ def process_message(original_message):
 
         return new_message
     else:
-        return "未找到图片URL"
+        return original_message
 
 
 @cave_add.handle()
