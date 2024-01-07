@@ -22,11 +22,7 @@ github = on_regex(r"https?://github\.com/([^/]+/[^/]+)",
 
 def match_link_parts(link):
     pattern = r'https?://github\.com/([^/]+/[^/]+)'
-    match = re.search(pattern, link)
-    if match:
-        return match.group(0)
-    else:
-        return None
+    return match.group(0) if (match := re.search(pattern, link)) else None
 
 
 @github.handle()

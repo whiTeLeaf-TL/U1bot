@@ -17,9 +17,8 @@ async def render(weather: Weather) -> bytes:
     template_path = str(Path(__file__).parent / "templates")
 
     air = None
-    if weather.air:
-        if weather.air.now:
-            air = add_tag_color(weather.air.now)
+    if weather.air and weather.air.now:
+        air = add_tag_color(weather.air.now)
 
     return await template_to_pic(
         template_path=template_path,
@@ -40,8 +39,8 @@ async def render(weather: Weather) -> bytes:
 
 
 def add_hour_data(hourly: List[Hourly]):
-    min_temp = min([int(hour.temp) for hour in hourly])
-    high = max([int(hour.temp) for hour in hourly])
+    min_temp = min(int(hour.temp) for hour in hourly)
+    high = max(int(hour.temp) for hour in hourly)
     low = int(min_temp - (high - min_temp))
     for hour in hourly:
         date_time = datetime.fromisoformat(hour.fxTime)

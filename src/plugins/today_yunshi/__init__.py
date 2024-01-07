@@ -56,10 +56,6 @@ async def _(matcher: Matcher, event: MessageEvent):
             member_model.luckid = luckid
             member_model.time = datetime.now()
             await member_model.save()
-            if isinstance(event, PrivateMessageEvent):
-                await matcher.finish(result)
-            else:
-                await matcher.finish("\n" + result, at_sender=True)
         else:
             # 如果是今天的数据则返回今天的数据
             r = str(member_model.luckid)
@@ -67,10 +63,10 @@ async def _(matcher: Matcher, event: MessageEvent):
                 f"----\n{luckdata[r]['运势']}\n{luckdata[r]['星级']}\n"
                 f"{luckdata[r]['签文']}\n{luckdata[r]['解签']}\n----"
             )
-            if isinstance(event, PrivateMessageEvent):
-                await matcher.finish(result)
-            else:
-                await matcher.finish("\n" + result, at_sender=True)
+        if isinstance(event, PrivateMessageEvent):
+            await matcher.finish(result)
+        else:
+            await matcher.finish("\n" + result, at_sender=True)
 
 
 def randomluck(arg, memberdata):

@@ -112,7 +112,7 @@ def syncify(
     def wrapper(*args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs) -> T_Retval:
         current_async_module = getattr(threadlocals, "current_async_module", None)
         partial_f = functools.partial(async_function, *args, **kwargs)
-        if current_async_module is None and raise_sync_error is False:
+        if current_async_module is None and not raise_sync_error:
             return anyio.run(partial_f)
         return anyio.from_thread.run(partial_f)
 

@@ -65,7 +65,5 @@ class SetuHandler:
 
     async def process_request(self):
         await self.refresh_api_info()
-        task_list = []
-        for i in self.setu_instance_list:
-            task_list.append(self.prep_handler(i))
+        task_list = [self.prep_handler(i) for i in self.setu_instance_list]
         await gather(*task_list)

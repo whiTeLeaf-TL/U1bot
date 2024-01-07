@@ -1,3 +1,4 @@
+import contextlib
 from pathlib import Path
 from typing import Literal
 from nonebot.adapters.onebot.v11 import MessageEvent
@@ -22,17 +23,13 @@ def save_blacklist() -> None:
 
 
 def is_number(s: str) -> bool:
-    try:
+    with contextlib.suppress(ValueError):
         float(s)
         return True
-    except ValueError:
-        pass
-    try:
+    with contextlib.suppress(TypeError, ValueError):
         import unicodedata
         unicodedata.numeric(s)
         return True
-    except (TypeError, ValueError):
-        pass
     return False
 
 
@@ -41,10 +38,7 @@ def handle_blacklist(
     mode: Literal["add", "del"],
 ) -> str:
     msg = str(event.get_message()).strip().split(' ')
-    uids = []
-    for i in msg:
-        if is_number(i):
-            uids.append(i)
+    uids = [i for i in msg if is_number(i)]
     if mode == "add":
         for i in uids:
             if i in superusers:
@@ -61,7 +55,7 @@ def handle_blacklist(
             uid for uid in blacklist["blacklist"] if uid not in uids]
         _mode = "删除"
     save_blacklist()
-    if len(uids) == 0:
+    if not uids:
         return "没有可操作的用户，请检查输入格式或者用户是否已在黑名单中"
     else:
         return f"已{_mode} {len(uids)} 个黑名单用户: {', '.join(uids)}"

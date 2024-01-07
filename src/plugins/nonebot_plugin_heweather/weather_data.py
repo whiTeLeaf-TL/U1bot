@@ -29,7 +29,7 @@ class Weather:
             self.url_hourly = "https://api.qweather.com/v7/weather/24h"
             self.forecast_days = 7
             logger.info("使用商业版API")
-        elif self.api_type == 0 or self.api_type == 1:
+        elif self.api_type in [0, 1]:
             self.url_weather_api = "https://devapi.qweather.com/v7/weather/"
             self.url_geoapi = "https://geoapi.qweather.com/v2/city/"
             self.url_weather_warning = "https://devapi.qweather.com/v7/warning/now"
@@ -38,7 +38,7 @@ class Weather:
             if self.api_type == 0:
                 self.forecast_days = 3
                 logger.info("使用普通版API")
-            elif self.api_type == 1:
+            else:
                 self.forecast_days = 7
                 logger.info("使用个人开发版API")
         else:
@@ -88,35 +88,30 @@ class Weather:
         if res["code"] == "404":
             raise CityNotFoundError()
         elif res["code"] != "200":
-            raise APIError("错误! 错误代码: {}".format(res["code"]) + self.__reference)
+            raise APIError(f'错误! 错误代码: {res["code"]}{self.__reference}')
         else:
             self.city_name = res["location"][0]["name"]
             return res["location"][0]["id"]
 
     def _data_validate(self):
-        if self.now.code == "200" and self.daily.code == "200":
-            pass
-        else:
+        if self.now.code != "200" or self.daily.code != "200":
             raise APIError(
-                "错误! 请检查配置! "
-                f"错误代码: now: {self.now.code}  "
-                f"daily: {self.daily.code}  "
-                + "air: {}  ".format(self.air.code if self.air else "None")
-                + "warning: {}".format(self.warning.code if self.warning else "None")
+                f"错误! 请检查配置! 错误代码: now: {self.now.code}  daily: {self.daily.code}  "
+                + f'air: {self.air.code if self.air else "None"}  '
+                + f'warning: {self.warning.code if self.warning else "None"}'
                 + self.__reference
             )
 
     def _check_response(self, response: Response) -> bool:
-        if response.status_code == 200:
-            logger.debug(f"{response.json()}")
-            return True
-        else:
+        if response.status_code != 200:
             raise APIError(f"Response code:{response.status_code}")
+        logger.debug(f"{response.json()}")
+        return True
 
     @property
     async def _now(self) -> NowApi:
         res = await self._get_data(
-            url=self.url_weather_api + "now",
+            url=f"{self.url_weather_api}now",
             params={"location": self.city_id, "key": self.apikey},
         )
         self._check_response(res)
