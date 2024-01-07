@@ -1,6 +1,8 @@
+import contextlib
 import random
 from venv import logger
 import nonebot
+from datetime import datetime, timedelta
 from nonebot.plugin.on import on_command, on_message
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
@@ -17,7 +19,6 @@ from numpy import record
 from .models import *
 from .utils import *
 from .config import Config
-from datetime import datetime, timedelta
 
 __plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
@@ -99,14 +100,12 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     group_id = event.group_id
     user_id = event.user_id
     protect_list = await WaifuProtect.get_or_none(group_id=group_id)
-    if protect_list is not None:
-        if user_id in protect_list.user_id:
-            return False
+    if protect_list is not None and user_id in protect_list.user_id:
+        return False
     at = get_message_at(event.message)
     at = at[0] if at else None
-    if protect_list is not None:
-        if at in protect_list.user_id:
-            return False
+    if protect_list is not None and at in protect_list.user_id:
+        return False
     tips = "伱的群友結婚对象是、"
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
@@ -191,9 +190,9 @@ waifu = on_message(rule=waifu_rule, priority=90, block=True)
 
 @waifu.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
-    group_id = event.group_id
     user_id = event.user_id
     waifu_id, tips = state["waifu"]
+    group_id = event.group_id
     if waifu_id == user_id:
         record_cp, _ = await WaifuCP.get_or_create(group_id=group_id)
         record_cp.affect[user_id] = user_id
@@ -206,9 +205,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"
-            + MessageSegment.image(file=await user_img(waifu_cp))
-            + "ta的cp："
+            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
@@ -220,10 +217,8 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             record_CP.affect[user_id] = user_id
         else:
             rec.pop(waifu_cp)
-            try:
+            with contextlib.suppress(Exception):
                 record_waifu.waifu.remove(waifu_cp)
-            except:
-                pass
             await waifu.send(msg + "\n但是...", at_sender=True)
             await asyncio.sleep(1)
     record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
@@ -280,10 +275,8 @@ if waifu_cd_bye > -1:
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
             waifu_set.waifu.remove(waifu_id)
-            try:
+            with contextlib.suppress(Exception):
                 waifu_set.waifu.remove(user_id)
-            except:
-                pass
             record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
             if group_id in record_lock.lock:
                 if waifu_id in record_lock.lock:
@@ -364,14 +357,14 @@ async def _(bot: Bot, event: GroupMessageEvent):
         try:
             member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
             niknameA = member["card"] or member["nickname"]
-        except:
+        except Exception:
             niknameA = ""
         try:
             member = await bot.get_group_member_info(
                 group_id=group_id, user_id=waifu_id
             )
             niknameB = member["card"] or member["nickname"]
-        except:
+        except Exception:
             niknameB = ""
 
         msg += f"♥ {niknameA} | {niknameB}\n"
@@ -402,7 +395,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if at in protect_set:
             return False
         if at == user_id:
-            msg = f"恭喜你涩到了你自己！" + MessageSegment.image(file=await user_img(user_id))
+            msg = f"恭喜你涩到了你自己！{MessageSegment.image(file=await user_img(user_id))}"
             await bot.send(event, msg, at_sender=True)
             return False
         X = random.randint(1, 100)
@@ -470,7 +463,6 @@ yinpa_list = on_command("涩涩记录", aliases={"色色记录"}, priority=90, b
 @yinpa_list.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
-    msg_list = []
     # 输出卡池
     member_list = await bot.get_group_member_list(group_id=event.group_id)
     lastmonth = event.time - last_sent_time_filter
@@ -482,11 +474,10 @@ async def _(bot: Bot, event: GroupMessageEvent):
         and member["last_sent_time"] > lastmonth
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
-    msg = "卡池：\n——————————————\n"
-    msg += "\n".join(
+    msg = "卡池：\n——————————————\n" + "\n".join(
         [(member["card"] or member["nickname"]) for member in member_list[:80]]
     )
-    msg_list.append(
+    msg_list = [
         {
             "type": "node",
             "data": {
@@ -495,8 +486,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 "content": MessageSegment.image(text_to_png(msg)),
             },
         }
-    )
-
+    ]
     # 输出透群友记录
 
     record = [
@@ -505,13 +495,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if (times := await Waifuyinppa1.get_or_none(user_id=member["user_id"]))
     ]
     record.sort(key=lambda x: x[1], reverse=True)
-    msg = "\n".join(
+    if msg := "\n".join(
         [
             f"[align=left]{nickname}[/align][align=right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
-    )
-    if msg:
+    ):
         msg_list.append(
             {
                 "type": "node",
@@ -535,13 +524,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
     record.sort(key=lambda x: x[1], reverse=True)
 
     msg = "涩涩记录②：\n——————————————\n"
-    msg = "\n".join(
+    if msg := "\n".join(
         [
             f"[align=left]{nickname}[/align][align=right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
-    )
-    if msg:
+    ):
         msg_list.append(
             {
                 "type": "node",
