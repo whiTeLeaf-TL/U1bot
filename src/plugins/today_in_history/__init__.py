@@ -27,7 +27,7 @@ elif isinstance(plugin_config.history_inform_time, list):
     hour = plugin_config.history_inform_time[0]["HOUR"]
     minute = plugin_config.history_inform_time[0]["MINUTE"]
 
-config_test = on_fullmatch("test", priority=1)
+config_test = on_fullmatch("test")
 
 
 @config_test.handle()
@@ -41,7 +41,7 @@ async def _(event: MessageEvent):
                            )
 
 
-history_matcher = on_fullmatch("历史上的今天", priority=15)
+history_matcher = on_fullmatch("历史上的今天")
 
 
 @history_matcher.handle()
