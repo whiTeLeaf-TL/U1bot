@@ -87,7 +87,7 @@ async def reset_record():
 from nonebot import require
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-scheduler.add_job(reset_record, "cron", hour=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=3, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
