@@ -78,7 +78,8 @@ happy_end = [
 async def reset_record():
     logger.info("重置娶群友记录")
     today = datetime.now()
-    yesterday = today - timedelta(days=1)
+    yesterday = datetime(today.year, today.month, today.day, 0, 0, 0)
+    logger.info(yesterday)
     await WaifuCP.filter(created_at__lt=yesterday).delete()
     await Waifu.filter(created_at__lt=yesterday).delete()
     await WaifuLock.filter(created_at__lt=yesterday).delete()
@@ -92,7 +93,8 @@ scheduler = require("nonebot_plugin_apscheduler").scheduler
 on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append_handler(
     reset_record
 )
-scheduler.add_job(reset_record, "cron", hour=0, misfire_grace_time=120)
+# 第一个触发时间：每天凌晨 0:00
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
