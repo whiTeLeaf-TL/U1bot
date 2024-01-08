@@ -15,5 +15,5 @@ fakeinfo = on_command('伪造信息')
 @fakeinfo.handle()
 async def handle_function(matcher: Matcher):
     await matcher.finish(
-        f'伪造信息：\n姓名：{faker.name()}\n网名：{faker.user_name()}\n身份证：{faker.ssn(min_age=18, max_age=90)}\n住址：{faker.address()}\n电话：{faker.phone_number()}\n邮箱：{faker.email()}\n公司：{faker.company()}\n职位：{faker.job()}'
+        f'伪造信息：\n姓名：{faker.name()}\n网名：{faker.user_name()}\n头像：{faker.image_url()}\n身份证：{faker.ssn(min_age=18, max_age=90)}\n住址：{faker.address()}\n电话：{faker.phone_number()}\n邮箱：{faker.free_email()}\n网站：{faker.hostname(2)}\n公司：{faker.company()}\n职位：{faker.job()}\n工作邮箱：{faker.company_email()}\n信用卡：{faker.credit_card_number()},{faker.credit_card_security_code()},{faker.credit_card_expire()}'
     )
