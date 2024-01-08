@@ -11,7 +11,7 @@
 1. QWEATHER_APIKEY: 和风天气的apikey，用于获取天气信息，[注册地址](https://dev.qweather.com/)
 2. bilibili_cookie=xxx: B站用户cookie，用于获取用户信息，[获取方式](##cookie-获取方式)
 
-## cookie-获取方式
+### cookie-获取方式
 需要在 `.env.xxx` 文件中添加任意的B站用户cookie：
 
 ```
