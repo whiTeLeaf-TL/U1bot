@@ -1,9 +1,8 @@
 import contextlib
 import random
-from venv import logger
-import nonebot
+
+from nonebot import logger, get_driver, on_command, on_message
 from datetime import datetime, timedelta
-from nonebot.plugin.on import on_command, on_message
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import (
@@ -23,7 +22,7 @@ from .config import Config
 __plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
-global_config = nonebot.get_driver().config
+global_config = get_driver().config
 waifu_config = Config.parse_obj(global_config.dict())
 waifu_cd_bye = waifu_config.waifu_cd_bye
 waifu_save = waifu_config.waifu_save
@@ -74,7 +73,10 @@ happy_end = [
 
 
 # 重置记录
+
+
 async def reset_record():
+    logger.info("重置娶群友记录")
     today = datetime.now()
     yesterday = today - timedelta(days=1)
     await WaifuCP.filter(created_at__lt=yesterday).delete()
@@ -87,7 +89,10 @@ async def reset_record():
 from nonebot import require
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-scheduler.add_job(reset_record, "cron", hour=3, misfire_grace_time=120)
+on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append_handler(
+    reset_record
+)
+scheduler.add_job(reset_record, "cron", hour=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -346,13 +351,14 @@ cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
 @cp_list.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
-    record_waifu, _ = await Waifu.get_or_create(group_id=group_id)
-    if record_waifu.waifu:
+    record_waifu = await Waifu.get_or_none(group_id=group_id)
+    if record_waifu is None or len(record_waifu.waifu) == 0:
         await cp_list.finish("本群暂无cp哦~")
     record_CP = await WaifuCP.get_or_none(group_id=group_id)
     rec = record_CP.affect
     msg = ""
     for waifu_id in record_waifu.waifu:
+        logger.info(waifu_id)
         user_id = rec[str(waifu_id)]
         try:
             member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
