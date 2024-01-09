@@ -96,7 +96,8 @@ __plugin_meta__ = PluginMetadata(
 
 
 class SameTime(ArparmaBehavior):
-    def operate(self, interface: Arparma):
+    @staticmethod
+    def operate(interface: Arparma):
         type = interface.query("type")
         time = interface.query("time")
         if type is None and time:
