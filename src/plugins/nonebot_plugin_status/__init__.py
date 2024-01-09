@@ -115,4 +115,4 @@ async def server_status(matcher: Matcher):
 with contextlib.suppress(ImportError):
     import nonebot.adapters.onebot.v11  # noqa: F401
 
-    from . import onebot_v11 as onebot_v11
+    from . import onebot_v11
