@@ -146,3 +146,4 @@ run.sh
 fix.sh
 .env.dev
 src/plugins/nonebot_plugin_addFriend/num.json
+test.txt
