@@ -126,10 +126,12 @@ async def main(bot: Bot, event: Event, state: T_State):
     for item in content["data"]:
         width, height = base_img.size
         box = item["box"]
-        box = (box[0] * width, box[1] * height, box[2] * width, box[3] * height)
+        box = (box[0] * width, box[1] * height,
+               box[2] * width, box[3] * height)
         img_bytes = BytesIO()
         item_img = base_img.crop(box)
-        item_img.save(img_bytes, format="JPEG", quality=int(item["box"][4] * 100))
+        item_img.save(img_bytes, format="JPEG",
+                      quality=int(item["box"][4] * 100))
         char = item["char"]
         may_num = min(config.animetrace_max_num, len(char))
         msg_txt = f"该角色有{may_num}种可能\n"
@@ -158,11 +160,13 @@ async def main(bot: Bot, event: Event, state: T_State):
         ]
         # 发送转发消息
         await bot.send_forward_msg(
-            user_id=event.user_id if isinstance(event, PrivateMessageEvent) else 0,
-            group_id=event.group_id if isinstance(event, GroupMessageEvent) else 0,
+            user_id=event.user_id if isinstance(
+                event, PrivateMessageEvent) else 0,
+            group_id=event.group_id if isinstance(
+                event, GroupMessageEvent) else 0,
             messages=msgs,
         )
-        acg_trace.skip() # 发送成功就跳过单条消息发送
+        acg_trace.skip()  # 发送成功就跳过单条消息发送
     except ActionFailed as e:
         logger.warning(e)
 

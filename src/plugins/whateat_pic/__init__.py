@@ -69,7 +69,8 @@ import os
 import re
 import nonebot
 import requests
-import random, base64
+import random
+import base64
 
 what_eat = on_regex(
     r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)吃(什么|啥|点啥)$", priority=5
@@ -238,7 +239,8 @@ async def wtd(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        msg = f"{Bot_NICKNAME}建议你喝: \n⭐{img.stem}⭐\n" + MessageSegment.image(base64_str)
+        msg = f"{Bot_NICKNAME}建议你喝: \n⭐{img.stem}⭐\n" + \
+            MessageSegment.image(base64_str)
         try:
             await what_drink.send(f"{Bot_NICKNAME}正在为你找好喝的……")
             await what_drink.send(msg, at_sender=True)
@@ -263,7 +265,8 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        msg = f"{Bot_NICKNAME}建议你吃: \n⭐{img.stem}⭐\n" + MessageSegment.image(base64_str)
+        msg = f"{Bot_NICKNAME}建议你吃: \n⭐{img.stem}⭐\n" + \
+            MessageSegment.image(base64_str)
         try:
             await what_eat.send(f"{Bot_NICKNAME}正在为你找好吃的……")
             await what_eat.send(msg, at_sender=True)

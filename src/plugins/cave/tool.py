@@ -4,7 +4,7 @@ import requests
 
 
 def url_to_base64(image_url):
-    response = requests.get(image_url,timeout=5)
+    response = requests.get(image_url, timeout=5)
     image_data = response.content
     return base64.b64encode(image_data).decode("utf-8")
 
