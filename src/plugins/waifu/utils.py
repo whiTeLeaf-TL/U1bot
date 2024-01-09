@@ -2,6 +2,7 @@ import io
 import httpx
 import hashlib
 import asyncio
+from nonebot import logger
 
 from pil_utils import BuildImage, Text2Image
 from nonebot.adapters.onebot.v11 import Message
