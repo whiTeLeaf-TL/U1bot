@@ -3,13 +3,7 @@ import re
 import base64
 from nonebot import logger
 import requests
-from nonebot.adapters.onebot.v11 import (
-    Message,
-    Bot,
-    GroupMessageEvent,
-    PrivateMessageEvent,
-    MessageEvent,
-)
+from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
 from nonebot import on_command, get_driver
 from nonebot.plugin import PluginMetadata
 from nonebot.matcher import Matcher
