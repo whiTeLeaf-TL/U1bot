@@ -32,7 +32,9 @@ def check_dict_key_bot_id(config: dict, requestorDict: dict, numDict: dict, bot:
     # return True
 
 
-def readData(path, content={}, update=0) -> dict:
+def readData(path, content=None, update=0) -> dict:
+    if content is None:
+        content = {}
     if not exists(path):
         with open(path, "w", encoding="utf-8") as fp:
             json.dump(content, fp, ensure_ascii=False)
