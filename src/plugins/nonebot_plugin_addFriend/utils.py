@@ -4,7 +4,6 @@ from nonebot.adapters.onebot.v11 import Bot
 import datetime
 
 
-# from nonebot_plugin_txt2img import Txt2Img
 def filterFriend(comment, type, allowTextList):
     if type != 'friend':
         return True
@@ -60,7 +59,6 @@ def getExist(plainCommandtext: str, wholeMessageText: str, argsText: str):
     return commandText if not plainCommandtext else plainCommandtext in commandText
 
 
-# def read_time(numPath:str)->dict:
 def readTime(numDict: dict) -> dict:
     '''读时间'''
     # global num,now,old
@@ -80,7 +78,6 @@ def readTime(numDict: dict) -> dict:
         for type in numDict[id].keys():
             numDict[id][type]["time"] = datetime.datetime.strptime(
                 numDict[id][type]["time"], "%Y-%m-%d %H:%M:%S.%f")
-    # now = datetime.datetime.now()
     return numDict
 
 
@@ -92,7 +89,6 @@ def writeTime(numDictPath, numDict: dict) -> dict:
             numDictTemp[id][type]["time"] = str(numDictTemp[id][type]["time"])
     with open(numDictPath, 'w', encoding='utf-8') as fp:
         json.dump(numDictTemp, fp, ensure_ascii=False)
-    # now = datetime.datetime.now()
     return numDictTemp
 
 

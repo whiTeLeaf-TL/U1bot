@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11 import Bot
 from .utils import writeTime
 
 basedir = dirname(__file__)
-# numDictPath=basedir+'/num.txt'
 configPath = f"{basedir}/config.json"
 requestorDictPath = f"{basedir}/requestor.json"
 numDictPath = f"{basedir}/num.json"
@@ -47,7 +46,6 @@ def writeData(path, content):
         json.dump(content, fp, ensure_ascii=False)
 
 
-# if not exists(configPath):
 recipientList = list(get_driver().config.superusers)
 # recipients=str(recipients)[1:-1].replace(' ','').replace("'",'')
 # 可以在这里修改默认模板哦

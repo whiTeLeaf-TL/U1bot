@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from pathlib import Path
 from typing import Tuple, Any, Union
 from nonebot import on_regex, on_command, on_message
@@ -79,7 +77,6 @@ async def music_set_rule(event: Union[GroupMessageEvent, PrivateMessageEvent]) -
 
 
 async def music_reply_rule(event: Union[GroupMessageEvent, PrivateMessageEvent]):
-    # logger.info(event.get_plaintext())
     return event.reply and event.get_plaintext().strip() == "下载"
 
 
@@ -118,7 +115,6 @@ async def receive_song(bot: Bot,
     _id = await nncm.search_song(keyword=str(song), limit=1)
     message_id = await bot.send(event=event, message=Message(MessageSegment.music(type_="163", id_=_id)))
     nncm.get_song(message_id=message_id["message_id"], nid=_id)
-    # try:
 
     # except ActionFailed as e:
     #    logger.error(e.info)
@@ -145,7 +141,6 @@ async def music_list_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMe
 
 @music_reply.handle()
 async def music_reply_receive(bot: Bot, event: Union[GroupMessageEvent, PrivateMessageEvent]):
-    # logger.info(event.dict()["reply"]["message_id"])
     nncm.get_session(bot, event)
     info = nncm.check_message()
     if info is None:

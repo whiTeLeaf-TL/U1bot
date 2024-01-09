@@ -15,12 +15,6 @@ from pydantic import Extra, BaseModel
 CPU_TEMPLATE = r"CPU: {{ '%02d' % cpu_usage }}%"
 """Default CPU status template."""
 
-# PER_CPU_TEMPLATE = (
-#     "CPU:\n"
-#     "{%- for core in per_cpu_usage %}\n"
-#     "  core{{ loop.index }}: {{ '%02d' % core }}%\n"
-#     "{%- endfor %}"
-# )
 
 MEMORY_TEMPLATE = r"Memory: {{ '%02d' % memory_usage.percent }}%"
 """Default memory status template."""
