@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import asyncio
 import re
 import time
@@ -38,7 +36,8 @@ Q = Query()
 cmd = list(nonebot.get_driver().config.command_start)[0]
 
 
-class NcmLoginFailedException(Exception): pass
+class NcmLoginFailedException(Exception):
+    pass
 
 
 # ============主类=============
@@ -61,7 +60,8 @@ class Ncm:
 
     def login(self) -> bool:
         try:
-            self.api.login.LoginViaCellphone(phone=ncm_config.ncm_phone, password=ncm_config.ncm_password)
+            self.api.login.LoginViaCellphone(
+                phone=ncm_config.ncm_phone, password=ncm_config.ncm_password)
             self.get_user_info()
             return True
         except Exception as e:
@@ -74,7 +74,7 @@ class Ncm:
             return False
 
     def get_user_info(self) -> str:
-        message: str = f"欢迎您网易云用户:{GetCurrentSession().nickname} [{GetCurrentSession().uid}]";
+        message: str = f"欢迎您网易云用户:{GetCurrentSession().nickname} [{GetCurrentSession().uid}]"
         logger.success(message)
         self.save_user(DumpSessionAsString(GetCurrentSession()))
         return message
@@ -82,17 +82,20 @@ class Ncm:
     def get_phone_login(self):
         phone = ncm_config.ncm_phone
         ctcode = int(ncm_config.ncm_ctcode)
-        result = self.api.login.SetSendRegisterVerifcationCodeViaCellphone(cell=phone, ctcode=ctcode)
+        result = self.api.login.SetSendRegisterVerifcationCodeViaCellphone(
+            cell=phone, ctcode=ctcode)
         if not result.get('code', 0) == 200:
             logger.error(result)
         else:
             logger.success('已发送验证码,输入验证码:')
         while True:
             captcha = int(input())
-            verified = self.api.login.GetRegisterVerifcationStatusViaCellphone(phone, captcha, ctcode)
+            verified = self.api.login.GetRegisterVerifcationStatusViaCellphone(
+                phone, captcha, ctcode)
             if verified.get('code', 0) == 200:
                 break
-        result = self.api.login.LoginViaCellphone(phone, captcha=captcha, ctcode=ctcode)
+        result = self.api.login.LoginViaCellphone(
+            phone, captcha=captcha, ctcode=ctcode)
         self.get_user_info()
 
     def get_qrcode(self):
@@ -122,12 +125,14 @@ class Ncm:
 
     def detail_names(self, ids: List[int]) -> List[str]:
         songs: list = self.api.track.GetTrackDetail(song_ids=ids)["songs"]
-        detail = [(data["name"] + "-" + ",".join([names["name"] for names in data["ar"]])) for data in songs]
+        detail = [(data["name"] + "-" + ",".join([names["name"]
+                   for names in data["ar"]])) for data in songs]
         return detail
 
     @logger.catch()
     def get_detail(self, ids: List[int]):
-        data: list = self.api.track.GetTrackAudio(song_ids=ids, bitrate=ncm_config.ncm_bitrate * 1000)["data"]
+        data: list = self.api.track.GetTrackAudio(
+            song_ids=ids, bitrate=ncm_config.ncm_bitrate * 1000)["data"]
         names: list = self.detail_names(ids)
         for i in range(len(ids)):
             data[i]['ncm_name'] = names[i]
@@ -143,7 +148,8 @@ class Ncm:
                 info = music.search(Q["id"] == i)
                 if info:
                     try:
-                        tasks.append(asyncio.create_task(self.upload_data_file(event=event, data=info[0])))
+                        tasks.append(asyncio.create_task(
+                            self.upload_data_file(event=event, data=info[0])))
                         del_nid.append(i)
                     except Exception:
                         continue
@@ -154,7 +160,8 @@ class Ncm:
             info = music.search(Q["id"] == nid)
             if info:
                 try:
-                    tasks.append(asyncio.create_task(self.upload_data_file(event=event, data=info[0])))
+                    tasks.append(asyncio.create_task(
+                        self.upload_data_file(event=event, data=info[0])))
                     return
                 except Exception as e:
                     if isinstance(e, ActionFailed) and e.info.get("retcode") != 10003:
@@ -168,7 +175,8 @@ class Ncm:
             await self.start_upload(ids=nid, event=event)
 
     async def search_song(self, keyword: str, limit: int = 1) -> int:  # 搜索歌曲
-        res = self.api.cloudsearch.GetSearchResult(keyword=keyword, stype=SONG, limit=limit)
+        res = self.api.cloudsearch.GetSearchResult(
+            keyword=keyword, stype=SONG, limit=limit)
         logger.debug(f"搜索歌曲{keyword},返回结果:{res}")
         if "result" in res.keys():
             data = res["result"]["songs"]
@@ -178,10 +186,12 @@ class Ncm:
             return data[0]["id"]
 
     async def search_user(self, keyword: str, limit: int = 1):  # 搜索用户
-        self.api.cloudsearch.GetSearchResult(keyword=keyword, stype=USER, limit=limit)
+        self.api.cloudsearch.GetSearchResult(
+            keyword=keyword, stype=USER, limit=limit)
 
     async def search_playlist(self, keyword: str, limit: int = 1):  # 搜索歌单
-        self.api.cloudsearch.GetSearchResult(keyword=keyword, stype=PLAYLIST, limit=limit)
+        self.api.cloudsearch.GetSearchResult(
+            keyword=keyword, stype=PLAYLIST, limit=limit)
 
     @staticmethod
     def check_message(message_id: int):
@@ -261,13 +271,6 @@ class Ncm:
                 await bot.send_private_msg(user_id=user_id, message=Message(MessageSegment.text(
                     "[ERROR]  文件上传失败\r\n[原因]  上传超时(一般来说还在传,建议等待五分钟)")))
 
-    # @run_sync
-    # def get_zip(self, lid: int, filenames: list):
-    #     zip_file_new = f'{lid}.zip'
-    #     with zipfile.ZipFile(str(Path.cwd().joinpath("music").joinpath(zip_file_new)), 'w', zipfile.ZIP_DEFLATED) as z:
-    #         for f in filenames:
-    #             z.write(str(f), f.name)
-    #     return zip_file_new
     async def upload(self, data: dict, fr: str, event: Union[GroupMessageEvent, PrivateMessageEvent]):
         if data["code"] == 404:
             logger.error("未从网易云读取到下载地址")

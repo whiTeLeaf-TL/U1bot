@@ -50,7 +50,7 @@ async def _(event: MessageEvent):
 
 # api处理->json
 def text_handle(text: str) -> json:
-    text = text.replace("<\/a>", "")
+    text = text.replace(r"<\/a>", "")
     text = text.replace("\n", "")
 
     # 去除html标签

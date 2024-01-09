@@ -84,11 +84,10 @@ class Weather:
         logger.debug(res)
         if res["code"] == "404":
             raise CityNotFoundError()
-        elif res["code"] != "200":
+        if res["code"] != "200":
             raise APIError(f'错误! 错误代码: {res["code"]}{self.__reference}')
-        else:
-            self.city_name = res["location"][0]["name"]
-            return res["location"][0]["id"]
+        self.city_name = res["location"][0]["name"]
+        return res["location"][0]["id"]
 
     def _data_validate(self):
         if self.now.code != "200" or self.daily.code != "200":
