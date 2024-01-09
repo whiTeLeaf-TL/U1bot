@@ -34,9 +34,7 @@ async def download_user_img(user_id: int):
 
 
 async def user_img(user_id: int) -> bytes:
-    """
-    获取用户头像url
-    """
+    """获取用户头像url"""
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
     if hashlib.md5(data).hexdigest() == "acef72340ac0e914090bd35799f5594e":
@@ -45,9 +43,7 @@ async def user_img(user_id: int) -> bytes:
 
 
 def text_to_png(msg):
-    """
-    文字转png
-    """
+    """文字转png"""
     output = io.BytesIO()
     Text2Image.from_text(msg, 50, spacing=10).to_image("white", (20, 20)).save(
         output, format="png"
@@ -56,9 +52,7 @@ def text_to_png(msg):
 
 
 def bbcode_to_png(msg, spacing: int = 10):
-    """
-    bbcode文字转png
-    """
+    """bbcode文字转png"""
     output = io.BytesIO()
     Text2Image.from_bbcode_text(msg, 50, spacing=spacing).to_image(
         "white", (20, 20)
@@ -67,7 +61,5 @@ def bbcode_to_png(msg, spacing: int = 10):
 
 
 def get_message_at(message: Message) -> list:
-    """
-    获取at列表
-    """
+    """获取at列表"""
     return [int(msg.data["qq"]) for msg in message if msg.type == "at"]
