@@ -6,7 +6,7 @@ from datetime import date
 
 import httpx
 import nonebot
-from nonebot import require, get_bot, get_driver, on_fullmatch
+from nonebot import require, get_driver, on_fullmatch
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 

@@ -40,9 +40,7 @@ from pathlib import Path
 from typing import Any, Union, Annotated
 from re import I, sub
 import asyncio
-from matplotlib.pyplot import switch_backend
 from nonebot import require
-from sqlalchemy import false
 
 require("nonebot_plugin_localstore")
 require("nonebot_plugin_tortoise_orm")
