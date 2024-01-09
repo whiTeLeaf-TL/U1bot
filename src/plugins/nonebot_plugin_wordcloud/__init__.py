@@ -32,7 +32,7 @@ from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot.permission import SUPERUSER
 from nonebot.params import Arg, Depends
 from nonebot.adapters import Bot, Event, Message
-from nonebot import get_driver, require
+from nonebot import get_driver
 from arclet.alconna.arparma import Arparma
 from arclet.alconna import ArparmaBehavior
 import nonebot_plugin_saa as saa
@@ -41,6 +41,7 @@ from typing import Optional, Union
 from io import BytesIO
 from datetime import datetime, timedelta
 import re
+from nonebot import require
 
 require("nonebot_plugin_apscheduler")
 require("nonebot_plugin_alconna")
