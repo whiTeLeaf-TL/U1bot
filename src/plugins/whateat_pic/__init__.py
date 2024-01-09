@@ -321,7 +321,6 @@ async def send_forward_msg(
         return await bot.call_api(
             "send_group_forward_msg", group_id=event.group_id, messages=messages
         )
-    else:
-        return await bot.call_api(
-            "send_private_forward_msg", user_id=event.user_id, messages=messages
-        )
+    return await bot.call_api(
+        "send_private_forward_msg", user_id=event.user_id, messages=messages
+    )

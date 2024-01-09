@@ -151,8 +151,7 @@ def parseTimeInterval(old='2022-06-21 20:57', now='', op='int'):
     seconds = interval.seconds
     if op == 'int':
         return (days*3600*24+seconds)*symbol
-    else:
-        return {'days': days*3600*24*symbol, 'seconds': seconds*symbol}
+    return {'days': days*3600*24*symbol, 'seconds': seconds*symbol}
 
 
 def parseTime(numControl: dict, numTypedDict, now):
