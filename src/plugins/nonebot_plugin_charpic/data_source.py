@@ -82,7 +82,6 @@ async def get_char_frame(text: str, w: int, h: int, font_):
 async def get_img(img_url: str):
     if not img_url:
         return
-    async with aiohttp.ClientSession() as session:
-        async with session.get(img_url) as resp:
-            result = await resp.read()
+    async with aiohttp.ClientSession() as session, session.get(img_url) as resp:
+        result = await resp.read()
     return Image.open(io.BytesIO(result)) if result else None
