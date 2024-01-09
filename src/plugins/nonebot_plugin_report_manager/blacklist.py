@@ -58,5 +58,4 @@ def handle_blacklist(
     save_blacklist()
     if not uids:
         return "没有可操作的用户，请检查输入格式或者用户是否已在黑名单中"
-    else:
-        return f"已{_mode} {len(uids)} 个黑名单用户: {', '.join(uids)}"
+    return f"已{_mode} {len(uids)} 个黑名单用户: {', '.join(uids)}"
