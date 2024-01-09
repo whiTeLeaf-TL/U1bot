@@ -9,6 +9,3 @@ name = "python"
 [[transformers]]
 name = "autopep8"
 
-[[analyzers]]
-name = "test-coverage"
-enabled = true
