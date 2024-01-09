@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11 import Bot
 from .utils import writeTime
 
 basedir = dirname(__file__)
-# numDictPath=basedir+'/num.txt'
 configPath = f"{basedir}/config.json"
 requestorDictPath = f"{basedir}/requestor.json"
 numDictPath = f"{basedir}/num.json"
@@ -33,7 +32,9 @@ def check_dict_key_bot_id(config: dict, requestorDict: dict, numDict: dict, bot:
     # return True
 
 
-def readData(path, content={}, update=0) -> dict:
+def readData(path, content=None, update=0) -> dict:
+    if content is None:
+        content = {}
     if not exists(path):
         with open(path, "w", encoding="utf-8") as fp:
             json.dump(content, fp, ensure_ascii=False)
@@ -47,7 +48,6 @@ def writeData(path, content):
         json.dump(content, fp, ensure_ascii=False)
 
 
-# if not exists(configPath):
 recipientList = list(get_driver().config.superusers)
 # recipients=str(recipients)[1:-1].replace(' ','').replace("'",'')
 # 可以在这里修改默认模板哦

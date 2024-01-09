@@ -97,9 +97,7 @@ scheduler.add_job(reset_record, "cron", hour=0,
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
-    """
-    规则：娶群友
-    """
+    """规则：娶群友"""
     msg = event.message.extract_plain_text()
     if not msg.startswith("娶群友"):
         return False
@@ -389,9 +387,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 # 透群友
 async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
-    """
-    规则：透群友
-    """
+    """规则：透群友"""
     msg = event.message.extract_plain_text()
     if not msg.startswith("透群友"):
         return False
