@@ -14,11 +14,11 @@ import contextlib
 from typing import Any, Dict
 
 from jinja2 import Environment
-from jinja2.meta import find_undeclared_variables
 from nonebot import get_driver
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from jinja2.meta import find_undeclared_variables
 
 from .config import Config
 from .helpers import humanize_date, relative_time, humanize_delta
