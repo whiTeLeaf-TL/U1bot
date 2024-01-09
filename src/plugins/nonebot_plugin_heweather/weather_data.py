@@ -53,10 +53,6 @@ class Weather:
         self.api_type = int(api_type)
         self.__url__()
 
-        # self.now: Optional[Dict[str, str]] = None
-        # self.daily = None
-        # self.air = None
-        # self.warning = None
         self.__reference = "\n请参考: https://dev.qweather.com/docs/start/status-code/"
 
     async def load_data(self):

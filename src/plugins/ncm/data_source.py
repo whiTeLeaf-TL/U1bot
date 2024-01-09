@@ -13,6 +13,8 @@ from aiofile import async_open
 import httpx
 import nonebot
 from nonebot.utils import run_sync
+from nonebot.adapters.onebot.v11 import MessageSegment, Message, ActionFailed, NetworkError, Bot, GroupMessageEvent, PrivateMessageEvent
+from nonebot.log import logger
 
 from pyncm import (
     apis,
@@ -22,17 +24,6 @@ from pyncm import (
     SetCurrentSession,
 )
 from pyncm.apis.cloudsearch import SONG, USER, PLAYLIST
-
-from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import (
-    MessageSegment,
-    Message,
-    ActionFailed,
-    NetworkError,
-    Bot,
-    GroupMessageEvent,
-    PrivateMessageEvent,
-)
 
 from .config import ncm_config
 from tinydb import TinyDB, Query
