@@ -1,15 +1,18 @@
-on:
-  push:
-    branches:
-    - main
+name: Report Test Coverage
+
+on: [pull_request, push]
+
 jobs:
-    report:
-      name: deploy to staging
-      runs-on: ubuntu-18.04
-      steps:
-        - name: Report test coverage to DeepSource
-          uses: deepsourcelabs/test-coverage-action@master
-          with:
-            key: python
-            coverage-file: coverage.xml
-            dsn: ${{ secrets.DEEPSOURCE_DSN }}
+  report_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Report test coverage to DeepSource
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: python
+          coverage-file: coverage.xml
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
+          fail-ci-on-error: true  # Optional: Set to true if you want the CI build to fail on error
