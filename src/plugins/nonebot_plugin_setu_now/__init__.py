@@ -1,11 +1,5 @@
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
-from nonebot import on_command, on_regex, require
-from nonebot.adapters.onebot.v11 import GROUP, PRIVATE_FRIEND, Bot, Message, MessageEvent, MessageSegment, GroupMessageEvent, PrivateMessageEvent
-from nonebot.exception import ActionFailed
-from nonebot.log import logger
-from nonebot.params import Depends, RegexGroup
-from nonebot.plugin import PluginMetadata
 from .r18_whitelist import get_group_white_list_record
 from .data_source import SetuHandler
 from .perf_timer import PerfTimer
@@ -26,11 +20,27 @@ from nonebot.adapters.onebot.v11.helpers import (
     autorevoke_send,
 )
 from nonebot_plugin_tortoise_orm import add_model
+from nonebot.adapters.onebot.v11 import (
+    GROUP,
+    PRIVATE_FRIEND,
+    Bot,
+    Message,
+    MessageEvent,
+    MessageSegment,
+    GroupMessageEvent,
+    PrivateMessageEvent,
+)
+from nonebot.exception import ActionFailed
+from nonebot.plugin import PluginMetadata
+from nonebot.params import Depends, RegexGroup
+from nonebot.log import logger
+from nonebot import on_regex, on_command
 from PIL import UnidentifiedImageError
 from pathlib import Path
 from typing import Any, Union, Annotated
 from re import I, sub
 import asyncio
+from nonebot import require
 
 require("nonebot_plugin_localstore")
 require("nonebot_plugin_tortoise_orm")
