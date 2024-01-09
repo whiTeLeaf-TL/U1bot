@@ -18,6 +18,7 @@ blacklist = (
     else {"blacklist": []}
 )
 
+
 def save_blacklist() -> None:
     file_path.write_text(json.dumps(blacklist), encoding="utf-8")
 

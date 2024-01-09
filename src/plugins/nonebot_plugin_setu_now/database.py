@@ -5,7 +5,6 @@ from tortoise.models import Model
 from .data_source import SETU_SIZE, Setu
 
 
-
 class SetuInfo(Model):
     pid = fields.IntField(pk=True)
     author = fields.CharField(max_length=50)

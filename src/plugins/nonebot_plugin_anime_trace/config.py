@@ -16,4 +16,3 @@ class Config(BaseConfig):
     animetrace_max_num: int = 3
     # bot昵称
     nickname: list[str] = ["anime trace"]
-
