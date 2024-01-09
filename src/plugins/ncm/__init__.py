@@ -40,7 +40,8 @@ async def song_is_open(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> 
     if isinstance(event, GroupMessageEvent):
         if info := setting.search(Q["group_id"] == event.group_id):
             return info[0]["song"]
-        setting.insert({"group_id": event.group_id, "song": False, "list": False})
+        setting.insert({"group_id": event.group_id,
+                       "song": False, "list": False})
         return False
     elif isinstance(event, PrivateMessageEvent):
         if info := setting.search(Q["user_id"] == event.user_id):
@@ -57,14 +58,16 @@ async def playlist_is_open(
         if info:
             return info[0]["list"]
         else:
-            setting.insert({"group_id": event.group_id, "song": False, "list": False})
+            setting.insert({"group_id": event.group_id,
+                           "song": False, "list": False})
             return False
     elif isinstance(event, PrivateMessageEvent):
         info = setting.search(Q["user_id"] == event.user_id)
         if info:
             return info[0]["list"]
         else:
-            setting.insert({"user_id": event.user_id, "song": True, "list": True})
+            setting.insert({"user_id": event.user_id,
+                           "song": True, "list": True})
             return True
 
 
@@ -95,7 +98,8 @@ ncm_set = on_command("ncm", rule=Rule(music_set_rule), priority=1, block=False)
 """功能设置"""
 music_regex = on_regex(r"(song|url)\?id=([0-9]+)(|&)", priority=2, block=False)
 """歌曲id识别"""
-playlist_regex = on_regex(r"playlist\?id=([0-9]+)(|&)", priority=2, block=False)
+playlist_regex = on_regex(
+    r"playlist\?id=([0-9]+)(|&)", priority=2, block=False)
 """歌单识别"""
 music_reply = on_message(priority=2, rule=Rule(music_reply_rule), block=False)
 """回复下载"""
@@ -117,7 +121,8 @@ async def receive_song(
 ):
     _id = await nncm.search_song(keyword=song.extract_plain_text(), limit=1)
     message_id = await bot.send(
-        event=event, message=Message(MessageSegment.music(type_="163", id_=_id))
+        event=event, message=Message(
+            MessageSegment.music(type_="163", id_=_id))
     )
     nncm.get_song(message_id=message_id["message_id"], nid=_id)
     # try:
@@ -185,28 +190,34 @@ async def set_receive(
                     if mold in TRUE:
                         info[0]["song"] = True
                         info[0]["list"] = True
-                        setting.update(info[0], Q["group_id"] == event.group_id)
+                        setting.update(
+                            info[0], Q["group_id"] == event.group_id)
                         msg = "已开启自动下载功能"
                         await bot.send(
-                            event=event, message=Message(MessageSegment.text(msg))
+                            event=event, message=Message(
+                                MessageSegment.text(msg))
                         )
                     elif mold in FALSE:
                         info[0]["song"] = False
                         info[0]["list"] = False
-                        setting.update(info[0], Q["group_id"] == event.group_id)
+                        setting.update(
+                            info[0], Q["group_id"] == event.group_id)
                         msg = "已关闭自动下载功能"
                         await bot.send(
-                            event=event, message=Message(MessageSegment.text(msg))
+                            event=event, message=Message(
+                                MessageSegment.text(msg))
                         )
                     logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
                 else:
                     if mold in TRUE:
                         setting.insert(
-                            {"group_id": event.group_id, "song": True, "list": True}
+                            {"group_id": event.group_id,
+                                "song": True, "list": True}
                         )
                     elif mold in FALSE:
                         setting.insert(
-                            {"group_id": event.group_id, "song": False, "list": False}
+                            {"group_id": event.group_id,
+                                "song": False, "list": False}
                         )
             elif isinstance(event, PrivateMessageEvent):
                 info = setting.search(Q["user_id"] == event.user_id)
@@ -218,7 +229,8 @@ async def set_receive(
                         setting.update(info[0], Q["user_id"] == event.user_id)
                         msg = "已开启下载功能"
                         await bot.send(
-                            event=event, message=Message(MessageSegment.text(msg))
+                            event=event, message=Message(
+                                MessageSegment.text(msg))
                         )
                     elif mold in FALSE:
                         info[0]["song"] = False
@@ -226,7 +238,8 @@ async def set_receive(
                         setting.update(info[0], Q["user_id"] == event.user_id)
                         msg = "已关闭下载功能"
                         await bot.send(
-                            event=event, message=Message(MessageSegment.text(msg))
+                            event=event, message=Message(
+                                MessageSegment.text(msg))
                         )
                     logger.debug(f"用户<{event.sender.nickname}>执行操作成功")
                 else:
