@@ -1,3 +1,5 @@
+from .data_source import get_reply
+from .config import Config
 import traceback
 from typing import Union
 
@@ -17,8 +19,6 @@ require("nonebot_plugin_apscheduler")
 require("nonebot_plugin_htmlrender")
 require("nonebot_plugin_localstore")
 
-from .config import Config
-from .data_source import get_reply
 
 __plugin_meta__ = PluginMetadata(
     name="成分姬",

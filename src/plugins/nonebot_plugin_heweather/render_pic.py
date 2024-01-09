@@ -1,3 +1,7 @@
+from .weather_data import Weather
+from .model import Air, Daily, Hourly, HourlyType
+from .config import QWEATHER_HOURLYTYPE
+from nonebot_plugin_htmlrender import template_to_pic
 from datetime import datetime
 from typing import List
 from pathlib import Path
@@ -5,12 +9,6 @@ from pathlib import Path
 from nonebot import require
 
 require("nonebot_plugin_htmlrender")
-
-from nonebot_plugin_htmlrender import template_to_pic
-
-from .config import QWEATHER_HOURLYTYPE
-from .model import Air, Daily, Hourly, HourlyType
-from .weather_data import Weather
 
 
 async def render(weather: Weather) -> bytes:
