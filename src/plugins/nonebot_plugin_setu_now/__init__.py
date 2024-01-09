@@ -156,8 +156,6 @@ async def _(
             if r18 and process_func == EFFECT_FUNC_LIST[0]:
                 # R18禁止使用默认图像处理方法(do_nothing)
                 continue
-            # if process_func == EFFECT_FUNC_LIST[0]:
-            #     continue
             logger.debug(f"Using effect {process_func}")
             effert_timer = PerfTimer.start("Effect process")
             try:
