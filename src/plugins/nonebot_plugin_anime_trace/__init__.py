@@ -13,12 +13,10 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     PrivateMessageEvent,
     GroupMessageEvent,
-    MessageEvent,
-    NetworkError
+    MessageEvent
 )
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.params import Arg
-from nonebot.rule import Rule
 from nonebot.exception import ActionFailed
 from nonebot.internal.matcher import Matcher
 from nonebot.typing import T_State

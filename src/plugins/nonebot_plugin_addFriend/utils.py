@@ -1,8 +1,6 @@
 import copy
 import json
-from nonebot import get_driver
-from nonebot.adapters.onebot.v11 import Bot,  MessageSegment
-import os
+from nonebot.adapters.onebot.v11 import Bot
 import datetime
 
 

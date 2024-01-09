@@ -3,12 +3,10 @@ import contextlib
 import random
 
 from nonebot import logger, get_driver, on_command, on_message
-from datetime import datetime, timedelta
+from datetime import datetime
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import (
-    GROUP_ADMIN,
-    GROUP_OWNER,
     Bot,
     GroupMessageEvent,
     Message,
