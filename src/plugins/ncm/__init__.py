@@ -42,7 +42,7 @@ async def song_is_open(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> 
             return info[0]["song"]
         setting.insert({"group_id": event.group_id, "song": False, "list": False})
         return False
-    elif isinstance(event, PrivateMessageEvent):
+    if isinstance(event, PrivateMessageEvent):
         if info := setting.search(Q["user_id"] == event.user_id):
             return info[0]["song"]
         setting.insert({"user_id": event.user_id, "song": True, "list": True})
@@ -56,25 +56,22 @@ async def playlist_is_open(
         info = setting.search(Q["group_id"] == event.group_id)
         if info:
             return info[0]["list"]
-        else:
-            setting.insert({"group_id": event.group_id, "song": False, "list": False})
-            return False
+        setting.insert({"group_id": event.group_id, "song": False, "list": False})
+        return False
     elif isinstance(event, PrivateMessageEvent):
         info = setting.search(Q["user_id"] == event.user_id)
         if info:
             return info[0]["list"]
-        else:
-            setting.insert({"user_id": event.user_id, "song": True, "list": True})
-            return True
+        setting.insert({"user_id": event.user_id, "song": True, "list": True})
+        return True
 
 
 async def check_search() -> bool:
     info = setting.search(Q["global"] == "search")
     if info:
         return info[0]["value"]
-    else:
-        setting.insert({"global": "search", "value": True})
-        return True
+    setting.insert({"global": "search", "value": True})
+    return True
 
 
 async def music_set_rule(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> bool:
