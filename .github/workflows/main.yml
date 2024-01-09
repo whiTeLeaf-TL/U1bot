@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+    - main
+jobs:
+    report:
+      name: deploy to staging
+      runs-on: ubuntu-18.04
+      steps:
+        - name: Report test coverage to DeepSource
+          uses: deepsourcelabs/test-coverage-action@master
+          with:
+            key: python
+            coverage-file: coverage.xml
+            dsn: ${{ secrets.DEEPSOURCE_DSN }}
