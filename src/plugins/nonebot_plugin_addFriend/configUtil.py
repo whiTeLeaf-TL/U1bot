@@ -52,8 +52,8 @@ recipientList = list(get_driver().config.superusers)
 # recipients=str(recipients)[1:-1].replace(' ','').replace("'",'')
 # 可以在这里修改默认模板哦
 configModel = {
-    "agreeAutoApprove": {"friend": 1, "group": 0},
-    "recipientList": recipientList[:2],
+    "agreeAutoApprove": {"friend": 1, "group": 1},
+    "recipientList": [],
     "forwardSet": 0,
     "numControl": {
         "useAlgorithm": 0,
@@ -61,26 +61,26 @@ configModel = {
         "time": 2,
         "unit": "h",
         "friend": {"maxNum": 6, "time": 2, "unit": "h"},
-        "group": {"maxNum": 2, "time": 8, "unit": "h"},
+        "group": {"maxNum": 5, "time": 2, "unit": "h"},
     },
     "maxViewNum": 20,
     "blackDict": {
         "friend": {"text": [], "id": []},
         "group": {"text": [], "id": []},
         "forward": {},
-    },  # "群号":"管理员号，转发给其用来揪出在群里拉人头的人"
+    },
     "warnDict": {
         "friend": {"text": [], "id": []},
         "group": {"text": [], "id": []},
         "forward": {},
     },
     "allowAddFriednText": [],
-    "botName": "我",
+    "botName": "姚奕",
     "friend_msg": {
         "notice_msg": "请求添加好友,验证消息为",
-        "welcome_msg": "我未知的的朋友啊，很高兴你添加我为qq好友哦！\n同时，如果有疑问，可以发送/help哦",
+        "welcome_msg": "你吼，我是姚奕！我的信息都会在我的说说更新，绝对不会骚扰到你滴！\n同时，如果有疑问，可以发送help哦",
     },
-    "group_msg": {"notice_msg": "发送群邀请,验证消息为", "welcome_msg": "我亲爱的的朋友啊，很高兴你邀请我哦！"},
+    "group_msg": {"notice_msg": "发送群邀请,验证消息为", "welcome_msg": "很高兴有你的邀请，但要等我一下！"},
     "statusDict": {
         "blackDict": {
             "friend": {"status": "拉黑QQ,已拒绝,仅作提示"},
@@ -92,6 +92,7 @@ configModel = {
         },
     },
 }
+
 requestorDictModel = {"friend": {}, "group": {}}
 numDictModel = {
     "friend": {"count": 0, "time": str(datetime.now())},
