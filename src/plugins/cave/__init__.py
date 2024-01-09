@@ -1,7 +1,7 @@
 import random
 import re
 import base64
-from nonebot import logger
+from nonebot import get_driver, logger, on_command
 import requests
 from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
 from nonebot import on_command, get_driver
