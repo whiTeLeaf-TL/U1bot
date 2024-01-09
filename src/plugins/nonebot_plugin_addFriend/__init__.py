@@ -10,16 +10,10 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from .configUtil import check_dict_key_bot_id, config, requestorDict, configPath, requestorDictPath, writeData, blackLogPath, numDict, numDictPath
 from .utils import getReferIdList, sendMsg, getExist, parseMsg, isNormalAdd, writeLog, filterFriend, parseTime, writeTime
-# try:
-#     scheduler = require('nonebot_plugin_apscheduler').scheduler
-# except:
-#     import nonebot_plugin_apscheduler
-#     scheduler = nonebot_plugin_apscheduler.scheduler
 
 
 # 初始化完毕，num文件单独初始化
 parseRequest = on_request(priority=1, block=True)
-# @event_preprocessor
 
 
 @parseRequest.handle()
@@ -57,7 +51,6 @@ async def _(bot: Bot, event: RequestEvent):
             return
     else:
         return
-    # num,now,old=read_data(numPath,autoType)
     agreeAutoApprove, status = isNormalAdd(
         config[bot.self_id], autoType, addInfo, agreeAutoApprove)  # 正常添加判断，过滤无意义添加，类似xx通知群
     if agreeAutoApprove == -1:  # 黑名单结果
@@ -285,7 +278,6 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         welcome_msg = config[bot.self_id][msgType]['welcome_msg']
         await bot.send_private_msg(user_id=requestorId, message=welcome_msg)
 
-# @scheduler.scheduled_job('interval', hour=1, id='check_outdate', timezone="Asia/Shanghai")
 delRequestorDict = on_command(
     "清理请求表", priority=5, block=True, permission=SUPERUSER)
 
@@ -317,7 +309,6 @@ reFriendReqNum = on_command(
 @reFriendReqNum.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     check_dict_key_bot_id(config, requestorDict, numDict, bot)
-    # text=event.get_plaintext().strip()
     argsText = args.extract_plain_text().strip()
     if '群聊' in argsText:
         argsText = argsText.replace('群聊', '').strip()
@@ -329,7 +320,6 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         autoType = 'all'
     max = config[bot.self_id]['numControl'][autoType]['maxNum']
     now = datetime.now()
-    # num,now,old=read_data(numPath)
     if parseTime(config[bot.self_id]['numControl'][autoType], numDict[bot.self_id][autoType], now) != -1:
         await reFriendReqNum.send(message='未增满{}人,人数为{}上次添加时间{}'.format(max, numDict[bot.self_id][autoType]['count'], now))
     argsText = argsText.replace('为', '').strip()
