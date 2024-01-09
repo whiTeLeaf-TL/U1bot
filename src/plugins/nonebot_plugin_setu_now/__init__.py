@@ -1,21 +1,25 @@
-from matplotlib.pyplot import switch_backend
-from nonebot import require
-from sqlalchemy import false
-
-require("nonebot_plugin_localstore")
-require("nonebot_plugin_tortoise_orm")
-
-import asyncio
-from re import I, sub
-from typing import Any, Union, Annotated
-from pathlib import Path
-
-from PIL import UnidentifiedImageError
-from nonebot import on_regex, on_command
-from nonebot.log import logger
-from nonebot.params import Depends, RegexGroup
-from nonebot.plugin import PluginMetadata
-from nonebot.exception import ActionFailed
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+from nonebot.permission import SUPERUSER
+from .r18_whitelist import get_group_white_list_record
+from .data_source import SetuHandler
+from .perf_timer import PerfTimer
+from .img_utils import EFFECT_FUNC_LIST, image_segment_convert
+from .database import (
+    SetuInfo,
+    MessageInfo,
+    bind_message_data,
+    auto_upgrade_setuinfo,
+    SetuSwitch,
+)
+from .models import Setu, SetuNotFindError
+from .config import MAX, CDTIME, EFFECT, SETU_PATH, WITHDRAW_TIME, Config
+from .utils import SpeedLimiter
+from nonebot.adapters.onebot.v11.helpers import (
+    Cooldown,
+    CooldownIsolateLevel,
+    autorevoke_send,
+)
+from nonebot_plugin_tortoise_orm import add_model
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     PRIVATE_FRIEND,
@@ -26,29 +30,23 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     PrivateMessageEvent,
 )
-from nonebot_plugin_tortoise_orm import add_model
-from nonebot.adapters.onebot.v11.helpers import (
-    Cooldown,
-    CooldownIsolateLevel,
-    autorevoke_send,
-)
+from nonebot.exception import ActionFailed
+from nonebot.plugin import PluginMetadata
+from nonebot.params import Depends, RegexGroup
+from nonebot.log import logger
+from nonebot import on_regex, on_command
+from PIL import UnidentifiedImageError
+from pathlib import Path
+from typing import Any, Union, Annotated
+from re import I, sub
+import asyncio
+from matplotlib.pyplot import switch_backend
+from nonebot import require
+from sqlalchemy import false
 
-from .utils import SpeedLimiter
-from .config import MAX, CDTIME, EFFECT, SETU_PATH, WITHDRAW_TIME, Config
-from .models import Setu, SetuNotFindError
-from .database import (
-    SetuInfo,
-    MessageInfo,
-    bind_message_data,
-    auto_upgrade_setuinfo,
-    SetuSwitch,
-)
-from .img_utils import EFFECT_FUNC_LIST, image_segment_convert
-from .perf_timer import PerfTimer
-from .data_source import SetuHandler
-from .r18_whitelist import get_group_white_list_record
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+require("nonebot_plugin_localstore")
+require("nonebot_plugin_tortoise_orm")
+
 
 usage_msg = """指令: 色图|涩图|来点色色|色色|涩涩|来点色图"""
 
@@ -74,7 +72,8 @@ setu_matcher = on_regex(
     permission=PRIVATE_FRIEND | GROUP,
 )
 
-setuopenorclose_matcher = on_command("setu开关", permission=SUPERUSER | GROUP_ADMIN)
+setuopenorclose_matcher = on_command(
+    "setu开关", permission=SUPERUSER | GROUP_ADMIN)
 
 
 @setuopenorclose_matcher.handle()
@@ -183,7 +182,8 @@ async def _(
                     await bind_message_data(message_id, setu.pid)
                     logger.debug(f"Message ID: {message_id}")
                 else:
-                    logger.debug(f"Using auto revoke API, interval: {WITHDRAW_TIME}")
+                    logger.debug(
+                        f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
                         bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME
                     )

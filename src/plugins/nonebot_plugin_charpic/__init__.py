@@ -7,22 +7,22 @@ from nonebot.plugin import PluginMetadata
 from .data_source import *
 
 
-__plugin_meta__  = PluginMetadata(
-name='字符画',
-description='画一幅好看的字符画吧！',
-usage='字符画 <图片>（可GIF）',
-extra={
-'menu_data': [
-{
-'func': '字符画',
-'trigger_method': '字符画 <图片>',
-'trigger_condition': '群聊/私聊',
-'brief_des': '合成字符画，但输出的是图片（哭），可以用GIF啊！',
-'detail_des': '字符画 <图片>\n' '根据提供的图片生成相应的字符画\n' '群聊或私聊\n' '例如：\n' '字符画 图片',
-}
-],
-'menu_template': 'default',
-},
+__plugin_meta__ = PluginMetadata(
+    name='字符画',
+    description='画一幅好看的字符画吧！',
+    usage='字符画 <图片>（可GIF）',
+    extra={
+        'menu_data': [
+            {
+                'func': '字符画',
+                'trigger_method': '字符画 <图片>',
+                'trigger_condition': '群聊/私聊',
+                'brief_des': '合成字符画，但输出的是图片（哭），可以用GIF啊！',
+                'detail_des': '字符画 <图片>\n' '根据提供的图片生成相应的字符画\n' '群聊或私聊\n' '例如：\n' '字符画 图片',
+            }
+        ],
+        'menu_template': 'default',
+    },
 )
 
 pic2text = on_command("字符画", priority=26, block=True)

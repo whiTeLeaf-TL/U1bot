@@ -72,7 +72,8 @@ class Weather:
         )
         self._data_validate()
 
-    async def _get_data(self, url: str, params: dict) -> Response:
+    @staticmethod
+    async def _get_data(url: str, params: dict) -> Response:
         async with AsyncClient() as client:
             res = await client.get(url, params=params)
         return res
@@ -102,7 +103,8 @@ class Weather:
                 + self.__reference
             )
 
-    def _check_response(self, response: Response) -> bool:
+    @staticmethod
+    def _check_response(response: Response) -> bool:
         if response.status_code != 200:
             raise APIError(f"Response code:{response.status_code}")
         logger.debug(f"{response.json()}")
