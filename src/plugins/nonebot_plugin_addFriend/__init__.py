@@ -58,7 +58,7 @@ async def _(bot: Bot, event: RequestEvent):
         # 黑名单警告，转发给设定的人
         await sendMsg(bot, config[bot.self_id]['recipientList'], msg+status, 0)
         forwardId = config[bot.self_id]["blackDict"]["forward"].get(id)
-        if forwardId != None and autoType == "group":
+        if forwardId is not None and autoType == "group":
             friendList = await getReferIdList(bot, 'user_id')
             if forwardId in friendList:
                 await bot.send_private_msg(user_id=forwardId, message=msg+status)
@@ -226,7 +226,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     # 预处理完毕，开始设置参数
     QQOrGroupId = argsText.split()[0]
     print(QQOrGroupId)
-    if requestorDict[bot.self_id][autoType].get(QQOrGroupId) == None:
+    if requestorDict[bot.self_id][autoType].get(QQOrGroupId) is None:
         await addFriend.finish('没有此请求')
 
     flag = requestorDict[bot.self_id][autoType][QQOrGroupId]['flag']
@@ -255,7 +255,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             if int(QQOrGroupId) in friendList:
                 status = '已经添加成功，勿复添加'
             else:
-                if len(argsText) >= 2 and argsText[1] != '' and approve == True:
+                if len(argsText) >= 2 and argsText[1] != '' and approve is True:
                     remark = argsText[1]
                     # 备注似乎无用
                     await bot.set_friend_add_request(flag=flag, approve=approve, remark=remark)

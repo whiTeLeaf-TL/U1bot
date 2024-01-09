@@ -85,10 +85,10 @@ ncm_set = on_command("ncm",
                      rule=Rule(music_set_rule),
                      block=False)
 '''功能设置'''
-music_regex = on_regex("(song|url)\?id=([0-9]+)(|&)",
+music_regex = on_regex(r"(song|url)\?id=([0-9]+)(|&)",
                        block=False)
 '''歌曲id识别'''
-playlist_regex = on_regex("playlist\?id=([0-9]+)&",
+playlist_regex = on_regex(r"playlist\?id=([0-9]+)&",
                           block=False)
 '''歌单识别'''
 music_reply = on_message(
