@@ -53,9 +53,7 @@ async def text2img(text: str):
 
 
 async def char_gif(gif: Image.Image):
-    """
-    合成 gif 字符画
-    """
+    """合成 gif 字符画"""
     frame_list: List[str] = []
     with contextlib.suppress(EOFError):
         while True:
