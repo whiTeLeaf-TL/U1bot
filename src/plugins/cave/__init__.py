@@ -4,7 +4,6 @@ import base64
 from nonebot import get_driver, logger, on_command
 import requests
 from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
-from nonebot import on_command, get_driver
 from nonebot.plugin import PluginMetadata
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
