@@ -1,20 +1,14 @@
 
 from datetime import datetime
 import json
-
-import re
 from asyncio import sleep
-from os.path import dirname, exists
 from typing import Union
-from nonebot import on_command, on_request, on_notice, require
-from nonebot.adapters.onebot.v11 import Bot,  MessageEvent, PrivateMessageEvent, GroupMessageEvent, MessageSegment, RequestEvent, GroupRequestEvent, FriendRequestEvent, NoticeEvent, GroupDecreaseNoticeEvent, GroupIncreaseNoticeEvent
-from nonebot.message import event_preprocessor
-from nonebot import get_driver
+from nonebot import on_command, on_request
+from nonebot.adapters.onebot.v11 import Bot,  MessageEvent, RequestEvent, GroupRequestEvent, FriendRequestEvent
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.params import CommandArg
 from nonebot.adapters import Message
-from .configUtil import check_dict_key_bot_id, config, requestorDict, basedir, configPath, requestorDictPath, writeData, blackLogPath, numDict, numDictPath
+from .configUtil import check_dict_key_bot_id, config, requestorDict, configPath, requestorDictPath, writeData, blackLogPath, numDict, numDictPath
 from .utils import getReferIdList, sendMsg, getExist, parseMsg, isNormalAdd, writeLog, filterFriend, parseTime, writeTime
 # try:
 #     scheduler = require('nonebot_plugin_apscheduler').scheduler

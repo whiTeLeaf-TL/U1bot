@@ -1,4 +1,3 @@
-from operator import ge
 from tortoise import fields
 from tortoise.models import Model
 

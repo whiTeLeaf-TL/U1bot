@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os
 import zipfile
 from pathlib import Path
 from datetime import datetime
@@ -17,7 +16,6 @@ from nonebot.utils import run_sync
 
 from pyncm import (
     apis,
-    Session,
     GetCurrentSession,
     DumpSessionAsString,
     LoadSessionFromString,

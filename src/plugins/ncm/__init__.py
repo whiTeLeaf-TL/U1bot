@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 from typing import Tuple, Any, Union
-
-import nonebot
 from nonebot import on_regex, on_command, on_message
 from nonebot.adapters.onebot.v11 import (Message, Bot,
                                          MessageSegment,

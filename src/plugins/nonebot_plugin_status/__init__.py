@@ -112,9 +112,6 @@ async def server_status(matcher: Matcher):
     """Server status matcher handler."""
     await matcher.send(message=await render_template())
 
-
-from . import common as common  # noqa: E402
-
 with contextlib.suppress(ImportError):
     import nonebot.adapters.onebot.v11  # noqa: F401
 
