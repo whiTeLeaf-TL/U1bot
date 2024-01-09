@@ -2,7 +2,7 @@
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
 ]
-plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry"]
+plugins = ["nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry","nonebot_plugin_cesaa"]
 plugin_dirs = ["src/plugins"]
 builtin_plugins = []
 
