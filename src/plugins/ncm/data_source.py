@@ -312,7 +312,7 @@ class Ncm:
             url = data[i]["url"]
             nid = data[i]["id"]
             filename = f"{name[i]}.{data[i]['type']}"
-            filename = re.sub('[\/:*?"<>|]', "-", filename)
+            filename = re.sub(r'[\/:*?"<>|]', "-", filename)
             file = Path.cwd().joinpath("music").joinpath(filename)
             config = {
                 "id": int(nid),
