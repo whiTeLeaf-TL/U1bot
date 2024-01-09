@@ -14,8 +14,7 @@ def check_cd(last_time: int) -> Tuple[bool, int, int]:
     delta_time = current_time - last_time
     if delta_time < cd:
         return False, cd-delta_time, last_time
-    else:
-        return True, 0, current_time
+    return True, 0, current_time
 
 
 def check_max(message, user_count: dict) -> Tuple[bool, dict]:

@@ -23,8 +23,7 @@ def process_message(original_message):
             f"[CQ:image,file=base64://{base64_image}]",
             original_message,
         )
-    else:
-        return original_message
+    return original_message
 
 
 # 覆盖一个txt文件
