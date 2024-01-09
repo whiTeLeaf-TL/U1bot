@@ -104,7 +104,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     global config
     # 下个版本把其他俩json也重载一下，不知道为啥这次就不想改
     with open(configPath, 'r', encoding='utf-8') as fp:
-        config = json.loads(fp.read())
+        config = json.load(fp)
     check_dict_key_bot_id(config, requestorDict, numDict, bot)
     text = event.get_plaintext().strip()
     argsText = args.extract_plain_text().strip()

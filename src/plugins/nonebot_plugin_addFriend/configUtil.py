@@ -39,7 +39,7 @@ def readData(path, content=None, update=0) -> dict:
         with open(path, "w", encoding="utf-8") as fp:
             json.dump(content, fp, ensure_ascii=False)
     with open(path, "r", encoding="utf-8") as fp:
-        data = json.loads(fp.read())
+        data = json.load(fp)
     return data
 
 

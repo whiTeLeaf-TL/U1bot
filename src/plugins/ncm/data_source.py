@@ -327,11 +327,9 @@ class Ncm:
                 music.update(config, Q["id"] == nid)
             else:
                 music.insert(config)
-            async with httpx.AsyncClient() as client:  # 下载歌曲
-                async with client.stream("GET", url=url) as r:
-                    async with async_open(file, "wb") as out_file:
-                        async for chunk in r.aiter_bytes():
-                            await out_file.write(chunk)
+            async with httpx.AsyncClient() as client, client.stream("GET", url=url) as r, async_open(file, "wb") as out_file:
+                async for chunk in r.aiter_bytes():
+                    await out_file.write(chunk)
             logger.debug(f"Download:{filename}")
         if is_zip:
             await self.get_zip(lid=lid, filenames=filenames)
