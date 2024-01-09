@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import asyncio
 import re
 import time
@@ -273,13 +271,6 @@ class Ncm:
                 await bot.send_private_msg(user_id=user_id, message=Message(MessageSegment.text(
                     "[ERROR]  文件上传失败\r\n[原因]  上传超时(一般来说还在传,建议等待五分钟)")))
 
-    # @run_sync
-    # def get_zip(self, lid: int, filenames: list):
-    #     zip_file_new = f'{lid}.zip'
-    #     with zipfile.ZipFile(str(Path.cwd().joinpath("music").joinpath(zip_file_new)), 'w', zipfile.ZIP_DEFLATED) as z:
-    #         for f in filenames:
-    #             z.write(str(f), f.name)
-    #     return zip_file_new
     async def upload(self, data: dict, fr: str, event: Union[GroupMessageEvent, PrivateMessageEvent]):
         if data["code"] == 404:
             logger.error("未从网易云读取到下载地址")
