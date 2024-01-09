@@ -297,8 +297,7 @@ class Ncm:
         await self.upload_data_file(event=event, data=cf)
 
     async def start_upload(self, ids: List[int], event: Union[GroupMessageEvent, PrivateMessageEvent]):
-        """一般地 320k及以上即 flac, 320k及以下即 mp3,96k及以下即 m4a
-        """
+        """一般地 320k及以上即 flac, 320k及以下即 mp3,96k及以下即 m4a"""
         data: list = self.get_detail(ids)
         for i in range(len(ids)):
             await self.upload(data[i], "song" if len(ids) == 1 else "list", event)
