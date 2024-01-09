@@ -260,7 +260,6 @@ async def check_divorce_rule(event):
 
 # 分手
 if waifu_cd_bye > -1:
-    global cd_bye
     cd_bye = {}
     bye = on_command(
         "离婚",
