@@ -58,7 +58,7 @@ async def playlist_is_open(
         setting.insert({"group_id": event.group_id,
                        "song": False, "list": False})
         return False
-    elif isinstance(event, PrivateMessageEvent):
+    if isinstance(event, PrivateMessageEvent):
         info = setting.search(Q["user_id"] == event.user_id)
         if info:
             return info[0]["list"]
