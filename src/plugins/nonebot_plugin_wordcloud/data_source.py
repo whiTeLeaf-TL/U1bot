@@ -76,7 +76,8 @@ def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
     # 词云参数
     wordcloud_options = {}
     wordcloud_options |= plugin_config.wordcloud_options
-    wordcloud_options.setdefault("font_path", str(plugin_config.wordcloud_font_path))
+    wordcloud_options.setdefault(
+        "font_path", str(plugin_config.wordcloud_font_path))
     wordcloud_options.setdefault("width", plugin_config.wordcloud_width)
     wordcloud_options.setdefault("height", plugin_config.wordcloud_height)
     wordcloud_options.setdefault(

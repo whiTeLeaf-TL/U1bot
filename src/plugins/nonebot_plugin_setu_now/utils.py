@@ -28,7 +28,8 @@ async def download_pic(
     )
     client = AsyncClient(proxies=proxies, timeout=5)
     try:
-        async with client.stream(method="GET", url=url, headers=headers, timeout=15) as response:  # type: ignore # params={"proxies": [proxies]}
+        # type: ignore # params={"proxies": [proxies]}
+        async with client.stream(method="GET", url=url, headers=headers, timeout=15) as response:
             if response.status_code != 200:
                 logger.warning(
                     f"Image respond status code error: {response.status_code}"
