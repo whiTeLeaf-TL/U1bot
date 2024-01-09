@@ -104,6 +104,10 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     msg = event.message.extract_plain_text()
     if not msg.startswith("娶群友"):
         return False
+    # 不能娶机器人
+    if event.to_me:
+        await bot.send(event, "不可以啦~", at_sender=True)
+        return False
     group_id = event.group_id
     user_id = event.user_id
     protect_list = await WaifuProtect.get_or_none(group_id=group_id)
@@ -155,7 +159,6 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 )
             await bot.send(event, msg, at_sender=True)
             return False
-
     if at:
         if at == rec.get(str(at)):
             X = HE
@@ -173,7 +176,11 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
 
     if not waifu_id:
         group_id = event.group_id
-        member_list = await bot.get_group_member_list(group_id=group_id)
+        member_list = [
+            member
+            for member in await bot.get_group_member_list(group_id=group_id)
+            if member["user_id"] != int(bot.self_id)
+        ]
         lastmonth = event.time - last_sent_time_filter
         rule_out = protect_list or set(rec.keys())
         waifu_ids = [
@@ -389,6 +396,10 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     msg = event.message.extract_plain_text()
     if not msg.startswith("透群友"):
         return False
+    # 不能透机器人
+    if event.to_me:
+        await bot.send(event, "不行！", at_sender=True)
+        return False
     group_id = event.group_id
     user_id = event.user_id
     protect_list, _ = await WaifuProtect.get_or_create(group_id=group_id)
@@ -402,6 +413,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         at = at[0]
         if at in protect_set:
             return False
+
         if at == user_id:
             msg = f"恭喜你涩到了你自己！{MessageSegment.image(file=await user_img(user_id))}"
             await bot.send(event, msg, at_sender=True)
@@ -428,6 +440,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             for member in member_list
             if (user_id := member["user_id"]) not in protect_set
             and member["last_sent_time"] > lastmonth
+            and member["user_id"] != int(bot.self_id)
         ]
         if yinpa_ids:
             yinpa_id = random.choice(yinpa_ids)
