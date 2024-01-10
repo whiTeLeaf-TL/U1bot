@@ -15,13 +15,16 @@ from .config import githubcard_config
 token = githubcard_config.github_token
 github_type = githubcard_config.github_type
 
-Headers1 = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"}
-Headers2 = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"}
+Headers1 = {
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"}
+Headers2 = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"}
 
 if token is None:
-    headers=Headers1
+    headers = Headers1
 else:
-    headers=Headers2
+    headers = Headers2
+
 
 async def get_github_reposity_information(url: str) -> str:
     try:
