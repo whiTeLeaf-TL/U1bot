@@ -36,5 +36,3 @@ if status_config.server_status_enabled:
         handlers=[server_status],
     )
     """`status`/`状态` command matcher"""
-
-
