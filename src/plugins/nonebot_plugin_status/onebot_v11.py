@@ -11,23 +11,23 @@ __author__ = "yanyongyu"
 import json
 from nonebot.rule import to_me
 from nonebot import logger, on_type, on_message, on_command
-from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent, GroupMessageEvent,Bot
+from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent, GroupMessageEvent, Bot
 from . import server_status, status_config, status_permission, switchFile
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 
 
-async def switch_status(bot:Bot,event: PokeNotifyEvent) -> bool:
+async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
     if to_me():
-        #读取状态
+        # 读取状态
         with open(switchFile, 'r', encoding='utf-8') as f:
             switch = json.load(f)
-        #判断是否开启
-        #找群，找不到就True
+        # 判断是否开启
+        # 找群，找不到就True
         if str(event.group_id) not in switch:
             return True
         if not switch[str(event.group_id)]:
-            await bot.send(event,"本群状态已被关闭")
+            await bot.send(event, "本群状态已被关闭")
             return False
         return True
     return bool(to_me())
@@ -63,7 +63,7 @@ if status_config.server_status_enabled:
     私聊发送戳一戳
     """
 
-switchst= on_command("状态开关", permission=SUPERUSER | GROUP_ADMIN)
+switchst = on_command("状态开关", permission=SUPERUSER | GROUP_ADMIN)
 
 
 @switchst.handle()
