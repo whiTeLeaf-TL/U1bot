@@ -9,9 +9,8 @@
 
 __author__ = "yanyongyu"
 import json
-from nonebot import logger, on_command
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from . import server_status, status_config, status_permission, switchFile
 
 
