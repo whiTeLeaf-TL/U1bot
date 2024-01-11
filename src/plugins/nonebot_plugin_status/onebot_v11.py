@@ -8,20 +8,36 @@
 """
 
 __author__ = "yanyongyu"
-
+import json
 from nonebot.rule import to_me
-from nonebot import on_type, on_message
-from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent
+from nonebot import logger, on_type, on_message, on_command
+from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent, GroupMessageEvent, Bot
+from . import server_status, status_config, status_permission, switchFile
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 
-from . import server_status, status_config, status_permission
+
+async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
+    if to_me():
+        # 读取状态
+        with open(switchFile, 'r', encoding='utf-8') as f:
+            switch = json.load(f)
+        # 判断是否开启
+        # 找群，找不到就True
+        if str(event.group_id) not in switch:
+            return True
+        if not switch[str(event.group_id)]:
+            await bot.send(event, "本群状态已被关闭")
+            return False
+        return True
+    return bool(to_me())
 
 if status_config.server_status_enabled:
     group_poke = on_type(
-        (PokeNotifyEvent,),
-        rule=to_me(),
+        PokeNotifyEvent,
+        rule=switch_status,
         permission=status_permission,
         priority=10,
-        block=True,
         handlers=[server_status],
     )
     """Poke notify matcher.
@@ -46,3 +62,24 @@ if status_config.server_status_enabled:
 
     私聊发送戳一戳
     """
+
+switchst = on_command("状态开关", permission=SUPERUSER | GROUP_ADMIN)
+
+
+@switchst.handle()
+async def _(event: GroupMessageEvent):
+    logger.info("status开关")
+    # 找json文件是否有这个群，没有就创建并FALSE
+    with open(switchFile, 'r', encoding='utf-8') as f:
+        switch = json.load(f)
+    if str(event.group_id) not in switch:
+        switch[str(event.group_id)] = False
+        with open(switchFile, 'w', encoding='utf-8') as f:
+            json.dump(switch, f, ensure_ascii=False)
+    else:
+        switch[str(event.group_id)] = not switch[str(event.group_id)]
+    with open(switchFile, 'w', encoding='utf-8') as f:
+        json.dump(switch, f, ensure_ascii=False)
+    if switch[str(event.group_id)]:
+        await switchst.finish("状态已开启")
+    await switchst.finish("状态已关闭")

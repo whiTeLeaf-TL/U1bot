@@ -7,6 +7,7 @@
 @GitHub         : https://github.com/yanyongyu
 """
 
+from pathlib import Path
 __author__ = "yanyongyu"
 
 import inspect
@@ -78,6 +79,16 @@ KNOWN_VARS = {
 }
 """Available variables for template rendering."""
 
+# 创建开关json文件
+
+switchPath = Path("data")
+if not switchPath.exists():
+    switchPath.mkdir()
+
+switchFile = Path("data/switch.json")
+if not switchFile.exists():
+    switchFile.touch()
+    switchFile.write_text('{}', encoding='utf-8')
 
 if not set(_t_vars).issubset(KNOWN_VARS):
     raise ValueError(

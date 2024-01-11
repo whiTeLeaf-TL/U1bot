@@ -8,17 +8,30 @@
 """
 
 __author__ = "yanyongyu"
-
+import json
 from nonebot import on_command
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from . import server_status, status_config, status_permission, switchFile
 
-from . import server_status, status_config, status_permission
+
+async def switch_status(event: GroupMessageEvent) -> bool:
+    if isinstance(event, GroupMessageEvent):
+        # 读取状态
+        with open(switchFile, 'r', encoding='utf-8') as f:
+            switch = json.load(f)
+        if str(event.group_id) not in switch:
+            return True
+        # 判断是否开启
+        return bool(switch[str(event.group_id)])
+    return True
+
 
 if status_config.server_status_enabled:
-    command = on_command(
+    on_command(
         "status",
-        aliases={"状态"},
+        rule=switch_status,
         permission=status_permission,
         priority=10,
         handlers=[server_status],
     )
-    """`status`/`状态` command matcher"""
+    # status`/`状态` command matcher
