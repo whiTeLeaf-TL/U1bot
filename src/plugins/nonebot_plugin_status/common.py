@@ -35,4 +35,4 @@ if status_config.server_status_enabled:
         priority=10,
         handlers=[server_status],
     )
-    """`status`/`状态` command matcher"""
+    # status`/`状态` command matcher
