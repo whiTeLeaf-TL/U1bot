@@ -25,7 +25,7 @@ async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
         # 判断是否开启
         # 找群，找不到就True
         if str(event.group_id) not in switch:
-            return True
+            return False
         if not switch[str(event.group_id)]:
             await bot.send(event, "本群状态已被关闭")
             return False
@@ -73,13 +73,13 @@ async def _(event: GroupMessageEvent):
     with open(switchFile, 'r', encoding='utf-8') as f:
         switch = json.load(f)
     if str(event.group_id) not in switch:
-        switch[str(event.group_id)] = False
+        switch[str(event.group_id)] = True
         with open(switchFile, 'w', encoding='utf-8') as f:
-            json.dump(switch, f, ensure_ascii=False)
+            json.dump(switch, f)
     else:
         switch[str(event.group_id)] = not switch[str(event.group_id)]
     with open(switchFile, 'w', encoding='utf-8') as f:
-        json.dump(switch, f, ensure_ascii=False)
+        json.dump(switch, f)
     if switch[str(event.group_id)]:
         await switchst.finish("状态已开启")
     await switchst.finish("状态已关闭")
