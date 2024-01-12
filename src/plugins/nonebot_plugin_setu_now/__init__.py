@@ -1,7 +1,8 @@
+from typing import Any, Dict, Union
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
 from nonebot import on_command, on_regex, require
-from nonebot.adapters.onebot.v11 import GROUP, PRIVATE_FRIEND, Bot, Message, MessageEvent, MessageSegment, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import GROUP, PRIVATE_FRIEND, Bot, Message, MessageEvent, MessageSegment, GroupMessageEvent, PrivateMessageEvent, Event
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.params import Depends, RegexGroup
@@ -17,14 +18,13 @@ from .database import (
     auto_upgrade_setuinfo,
     SetuSwitch,
 )
-from .models import Setu, SetuNotFindError
 from .config import MAX, CDTIME, EFFECT, SETU_PATH, WITHDRAW_TIME, Config
 from .utils import SpeedLimiter
 from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
     CooldownIsolateLevel,
-    autorevoke_send,
 )
+from .models import SetuNotFindError, Setu
 from nonebot_plugin_tortoise_orm import add_model
 from PIL import UnidentifiedImageError
 from pathlib import Path
@@ -160,18 +160,18 @@ async def _(
                 await global_speedlimiter.async_speedlimit()
                 send_timer = PerfTimer("Image send")
                 message_id = 0
+                await auto_upgrade_setuinfo(setu)
                 if not WITHDRAW_TIME:
                     # 未设置撤回时间 正常发送
                     message_id: int = (await setu_matcher.send(msg))["message_id"]
 
-                    await auto_upgrade_setuinfo(setu)
                     await bind_message_data(message_id, setu.pid)
                     logger.debug(f"Message ID: {message_id}")
                 else:
                     logger.debug(
                         f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
-                        bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME
+                        bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME,setu=setu
                     )
                 send_timer.stop()
                 global_speedlimiter.send_success()
@@ -234,3 +234,36 @@ async def _(
         await setu_matcher.finish(MessageSegment.reply(reply_message_id) + info_message)
     else:
         await setuinfo_matcher.finish("该插画相关信息已被移除")
+
+
+async def autorevoke_send(
+    bot: Bot,
+    event: Event,
+    message: Union[str, Message, MessageSegment],
+    at_sender: bool = False,
+    revoke_interval: int = 60,setu=None,
+    **kwargs,
+) -> asyncio.TimerHandle:
+    """发出消息指定时间后自动撤回
+
+    参数:
+        bot: 实例化的Bot类
+        event: 事件对象
+        message: 消息对象或消息文本
+        at_sender: 是否在消息中添加 @ 用户
+        revoke_interval: 撤回消息的间隔时间, 单位为秒
+
+    返回:
+        [`TimerHandle`](https://docs.python.org/zh-cn/3/library/asyncio-eventloop.html#asyncio.TimerHandle) 对象, 可以用来取消定时撤回任务
+    """  # noqa: E501
+    message_data: Dict[str, Any] = await bot.send(
+        event, message, at_sender=at_sender, **kwargs
+    )
+    message_id: int = message_data["message_id"]
+    await bind_message_data(message_id, setu.pid)
+
+    loop = asyncio.get_running_loop()
+    return loop.call_later(
+        revoke_interval,
+        lambda: loop.create_task(bot.delete_msg(message_id=message_id)),
+    )
