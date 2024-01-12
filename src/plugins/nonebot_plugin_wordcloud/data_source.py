@@ -65,6 +65,7 @@ def get_mask(key: str):
         return np.array(Image.open(default_mask_path))
     raise FileNotFoundError("mask 文件不存在")
 
+
 def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
     # 过滤掉命令
     command_start = tuple(i for i in global_config.command_start if i)
