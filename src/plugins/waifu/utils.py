@@ -7,6 +7,7 @@ from nonebot.adapters.onebot.v11 import Message
 
 defualt_md5 = "acef72340ac0e914090bd35799f5594e"
 
+
 async def download_avatar(user_id: int) -> bytes:
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
