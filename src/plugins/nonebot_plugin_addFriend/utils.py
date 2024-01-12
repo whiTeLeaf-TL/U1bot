@@ -86,7 +86,8 @@ def writeTime(numDictPath, numDict: dict) -> dict:
     numDictTemp = copy.deepcopy(numDict)
     for dictid in numDictTemp:
         for typemode in numDictTemp[dictid].keys():
-            numDictTemp[dictid][typemode]["time"] = str(numDictTemp[dictid][typemode]["time"])
+            numDictTemp[dictid][typemode]["time"] = str(
+                numDictTemp[dictid][typemode]["time"])
     with open(numDictPath, 'w', encoding='utf-8') as fp:
         json.dump(numDictTemp, fp, ensure_ascii=False)
     return numDictTemp
