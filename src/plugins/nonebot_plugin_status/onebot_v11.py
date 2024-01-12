@@ -18,7 +18,7 @@ from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 
 
 async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
-    if to_me():
+    if event.is_tome():
         # 读取状态
         with open(switchFile, 'r', encoding='utf-8') as f:
             switch = json.load(f)
@@ -30,7 +30,7 @@ async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
             await bot.send(event, "本群状态已被关闭")
             return False
         return True
-    return bool(to_me())
+    return False
 
 if status_config.server_status_enabled:
     group_poke = on_type(
