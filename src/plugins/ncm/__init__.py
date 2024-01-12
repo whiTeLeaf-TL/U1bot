@@ -127,7 +127,6 @@ async def receive_song(
 
 @music_regex.handle()
 async def music_receive(
-    bot: Bot,
     event: Union[GroupMessageEvent, PrivateMessageEvent],
     regroup: Tuple[Any, ...] = RegexGroup(),
 ):
@@ -139,7 +138,6 @@ async def music_receive(
 
 @playlist_regex.handle()
 async def music_list_receive(
-    bot: Bot,
     event: Union[GroupMessageEvent, PrivateMessageEvent],
     regroup: Tuple[Any, ...] = RegexGroup(),
 ):
