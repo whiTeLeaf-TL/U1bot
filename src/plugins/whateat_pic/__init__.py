@@ -165,7 +165,7 @@ async def handle(state: T_State, img: Message = Arg()):
 
 
 @view_dish.handle()
-async def got_name(matcher: Matcher, state: T_State, event: MessageEvent):
+async def got_name(matcher: Matcher, state: T_State):
     # 正则匹配组
     args = list(state['_matched_groups'])
 
