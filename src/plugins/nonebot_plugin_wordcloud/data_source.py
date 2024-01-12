@@ -63,7 +63,7 @@ def get_mask(key: str):
     default_mask_path = plugin_config.get_mask_path()
     if default_mask_path.exists():
         return np.array(Image.open(default_mask_path))
-
+    raise FileNotFoundError("mask 文件不存在")
 
 def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
     # 过滤掉命令
