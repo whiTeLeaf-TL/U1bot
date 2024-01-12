@@ -14,7 +14,10 @@ max = 6
 blackLogPath = f"{basedir}/blackLog.txt"
 
 
-def check_dict_key_bot_id(configbot: dict, requestor_dict: dict, numDictbot: dict, bot: Bot):
+def check_dict_key_bot_id(configbot: dict,
+                          requestor_dict: dict,
+                          numDictbot: dict,
+                          bot: Bot):
     print(1)
     if configbot.get(bot.self_id) is None:
         configbot[bot.self_id] = copy.deepcopy(configModel)
