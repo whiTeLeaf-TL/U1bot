@@ -1,7 +1,6 @@
 from nonebot.typing import T_State
 from nonebot import get_driver
-from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from .config import Config
 from .data_source import get_github_reposity_information
 from nonebot.plugin import on_regex, PluginMetadata
