@@ -38,4 +38,4 @@ async def github_handle(event: GroupMessageEvent):
         imageUrl = await get_github_reposity_information(url)
         if imageUrl == "获取信息失败":
             raise AssertionError
-        await github.send(MessageSegment.image(imageUrl))
+        await github.finish(MessageSegment.image(imageUrl))
