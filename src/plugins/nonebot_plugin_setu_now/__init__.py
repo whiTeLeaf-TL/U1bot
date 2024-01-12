@@ -171,7 +171,7 @@ async def _(
                     logger.debug(
                         f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
-                        bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME,setu=setu
+                        bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME, setu=setu
                     )
                 send_timer.stop()
                 global_speedlimiter.send_success()
@@ -241,7 +241,7 @@ async def autorevoke_send(
     event: Event,
     message: Union[str, Message, MessageSegment],
     at_sender: bool = False,
-    revoke_interval: int = 60,setu=None,
+    revoke_interval: int = 60, setu=None,
     **kwargs,
 ) -> asyncio.TimerHandle:
     """发出消息指定时间后自动撤回
