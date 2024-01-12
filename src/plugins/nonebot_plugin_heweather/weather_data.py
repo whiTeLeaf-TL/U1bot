@@ -54,6 +54,12 @@ class Weather:
         self.__url__()
 
         self.__reference = "\n请参考: https://dev.qweather.com/docs/start/status-code/"
+        self.city_id = None
+        self.now = None
+        self.daily = None
+        self.air = None
+        self.warning = None
+        self.hourly = None
 
     async def load_data(self):
         self.city_id = await self._get_city_id()
