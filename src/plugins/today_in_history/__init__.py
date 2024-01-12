@@ -9,6 +9,7 @@ import nonebot
 from nonebot import require, get_driver, on_fullmatch
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
+from typing import Dict, Any
 
 require("nonebot_plugin_apscheduler")
 
@@ -31,7 +32,7 @@ config_test = on_fullmatch("test")
 
 
 @config_test.handle()
-async def _(event: MessageEvent):
+async def _():
     await config_test.send(f"time={hour}:{minute}")
     await config_test.send(
         f"is_list={isinstance(plugin_config.history_inform_time,list)}")
@@ -44,12 +45,12 @@ history_matcher = on_fullmatch("历史上的今天")
 
 
 @history_matcher.handle()
-async def _(event: MessageEvent):
+async def _():
     await history_matcher.finish(await get_history_info())
 
 
 # api处理->json
-def text_handle(text: str) -> json:
+def text_handle(text: str) -> dict:
     text = text.replace(r"<\/a>", "")
     text = text.replace("\n", "")
 
