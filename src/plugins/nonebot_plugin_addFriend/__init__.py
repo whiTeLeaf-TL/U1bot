@@ -180,7 +180,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         resMsg = '重载成功:\n{}'.format(config[bot.self_id])
     if '重载配置' not in commandText:
         writeData(configPath, config)
-    resMsg = await parseMsg(commandText, resMsg)
+    resMsg = await parseMsg(resMsg)
     await againReadConfig.finish(resMsg)
 
 
@@ -218,7 +218,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             requestorDict[bot.self_id][autoType].items())[:num]
         requestorInfos = str(requestorValueList)
         print(autoType, requestorInfos)
-        resMsg = await parseMsg(commandText, requestorInfos)
+        resMsg = await parseMsg(requestorInfos)
         print(resMsg)
         await addFriend.finish(resMsg)
     if argsText == '':
