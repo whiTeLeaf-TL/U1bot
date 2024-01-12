@@ -118,23 +118,23 @@ class Scheduler:
                 return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
-        self, target: saa.PlatformTarget, *, time: Optional[time] = None
+        self, target: saa.PlatformTarget, *, time_param: Optional[time] = None
     ):
         """添加定时任务
 
         时间需要带时区信息
         """
         # 将时间转换为 UTC 时间
-        if time:
-            time = time_astimezone(time, ZoneInfo("UTC"))
+        if time_param:
+            time_param = time_astimezone(time_param, ZoneInfo("UTC"))
 
         async with get_session() as session:
             statement = self.select_target_statement(target, session)
             results = await session.scalars(statement)
             if schedule := results.one_or_none():
-                schedule.time = time
+                schedule.time = time_param
             else:
-                schedule = Schedule(time=time, target=target.dict())
+                schedule = Schedule(time=time_param, target=target.dict())
                 session.add(schedule)
             await session.commit()
         await self.update()
