@@ -208,17 +208,20 @@ class Ncm:
         :param nid:
         :return:
         """
-        ncm_check_cache.insert({"message_id": message_id,
-                                "type": "song",
-                                "nid": int(nid),
-                                "lid": 0,
-                                "ids": [],
-                                "lmsg": "",
-                                "bot_id": "",
-                                "time": int(time.time())})
+        ncm_check_cache.insert(
+            {
+                "message_id": message_id,
+                "type": "song",
+                "nid": nid,
+                "lid": 0,
+                "ids": [],
+                "lmsg": "",
+                "bot_id": "",
+                "time": int(time.time()),
+            }
+        )
 
     def get_playlist(self, lid: int, message_id: int):
-        lid = int(lid)
         data = self.api.playlist.GetPlaylistInfo(lid)
         # logger.info(data)
         if data["code"] == 200:
