@@ -129,9 +129,9 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             setList = argsText.split()
             i = 0
             setKeyList = list(config[bot.self_id]['agreeAutoApprove'].keys())
-            for set in setList[:2]:
-                if set.isdigit():
-                    if int(set) > 0:
+            for setarg in setList[:2]:
+                if setarg.isdigit():
+                    if int(setarg) > 0:
                         config[bot.self_id]['agreeAutoApprove'][setKeyList[i]] = 1
                     else:
                         config[bot.self_id]['agreeAutoApprove'][setKeyList[i]] = 0
@@ -318,10 +318,10 @@ async def _(bot: Bot, args: Message = CommandArg()):
         autoType = 'friend'
     else:
         autoType = 'all'
-    max = config[bot.self_id]['numControl'][autoType]['maxNum']
+    maxnum = config[bot.self_id]['numControl'][autoType]['maxNum']
     now = datetime.now()
     if parseTime(config[bot.self_id]['numControl'][autoType], numDict[bot.self_id][autoType], now) != -1:
-        await reFriendReqNum.send(message='未增满{}人,人数为{}上次添加时间{}'.format(max, numDict[bot.self_id][autoType]['count'], now))
+        await reFriendReqNum.send(message='未增满{}人,人数为{}上次添加时间{}'.format(maxnum, numDict[bot.self_id][autoType]['count'], now))
     argsText = argsText.replace('为', '').strip()
     if argsText.isdigit():
         numDict[bot.self_id][autoType]['count'] = int(argsText)

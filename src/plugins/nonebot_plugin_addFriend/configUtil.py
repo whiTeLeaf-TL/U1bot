@@ -10,7 +10,7 @@ basedir = dirname(__file__)
 configPath = f"{basedir}/config.json"
 requestorDictPath = f"{basedir}/requestor.json"
 numDictPath = f"{basedir}/num.json"
-max = 6
+addmax = 6
 blackLogPath = f"{basedir}/blackLog.txt"
 
 
@@ -105,7 +105,7 @@ config = readData(configPath)
 requestorDict = readData(requestorDictPath)
 numDict = readData(numDictPath)
 for bot_id in numDict.keys():
-    for type in numDict[bot_id].keys():
-        numDict[bot_id][type]["time"] = datetime.strptime(
-            numDict[bot_id][type]["time"], "%Y-%m-%d %H:%M:%S.%f"
+    for model in numDict[bot_id].keys():
+        numDict[bot_id][model]["time"] = datetime.strptime(
+            numDict[bot_id][model]["time"], "%Y-%m-%d %H:%M:%S.%f"
         )

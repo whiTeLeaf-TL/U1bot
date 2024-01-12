@@ -4,8 +4,8 @@ from nonebot.adapters.onebot.v11 import Bot
 import datetime
 
 
-def filterFriend(comment, type, allowTextList):
-    if type != 'friend':
+def filterFriend(comment, mode, allowTextList):
+    if mode != 'friend':
         return True
     if allowTextList == []:
         return True
@@ -74,19 +74,19 @@ def readTime(numDict: dict) -> dict:
     # num=int(data_list[0])sssssssss
     # old=datetime.datetime.strptime(data[type]["time"], "%Y-%m-%d %H:%M:%S.%f")
     # now = datetime.datetime.now()
-    for id in numDict:
-        for type in numDict[id].keys():
-            numDict[id][type]["time"] = datetime.datetime.strptime(
-                numDict[id][type]["time"], "%Y-%m-%d %H:%M:%S.%f")
+    for dictid in numDict:
+        for typemode in numDict[dictid].keys():
+            numDict[dictid][typemode]["time"] = datetime.datetime.strptime(
+                numDict[dictid][typemode]["time"], "%Y-%m-%d %H:%M:%S.%f")
     return numDict
 
 
 def writeTime(numDictPath, numDict: dict) -> dict:
     '''写时间'''
     numDictTemp = copy.deepcopy(numDict)
-    for id in numDictTemp:
-        for type in numDictTemp[id].keys():
-            numDictTemp[id][type]["time"] = str(numDictTemp[id][type]["time"])
+    for dictid in numDictTemp:
+        for typemode in numDictTemp[dictid].keys():
+            numDictTemp[dictid][typemode]["time"] = str(numDictTemp[dictid][typemode]["time"])
     with open(numDictPath, 'w', encoding='utf-8') as fp:
         json.dump(numDictTemp, fp, ensure_ascii=False)
     return numDictTemp
