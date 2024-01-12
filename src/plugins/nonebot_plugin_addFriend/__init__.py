@@ -257,7 +257,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
             if int(qq_or_group_id) in group_list:
                 status = '已经添加成功，勿复添加'
             else:
-                await bot.set_group_add_request(flag=flag, sub_type="add",approve=approve)
+                await bot.set_group_add_request(flag=flag, sub_type="add", approve=approve)
         else:
             res_msg = f'{qq_or_group_id}{notice_msg}{comment}\n{time}\n'
             msg_type = 'friend_msg'
