@@ -47,8 +47,7 @@ class Ncm:
 
     @staticmethod
     def save_user(session: str):
-        info = ncm_user_cache.search(Q["uid"] == "user")
-        if info:
+        if info := ncm_user_cache.search(Q["uid"] == "user"):
             info[0]['session'] = session
             ncm_user_cache.update(info[0], Q["uid"] == "user")
         else:
@@ -145,8 +144,7 @@ class Ncm:
         if lid:
             del_nid = []
             for i in nid:
-                info = music.search(Q["id"] == i)
-                if info:
+                if info := music.search(Q["id"] == i):
                     try:
                         tasks.append(asyncio.create_task(
                             self.upload_data_file(event=event, data=info[0])))
