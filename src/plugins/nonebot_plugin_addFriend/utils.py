@@ -52,11 +52,11 @@ async def sendMsg(bot: Bot, recipientList, msg: str, op=0):
             await bot.send_group_msg(group_id=recipient, message=msg)
 
 
-def getExist(plainCommandtext: str, wholeMessageText: str, argsText: str):
+def getExist(plainCommandtext: str, wholeMessageText: str, argsText: str) -> str | bool:
     '''返回命令'''
     commandText = wholeMessageText[::-
                                    1].replace(argsText[::-1], '', 1)[::-1].strip()
-    return commandText if not plainCommandtext else plainCommandtext in commandText
+    return plainCommandtext in commandText if plainCommandtext else commandText
 
 
 def readTime(numDict: dict) -> dict:
