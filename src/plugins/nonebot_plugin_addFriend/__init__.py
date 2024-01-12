@@ -307,7 +307,7 @@ reFriendReqNum = on_command(
 
 
 @reFriendReqNum.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, args: Message = CommandArg()):
     check_dict_key_bot_id(config, requestorDict, numDict, bot)
     argsText = args.extract_plain_text().strip()
     if '群聊' in argsText:
@@ -363,6 +363,6 @@ friendHelp = on_command("加好友帮助", block=True, priority=5, permission=SU
 
 
 @friendHelp.handle()
-async def _(bot: Bot, event: MessageEvent):
+async def _():
     msg = '重载配置\n更改自动同意,更改最大加数量,更改查看加返回数量,更改加时间,更改加时间单位(群聊、好友)\n同意加,拒绝加,查看加(群聊、好友)\n清理请求表\n重置请求次数(群聊、好友)\n添加请求接收者,删除请求接收者'
     await friendHelp.send(msg)
