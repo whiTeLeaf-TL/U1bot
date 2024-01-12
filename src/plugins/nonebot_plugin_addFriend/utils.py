@@ -12,7 +12,7 @@ def filterFriend(comment, type, allowTextList):
     return any(allowText in comment for allowText in allowTextList)
 
 
-async def parseMsg(commandText, resMsg, font_size=32, isText=1):
+async def parseMsg(resMsg):
     if type(resMsg) is list:
         temp = ''.join(str(item)+'\n' for item in resMsg)
         temp = temp.replace("'", "").replace('"', '')
