@@ -5,11 +5,12 @@ import asyncio
 from pil_utils import Text2Image
 from nonebot.adapters.onebot.v11 import Message
 
+defualt_md5 = "acef72340ac0e914090bd35799f5594e"
 
 async def download_avatar(user_id: int) -> bytes:
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
-    if hashlib.md5(data, usedforsecurity=False).hexdigest() == "acef72340ac0e914090bd35799f5594e":
+    if hashlib.md5(data, usedforsecurity=False).hexdigest() == defualt_md5:
         url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=100"
         data = await download_url(url)
     return data
@@ -31,7 +32,7 @@ async def user_img(user_id: int) -> str:
     """获取用户头像url"""
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
-    if hashlib.md5(data,usedforsecurity=False).hexdigest() == "acef72340ac0e914090bd35799f5594e":
+    if hashlib.md5(data, usedforsecurity=False).hexdigest() == defualt_md5:
         url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=100"
     return url
 
