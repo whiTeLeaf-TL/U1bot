@@ -64,12 +64,11 @@ class Ncm:
             self.get_user_info()
             return True
         except Exception as e:
-            if str(e) == str({'code': 400, 'message': '登陆失败,请进行安全验证'}):
-                logger.error("缺少安全验证，请将账号留空进行二维码登录")
-                logger.info("自动切换为二维码登录↓")
-                self.get_qrcode()
-            else:
+            if str(e) != str({'code': 400, 'message': '登陆失败,请进行安全验证'}):
                 raise e
+            logger.error("缺少安全验证，请将账号留空进行二维码登录")
+            logger.info("自动切换为二维码登录↓")
+            self.get_qrcode()
             return False
 
     def get_user_info(self) -> str:
