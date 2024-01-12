@@ -1,4 +1,4 @@
-from nonebot.rule import T_State
+from nonebot.typing import T_State
 from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
@@ -34,9 +34,10 @@ def match_link_parts(link):
 
 
 @github.handle()
-async def github_handle(bot: Bot, event: GroupMessageEvent, state: T_State):
+async def github_handle(event: GroupMessageEvent):
     url = match_link_parts(event.get_plaintext())
-    imageUrl = await get_github_reposity_information(url)
-    if imageUrl == "获取信息失败":
-        raise AssertionError
-    await github.send(MessageSegment.image(imageUrl))
+    if url is not None:
+        imageUrl = await get_github_reposity_information(url)
+        if imageUrl == "获取信息失败":
+            raise AssertionError
+        await github.send(MessageSegment.image(imageUrl))
