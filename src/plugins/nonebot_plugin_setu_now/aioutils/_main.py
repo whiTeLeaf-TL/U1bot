@@ -56,6 +56,8 @@ class SoonValue(Generic[T]):
 
     def set_value(self, value: T) -> None:
         self._stored_value = value
+
+
 class TaskGroup(_TaskGroup):
     def soonify(
         self, async_function: Callable[T_ParamSpec, Awaitable[T]], name: object = None
