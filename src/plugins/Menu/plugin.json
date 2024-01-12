@@ -334,12 +334,20 @@
                     "trigger_condition": "完全匹配",
                     "brief_des": "给群友涩涩",
                     "detail_des": "无"
-                },{
+                },
+                {
                     "func": "setu开关",
                     "trigger_method": "指令：setu开关",
                     "trigger_condition": "完全匹配",
                     "brief_des": "开关本群的涩图功能",
                     "detail_des": "权限:管理员/超管/群主"
+                },
+                {
+                    "func": "信息",
+                    "trigger_method": "回复消息 + 文字‘信息’",
+                    "trigger_condition": "完全匹配",
+                    "brief_des": "获取插图信息如作者作品id",
+                    "detail_des": "权限:所有人\n前提许开启涩图功能"
                 }
             ],
             "menu_template": "default"
@@ -417,7 +425,7 @@
             "menu_template": "default"
         }
     },
-    "14":{
+    "14": {
         "name": "伪造信息",
         "description": "伪造身份信息",
         "usage": "指令：伪造信息",
@@ -433,7 +441,8 @@
             ],
             "menu_template": "default"
         }
-    },"15":{
+    },
+    "15": {
         "name": "字符画",
         "description": "画一幅好看的字符画吧！",
         "usage": "字符画 <图片>（可GIF）",
@@ -449,7 +458,8 @@
             ],
             "menu_template": "default"
         }
-    },"16":{
+    },
+    "16": {
         "name": "表情包制作",
         "description": "制作各种沙雕表情包",
         "usage": "发送“表情包制作”查看表情包列表",
@@ -465,7 +475,8 @@
             ],
             "menu_template": "default"
         }
-    },"17":{
+    },
+    "17": {
         "name": "Github card",
         "description": "展示github仓库卡片",
         "usage": "github仓库卡片\n发出 github.com/用户名/仓库名 的格式即可自动检测",
@@ -481,7 +492,8 @@
             ],
             "menu_template": "default"
         }
-    },"18":{
+    },
+    "18": {
         "name": "识别动漫",
         "description": "查询图片中的人物",
         "usage": "#识别动漫\n回复图片即可",
@@ -510,7 +522,8 @@
                     "trigger_condition": "群聊",
                     "brief_des": "返回开关结果",
                     "detail_des": "默认关闭！"
-                },{
+                },
+                {
                     "func": "状态查询",
                     "trigger_method": "拍一拍",
                     "trigger_condition": "群聊/私聊",
