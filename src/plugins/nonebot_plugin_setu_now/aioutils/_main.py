@@ -59,6 +59,7 @@ class SoonValue(Generic[T]):
 
 
 class TaskGroup(_TaskGroup):
+
     def soonify(
         self, async_function: Callable[T_ParamSpec, Awaitable[T]], name: object = None
     ) -> Callable[T_ParamSpec, SoonValue[T]]:
