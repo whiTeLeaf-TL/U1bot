@@ -100,14 +100,15 @@ againReadConfig = on_command("重载配置", aliases={
 
 
 @againReadConfig.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):    # 下个版本把其他俩json也重载一下，不知道为啥这次就不想改
+# 下个版本把其他俩json也重载一下，不知道为啥这次就不想改
+async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     with open(configPath, 'r', encoding='utf-8') as fp:
         configUtil.config = json.load(fp)
     check_dict_key_bot_id(configUtil.config, requestorDict, numDict, bot)
     text = event.get_plaintext().strip()
     argsText = args.extract_plain_text().strip()
     commandText = getExist('', text, argsText)
-    if isinstance(commandText,bool):
+    if isinstance(commandText, bool):
         return
     print(argsText)
     if '群聊' in argsText:
@@ -137,6 +138,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):    # �
     resMsg = await parseMsg(resMsg)
     await againReadConfig.finish(resMsg)
 
+
 def handle_view_num_command(bot, argsText):
     print(3)
     if argsText.isdigit():
@@ -144,6 +146,7 @@ def handle_view_num_command(bot, argsText):
         if maxViewNum > 0 and maxViewNum < 120:
             configUtil.config[bot.self_id]['maxViewNum'] = maxViewNum
     return '更改成功,为\n{}'.format(configUtil.config[bot.self_id]['maxViewNum'])
+
 
 def handle_time_unit_command(bot, argsText, autoType):
     print(argsText, 1)
@@ -154,7 +157,8 @@ def handle_time_unit_command(bot, argsText, autoType):
     else:
         configUtil.config[bot.self_id]['numControl'][autoType]['unit'] = 'd'
     return '更改成功,为{}'.format(
-            configUtil.config[bot.self_id]['numControl'][autoType]['unit'])
+        configUtil.config[bot.self_id]['numControl'][autoType]['unit'])
+
 
 def handle_max_time_command(bot, argsText, autoType):
     print(2)
@@ -163,7 +167,8 @@ def handle_max_time_command(bot, argsText, autoType):
         if time > 0:
             configUtil.config[bot.self_id]['numControl'][autoType]['time'] = time
     return '更改成功,为{}'.format(
-            configUtil.config[bot.self_id]['numControl'][autoType]['time'])
+        configUtil.config[bot.self_id]['numControl'][autoType]['time'])
+
 
 def handle_max_num_command(bot, argsText, autoType):
     print(2)
@@ -174,7 +179,8 @@ def handle_max_num_command(bot, argsText, autoType):
         else:
             configUtil.config[bot.self_id]['numControl'][autoType]['maxNum'] = 0
     return '更改成功,为{}'.format(
-            configUtil.config[bot.self_id]['numControl'][autoType]['maxNum'])
+        configUtil.config[bot.self_id]['numControl'][autoType]['maxNum'])
+
 
 async def handle_auto_approve_command(bot, argsText, autoType):
     print(1)
@@ -186,7 +192,8 @@ async def handle_auto_approve_command(bot, argsText, autoType):
     elif autoType == 'all':
         setList = argsText.split()
         i = 0
-        setKeyList = list(configUtil.config[bot.self_id]['agreeAutoApprove'].keys())
+        setKeyList = list(
+            configUtil.config[bot.self_id]['agreeAutoApprove'].keys())
         for setarg in setList[:2]:
             if setarg.isdigit():
                 if int(setarg) > 0:
@@ -216,7 +223,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     if isinstance(command_text, bool):
         return
     auto_type = 'group' if '群' in args_text else 'friend'
-    res_msg=''
+    res_msg = ''
     status = '格式错误'
     if "同意加" in command_text:
         approve = True
