@@ -2,14 +2,14 @@ import io
 import httpx
 import hashlib
 import asyncio
-from pil_utils import BuildImage, Text2Image
+from pil_utils import Text2Image
 from nonebot.adapters.onebot.v11 import Message
 
 
 async def download_avatar(user_id: int) -> bytes:
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
-    if hashlib.md5(data).hexdigest() == "acef72340ac0e914090bd35799f5594e":
+    if hashlib.md5(data, usedforsecurity=False).hexdigest() == "acef72340ac0e914090bd35799f5594e":
         url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=100"
         data = await download_url(url)
     return data
@@ -27,17 +27,11 @@ async def download_url(url: str) -> bytes:
     raise Exception(f"{url} 下载失败！")
 
 
-async def download_user_img(user_id: int):
-    data = await download_avatar(user_id)
-    img = BuildImage.open(io.BytesIO(data))
-    return img.save_png()
-
-
-async def user_img(user_id: int) -> bytes:
+async def user_img(user_id: int) -> str:
     """获取用户头像url"""
     url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=640"
     data = await download_url(url)
-    if hashlib.md5(data).hexdigest() == "acef72340ac0e914090bd35799f5594e":
+    if hashlib.md5(data,usedforsecurity=False).hexdigest() == "acef72340ac0e914090bd35799f5594e":
         url = f"https://q1.qlogo.cn/g?b=qq&nk={user_id}&s=100"
     return url
 
