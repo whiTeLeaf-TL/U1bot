@@ -289,7 +289,7 @@ class Ncm:
             "from": fr,  # 判断来自单曲还是歌单
             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取时间
         }
-        if info := music.search(Q["id"] == nid):
+        if music.search(Q["id"] == nid):
             music.update(cf, Q["id"] == nid)
         else:
             music.insert(cf)
