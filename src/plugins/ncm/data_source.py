@@ -154,8 +154,7 @@ class Ncm:
                 nid.remove(j)
         else:
             nid = int(nid)
-            info = music.search(Q["id"] == nid)
-            if info:
+            if info := music.search(Q["id"] == nid):
                 try:
                     tasks.append(asyncio.create_task(
                         self.upload_data_file(event=event, data=info[0])))
@@ -308,9 +307,9 @@ class Ncm:
 
 
 nncm = Ncm()
-if info := ncm_user_cache.search(Q.uid == "user"):
+if ncm_user_info := ncm_user_cache.search(Q.uid == "user"):
     logger.info("检测到缓存，自动加载用户")
-    nncm.load_user(info[0]['session'])
+    nncm.load_user(ncm_user_info[0]['session'])
     nncm.get_user_info()
 elif ncm_config.ncm_phone == "":
     logger.warning("您未填写账号,自动进入二维码登录模式")

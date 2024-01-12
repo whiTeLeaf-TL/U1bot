@@ -14,21 +14,21 @@ max = 6
 blackLogPath = f"{basedir}/blackLog.txt"
 
 
-def check_dict_key_bot_id(config: dict, requestorDict: dict, numDict: dict, bot: Bot):
+def check_dict_key_bot_id(configbot: dict, requestor_dict: dict, numDictbot: dict, bot: Bot):
     print(1)
-    if config.get(bot.self_id) is None:
-        config[bot.self_id] = copy.deepcopy(configModel)
-        writeData(configPath, config)
-    if requestorDict.get(bot.self_id) is None:
-        requestorDict[bot.self_id] = copy.deepcopy(requestorDictModel)
-        writeData(requestorDictPath, requestorDict)
-    if numDict.get(bot.self_id) is None:
-        numDict[bot.self_id] = copy.deepcopy(numDictModel)
-        for type in numDict[bot.self_id].keys():
-            numDict[bot.self_id][type]["time"] = datetime.strptime(
-                numDict[bot.self_id][type]["time"], "%Y-%m-%d %H:%M:%S.%f"
+    if configbot.get(bot.self_id) is None:
+        configbot[bot.self_id] = copy.deepcopy(configModel)
+        writeData(configPath, configbot)
+    if requestor_dict.get(bot.self_id) is None:
+        requestor_dict[bot.self_id] = copy.deepcopy(requestorDictModel)
+        writeData(requestorDictPath, requestor_dict)
+    if numDictbot.get(bot.self_id) is None:
+        numDictbot[bot.self_id] = copy.deepcopy(numDictModel)
+        for t in numDictbot[bot.self_id].keys():
+            numDictbot[bot.self_id][t]["time"] = datetime.strptime(
+                numDictbot[bot.self_id][t]["time"], "%Y-%m-%d %H:%M:%S.%f"
             )
-        writeTime(numDictPath, numDict)
+        writeTime(numDictPath, numDictbot)
     # return True
 
 
