@@ -7,7 +7,7 @@ from datetime import date
 import httpx
 import nonebot
 from nonebot import require, get_driver, on_fullmatch
-from nonebot.adapters.onebot.v11 import  MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.plugin import PluginMetadata
 
 require("nonebot_plugin_apscheduler")
