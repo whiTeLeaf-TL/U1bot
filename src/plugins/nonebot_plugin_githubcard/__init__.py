@@ -1,4 +1,3 @@
-from nonebot.typing import T_State
 from nonebot import get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
 from .config import Config
