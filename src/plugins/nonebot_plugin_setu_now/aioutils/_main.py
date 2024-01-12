@@ -54,7 +54,8 @@ class SoonValue(Generic[T]):
     def ready(self) -> bool:
         return not isinstance(self._stored_value, PendingType)
 
-
+    def set_value(self, value: T) -> None:
+        self._stored_value = value
 class TaskGroup(_TaskGroup):
     def soonify(
         self, async_function: Callable[T_ParamSpec, Awaitable[T]], name: object = None
@@ -69,7 +70,7 @@ class TaskGroup(_TaskGroup):
             @functools.wraps(partial_f)
             async def value_wrapper() -> None:
                 value = await partial_f()
-                soon_value._stored_value = value
+                soon_value.set_value(value)
 
             self.start_soon(value_wrapper, name=name)
             return soon_value
