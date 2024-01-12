@@ -55,7 +55,7 @@ class AirApi(BaseModel, extra=Extra.allow):
     now: Optional[Air]
 
 
-class Warning(BaseModel, extra=Extra.allow):
+class Warninghint(BaseModel, extra=Extra.allow):
     title: str
     type: str
     pubTime: str
@@ -64,7 +64,7 @@ class Warning(BaseModel, extra=Extra.allow):
 
 class WarningApi(BaseModel, extra=Extra.allow):
     code: str
-    warning: Optional[List[Warning]]
+    warning: Optional[List[Warninghint]]
 
 
 class Hourly(BaseModel, extra=Extra.allow):

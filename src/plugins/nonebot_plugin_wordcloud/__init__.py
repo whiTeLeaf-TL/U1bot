@@ -96,9 +96,9 @@ __plugin_meta__ = PluginMetadata(
 class SameTime(ArparmaBehavior):
     @staticmethod
     def operate(interface: Arparma):
-        type = interface.query("type")
+        timetype = interface.query("type")
         time = interface.query("time")
-        if type is None and time:
+        if timetype is None and time:
             interface.behave_fail()
 
 
@@ -136,12 +136,12 @@ def parse_datetime(key: str):
     async def _key_parser(
         matcher: AlconnaMatcher,
         state: T_State,
-        input: Union[datetime, Message] = Arg(key),
+        keyinput: Union[datetime, Message] = Arg(key),
     ):
-        if isinstance(input, datetime):
+        if isinstance(keyinput, datetime):
             return
 
-        plaintext = input.extract_plain_text()
+        plaintext = keyinput.extract_plain_text()
         try:
             state[key] = get_datetime_fromisoformat_with_timezone(plaintext)
         except ValueError:
@@ -152,46 +152,46 @@ def parse_datetime(key: str):
 
 @wordcloud_cmd.handle(parameterless=[Depends(ensure_group)])
 async def handle_first_receive(
-    state: T_State, type: Optional[str] = None, time: Optional[str] = None
+    state: T_State, typemode: Optional[str] = None, time: Optional[str] = None
 ):
     dt = get_datetime_now_with_timezone()
 
-    if not type:
+    if not typemode:
         await wordcloud_cmd.finish(__plugin_meta__.usage)
 
-    if type == "今日":
+    if typemode == "今日":
         state["start"] = dt.replace(hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
-    elif type == "昨日":
+    elif typemode == "昨日":
         state["stop"] = dt.replace(hour=0, minute=0, second=0, microsecond=0)
         state["start"] = state["stop"] - timedelta(days=1)
-    elif type == "本周":
+    elif typemode == "本周":
         state["start"] = dt.replace(
             hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(days=dt.weekday())
         state["stop"] = dt
-    elif type == "上周":
+    elif typemode == "上周":
         state["stop"] = dt.replace(
             hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(days=dt.weekday())
         state["start"] = state["stop"] - timedelta(days=7)
-    elif type == "本月":
+    elif typemode == "本月":
         state["start"] = dt.replace(
             day=1, hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
-    elif type == "上月":
+    elif typemode == "上月":
         state["stop"] = dt.replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(microseconds=1)
         state["start"] = state["stop"].replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
-    elif type == "年度":
+    elif typemode == "年度":
         state["start"] = dt.replace(
             month=1, day=1, hour=0, minute=0, second=0, microsecond=0
         )
         state["stop"] = dt
-    elif type == "历史":
+    elif typemode == "历史":
         if time:
             plaintext = time
             if match := re.match(r"^(.+?)(?:~(.+))?$", plaintext):
