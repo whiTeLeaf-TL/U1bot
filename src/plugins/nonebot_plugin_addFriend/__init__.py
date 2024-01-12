@@ -283,7 +283,7 @@ delRequestorDict = on_command(
 
 
 @delRequestorDict.handle()
-async def check_outdate(bot: Bot, event: MessageEvent):
+async def check_outdate(bot: Bot):
     check_dict_key_bot_id(config, requestorDict, numDict, bot)
     delList = []
     for requestorType in requestorDict:
