@@ -497,5 +497,28 @@
             ],
             "menu_template": "default"
         }
+    },
+    "19": {
+        "name": "状态信息",
+        "description": "查询姚奕的状态",
+        "usage": "请看下面",
+        "extra": {
+            "menu_data": [
+                {
+                    "func": "状态开关",
+                    "trigger_method": "状态开关",
+                    "trigger_condition": "群聊",
+                    "brief_des": "返回开关结果",
+                    "detail_des": "默认关闭！"
+                },{
+                    "func": "状态查询",
+                    "trigger_method": "拍一拍",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "返回系统信息，内存占用，CPU占用，运行时间以及交换内存占用",
+                    "detail_des": "默认关闭！需要使用状态开关开启"
+                }
+            ],
+            "menu_template": "default"
+        }
     }
 }
