@@ -105,7 +105,7 @@ Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "脑积水"
 
 
 @del_dish.handle()
-async def got_dish_name(matcher: Matcher, state: T_State):
+async def _(matcher: Matcher, state: T_State):
     args = list(state['_matched_groups'])
     state['type'] = args[1]
     if args[2]:
@@ -113,7 +113,7 @@ async def got_dish_name(matcher: Matcher, state: T_State):
 
 
 @del_dish.got("name", prompt="请告诉我你要删除哪个菜品或饮料,发送“取消”可取消操作")
-async def del_(state: T_State, name: Message = Arg()):
+async def _(state: T_State, name: Message = Arg()):
     if str(name) == "取消":
         await del_dish.finish("已取消")
     if state['type'] in ['菜单', '菜品']:
@@ -129,7 +129,7 @@ async def del_(state: T_State, name: Message = Arg()):
 
 
 @add_dish.handle()
-async def got_dish_name(matcher: Matcher, state: T_State):
+async def _(matcher: Matcher, state: T_State):
     args = list(state['_matched_groups'])
     state['type'] = args[1]
     if args[2]:
@@ -137,14 +137,14 @@ async def got_dish_name(matcher: Matcher, state: T_State):
 
 
 @add_dish.got("dish_name", prompt="⭐请发送名字\n发送“取消”可取消添加")
-async def got(state: T_State, dish_name: Message = Arg()):
+async def _(state: T_State, dish_name: Message = Arg()):
     state['name'] = str(dish_name)
     if str(dish_name) == "取消":
         await add_dish.finish("已取消")
 
 
 @add_dish.got("img", prompt="⭐图片也发给我吧\n发送“取消”可取消添加")
-async def handle(state: T_State, img: Message = Arg()):
+async def _(state: T_State, img: Message = Arg()):
     if str(img) == "取消":
         await add_dish.finish("已取消")
     img_url = extract_image_urls(img)
@@ -165,7 +165,7 @@ async def handle(state: T_State, img: Message = Arg()):
 
 
 @view_dish.handle()
-async def got_name(matcher: Matcher, state: T_State):
+async def _(matcher: Matcher, state: T_State):
     # 正则匹配组
     args = list(state['_matched_groups'])
 
@@ -180,7 +180,7 @@ async def got_name(matcher: Matcher, state: T_State):
 
 
 @view_dish.got("name", prompt=f"请告诉{Bot_NICKNAME}具体菜名或者饮品名吧")
-async def handle(state: T_State, name: Message = Arg()):
+async def _(state: T_State, name: Message = Arg()):
     if state['type'] == "吃的":
         img = img_eat_path / f"{str(name)}.jpg"
     elif state['type'] == "喝的":
@@ -193,7 +193,7 @@ async def handle(state: T_State, name: Message = Arg()):
 
 
 @view_all_dishes.handle()
-async def handle(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent, state: T_State):
     # 正则匹配组
     args = list(state['_matched_groups'])
 
