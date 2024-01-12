@@ -13,7 +13,7 @@ from .perf_timer import PerfTimer
 
 
 async def download_pic(
-    url: str, proxies: Optional[str] = None, file_name="") -> Optional[Path]:
+        url: str, proxies: Optional[str] = None, file_name="") -> Optional[Path]:
     headers = {
         "Referer": "https://accounts.pixiv.net/login?lang=zh&source=pc&view_type=page&ref=wwwtop_accounts_index",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) "
