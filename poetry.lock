@@ -536,6 +536,22 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "blinker"
+version = "1.7.0"
+description = "Fast, simple object-to-object and broadcast signaling"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "blinker-1.7.0-py3-none-any.whl", hash = "sha256:c3f865d4d54db7abc53758a01601cf343fe55b84c1de4e3fa910e420b438d5b9"},
+    {file = "blinker-1.7.0.tar.gz", hash = "sha256:e6820ff6fa4e4d1d8e2747c2283749c3f547e4fee112b98555cdcdae32996182"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "cachetools"
 version = "5.3.2"
 description = "Extensible memoizing collections and decorators"
@@ -902,6 +918,33 @@ typing-extensions = ">=4.8.0"
 
 [package.extras]
 all = ["email-validator (>=2.0.0)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)", "jinja2 (>=2.11.2)", "orjson (>=3.2.1)", "pydantic-extra-types (>=2.0.0)", "pydantic-settings (>=2.0.0)", "python-multipart (>=0.0.5)", "pyyaml (>=5.3.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0)", "uvicorn[standard] (>=0.12.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "flask"
+version = "3.0.0"
+description = "A simple framework for building complex web applications."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "flask-3.0.0-py3-none-any.whl", hash = "sha256:21128f47e4e3b9d597a3e8521a329bf56909b690fcc3fa3e477725aa81367638"},
+    {file = "flask-3.0.0.tar.gz", hash = "sha256:cfadcdb638b609361d29ec22360d6070a77d7463dcb3ab08d2c2f2f168845f58"},
+]
+
+[package.dependencies]
+blinker = ">=1.6.2"
+click = ">=8.1.3"
+itsdangerous = ">=2.1.2"
+Jinja2 = ">=3.1.2"
+Werkzeug = ">=3.0.0"
+
+[package.extras]
+async = ["asgiref (>=3.2)"]
+dotenv = ["python-dotenv"]
 
 [package.source]
 type = "legacy"
@@ -1340,6 +1383,36 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "hypercorn"
+version = "0.16.0"
+description = "A ASGI Server based on Hyper libraries and inspired by Gunicorn"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "hypercorn-0.16.0-py3-none-any.whl", hash = "sha256:929e45c4acde3fbf7c58edf55336d30a009d2b4cb1f1eb96e6a515d61b663f58"},
+    {file = "hypercorn-0.16.0.tar.gz", hash = "sha256:3b17d1dcf4992c1f262d9f9dd799c374125d0b9a8e40e1e2d11e2938b0adfe03"},
+]
+
+[package.dependencies]
+h11 = "*"
+h2 = ">=3.1.0"
+priority = "*"
+taskgroup = {version = "*", markers = "python_version < \"3.11\""}
+tomli = {version = "*", markers = "python_version < \"3.11\""}
+wsproto = ">=0.14.0"
+
+[package.extras]
+docs = ["pydata_sphinx_theme", "sphinxcontrib_mermaid"]
+h3 = ["aioquic (>=0.9.0,<1.0)"]
+trio = ["exceptiongroup (>=1.1.0)", "trio (>=0.22.0)"]
+uvloop = ["uvloop"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "hyperframe"
 version = "6.0.1"
 description = "HTTP/2 framing layer for Python"
@@ -1437,6 +1510,22 @@ python-versions = ">=3.6.2,<4.0"
 files = [
     {file = "iso8601-1.1.0-py3-none-any.whl", hash = "sha256:8400e90141bf792bce2634df533dc57e3bee19ea120a87bebcd3da89a58ad73f"},
     {file = "iso8601-1.1.0.tar.gz", hash = "sha256:32811e7b81deee2063ea6d2e94f8819a86d1f3811e49d23623a41fa832bef03f"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "itsdangerous"
+version = "2.1.2"
+description = "Safely pass data to untrusted environments and back."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "itsdangerous-2.1.2-py3-none-any.whl", hash = "sha256:2c2349112351b88699d8d4b6b075022c0808887cb7ad10069318a8b0bc88db44"},
+    {file = "itsdangerous-2.1.2.tar.gz", hash = "sha256:5dbbc68b317e5e42f327f9021763545dc3fc3bfe22e6deb96aaf1fc38874156a"},
 ]
 
 [package.source]
@@ -2359,6 +2448,7 @@ httpx = {version = ">=0.20.0,<1.0.0", extras = ["http2"], optional = true, marke
 loguru = ">=0.6.0,<1.0.0"
 pydantic = {version = ">=1.10.0,<2.0.0", extras = ["dotenv"]}
 pygtrie = ">=2.4.1,<3.0.0"
+Quart = {version = ">=0.18.0,<1.0.0", optional = true, markers = "extra == \"quart\" or extra == \"all\""}
 tomli = {version = ">=2.0.1,<3.0.0", markers = "python_version < \"3.11\""}
 typing-extensions = ">=4.4.0,<5.0.0"
 uvicorn = {version = ">=0.20.0,<1.0.0", extras = ["standard"], optional = true, markers = "extra == \"quart\" or extra == \"fastapi\" or extra == \"all\""}
@@ -2599,6 +2689,22 @@ files = [
 [package.dependencies]
 greenlet = "3.0.1"
 pyee = "11.0.1"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "priority"
+version = "2.0.0"
+description = "A pure-Python implementation of the HTTP/2 priority tree"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "priority-2.0.0-py3-none-any.whl", hash = "sha256:6f8eefce5f3ad59baf2c080a664037bb4725cd0a790d53d59ab4059288faf6aa"},
+    {file = "priority-2.0.0.tar.gz", hash = "sha256:c965d54f1b8d0d0b19479db3924c7c36cf672dbf2aec92d43fbdaf4492ba18c0"},
+]
 
 [package.source]
 type = "legacy"
@@ -3094,6 +3200,37 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "quart"
+version = "0.19.4"
+description = "A Python ASGI web microframework with the same API as Flask"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "quart-0.19.4-py3-none-any.whl", hash = "sha256:959da9371b44b6f48d952661863f8f64e68a893481ef3f2ef45b177629dc0928"},
+    {file = "quart-0.19.4.tar.gz", hash = "sha256:22ff186cf164955a7bf7483ff42a739a9fad3b119041846b15dc9597ec74c85c"},
+]
+
+[package.dependencies]
+aiofiles = "*"
+blinker = ">=1.6"
+click = ">=8.0.0"
+flask = ">=3.0.0"
+hypercorn = ">=0.11.2"
+itsdangerous = "*"
+jinja2 = "*"
+markupsafe = "*"
+werkzeug = ">=3.0.0"
+
+[package.extras]
+docs = ["pydata_sphinx_theme"]
+dotenv = ["python-dotenv"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -3336,6 +3473,25 @@ files = [
 
 [package.dependencies]
 typing-extensions = ">=4.4.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "taskgroup"
+version = "0.0.0a4"
+description = "backport of asyncio.TaskGroup, asyncio.Runner and asyncio.timeout"
+optional = false
+python-versions = "*"
+files = [
+    {file = "taskgroup-0.0.0a4-py2.py3-none-any.whl", hash = "sha256:5c1bd0e4c06114e7a4128583ab75c987597d5378a33948a3b74c662b90f61277"},
+    {file = "taskgroup-0.0.0a4.tar.gz", hash = "sha256:eb08902d221e27661950f2a0320ddf3f939f579279996f81fe30779bca3a159c"},
+]
+
+[package.dependencies]
+exceptiongroup = "*"
 
 [package.source]
 type = "legacy"
@@ -3820,6 +3976,28 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "werkzeug"
+version = "3.0.1"
+description = "The comprehensive WSGI web application library."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "werkzeug-3.0.1-py3-none-any.whl", hash = "sha256:90a285dc0e42ad56b34e696398b8122ee4c681833fb35b8334a095d82c56da10"},
+    {file = "werkzeug-3.0.1.tar.gz", hash = "sha256:507e811ecea72b18a404947aded4b3390e1db8f826b494d76550ef45bb3b1dcc"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=2.1.1"
+
+[package.extras]
+watchdog = ["watchdog (>=2.3)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "win32-setctime"
 version = "1.1.0"
 description = "A small Python utility to set file creation time on Windows"
@@ -3915,6 +4093,25 @@ files = [
 matplotlib = "*"
 numpy = ">=1.6.1"
 pillow = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
+name = "wsproto"
+version = "1.2.0"
+description = "WebSockets state-machine based protocol implementation"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "wsproto-1.2.0-py3-none-any.whl", hash = "sha256:b9acddd652b585d75b20477888c56642fdade28bdfd3579aa24a4d2c037dd736"},
+    {file = "wsproto-1.2.0.tar.gz", hash = "sha256:ad565f26ecb92588a3e43bc3d96164de84cd9902482b130d0ddbaa9664a85065"},
+]
+
+[package.dependencies]
+h11 = ">=0.9.0,<1"
 
 [package.source]
 type = "legacy"
@@ -4032,4 +4229,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a62b79ab8a5a2471e6f3bb90931e126a5cb2551d49e5c1cac5a152f1375c15bd"
+content-hash = "81ed9043324520258442af72ee167722c4d10943805b248efbe0eb11e03f7fca"
