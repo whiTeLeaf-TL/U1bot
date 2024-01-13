@@ -505,6 +505,12 @@
                     "trigger_condition": "群聊/私聊",
                     "brief_des": "返回识别结果",
                     "detail_des": "回复图片即可"
+                },{
+                    "func": "搜图",
+                    "trigger_method": "搜图",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "返回识别结果",
+                    "detail_des": "回复图片即可"
                 }
             ],
             "menu_template": "default"
