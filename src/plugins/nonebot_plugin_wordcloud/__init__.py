@@ -1,26 +1,20 @@
 """ 词云
 """
-from nonebot import require
-
-require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_alconna")
-require("nonebot_plugin_cesaa")
-
-import re
-from datetime import datetime, timedelta
-from io import BytesIO
-from typing import Optional, Union
-
-import nonebot_plugin_alconna as alc
-import nonebot_plugin_saa as saa
-from arclet.alconna import ArparmaBehavior
-from arclet.alconna.arparma import Arparma
-from nonebot import get_driver
-from nonebot.adapters import Bot, Event, Message
-from nonebot.params import Arg, Depends
-from nonebot.permission import SUPERUSER
-from nonebot.plugin import PluginMetadata, inherit_supported_adapters
-from nonebot.typing import T_State
+from .utils import (
+    admin_permission,
+    ensure_group,
+    get_datetime_fromisoformat_with_timezone,
+    get_datetime_now_with_timezone,
+    get_mask_key,
+    get_time_fromisoformat_with_timezone,
+)
+from .schedule import schedule_service
+from .data_source import get_wordcloud
+from .config import Config, plugin_config
+from . import migrations
+from PIL import Image
+from nonebot_plugin_session import Session, SessionIdType, extract_session
+from nonebot_plugin_cesaa import get_messages_plain_text
 from nonebot_plugin_alconna import (
     Alconna,
     AlconnaMatch,
@@ -34,22 +28,26 @@ from nonebot_plugin_alconna import (
     on_alconna,
     store_true,
 )
-from nonebot_plugin_cesaa import get_messages_plain_text
-from nonebot_plugin_session import Session, SessionIdType, extract_session
-from PIL import Image
+from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata, inherit_supported_adapters
+from nonebot.permission import SUPERUSER
+from nonebot.params import Arg, Depends
+from nonebot.adapters import Bot, Event, Message
+from nonebot import get_driver
+from arclet.alconna.arparma import Arparma
+from arclet.alconna import ArparmaBehavior
+import nonebot_plugin_saa as saa
+import nonebot_plugin_alconna as alc
+from typing import Optional, Union
+from io import BytesIO
+from datetime import datetime, timedelta
+import re
+from nonebot import require
 
-from . import migrations
-from .config import Config, plugin_config
-from .data_source import get_wordcloud
-from .schedule import schedule_service
-from .utils import (
-    admin_permission,
-    ensure_group,
-    get_datetime_fromisoformat_with_timezone,
-    get_datetime_now_with_timezone,
-    get_mask_key,
-    get_time_fromisoformat_with_timezone,
-)
+require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_alconna")
+require("nonebot_plugin_cesaa")
+
 
 get_driver().on_startup(schedule_service.update)
 
@@ -109,7 +107,8 @@ wordcloud_cmd = on_alconna(
     Alconna(
         "词云",
         Option("--my", default=False, action=store_true),
-        Args["type?", ["今日", "昨日", "本周", "上周", "本月", "上月", "年度", "历史"]]["time?", str],
+        Args["type?", ["今日", "昨日", "本周", "上周",
+                       "本月", "上月", "年度", "历史"]]["time?", str],
         behaviors=[SameTime()],
     ),
     use_cmd_start=True,
@@ -178,7 +177,8 @@ async def handle_first_receive(
         ) - timedelta(days=dt.weekday())
         state["start"] = state["stop"] - timedelta(days=7)
     elif type == "本月":
-        state["start"] = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        state["start"] = dt.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
     elif type == "上月":
         state["stop"] = dt.replace(
@@ -199,9 +199,11 @@ async def handle_first_receive(
                 start = match[1]
                 stop = match[2]
                 try:
-                    state["start"] = get_datetime_fromisoformat_with_timezone(start)
+                    state["start"] = get_datetime_fromisoformat_with_timezone(
+                        start)
                     if stop:
-                        state["stop"] = get_datetime_fromisoformat_with_timezone(stop)
+                        state["stop"] = get_datetime_fromisoformat_with_timezone(
+                            stop)
                     else:
                         # 如果没有指定结束日期，则认为是所给日期的当天的词云
                         state["start"] = state["start"].replace(
@@ -335,7 +337,8 @@ async def _(
 schedule_cmd = on_alconna(
     Alconna(
         "词云定时发送",
-        Option("--action", Args["action_type", ["状态", "开启", "关闭"]], default="状态"),
+        Option("--action", Args["action_type",
+               ["状态", "开启", "关闭"]], default="状态"),
         Args["type", ["每日"]]["time?", str],
     ),
     permission=admin_permission(),
