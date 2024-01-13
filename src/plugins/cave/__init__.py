@@ -4,6 +4,8 @@ import base64
 import requests
 from nonebot import get_driver, logger, on_command
 from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
+from nonebot.adapters.onebot.v11.helpers import extract_image_urls
+
 from nonebot.plugin import PluginMetadata
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -58,16 +60,19 @@ def process_message(original_message):
 async def _(matcher: Matcher, event: MessageEvent, args: Message = CommandArg()):
     key = str(args).strip()
     # 仅私聊
+    urllist=extract_image_urls(event.get_message())
+    if len(urllist)>1:
+        await cave_add.finish("只能投一张图哦")
     if not isinstance(event, PrivateMessageEvent):
-        await matcher.finish("别搞啊，只能私聊我才能投稿啊！")
+        await cave_add.finish("别搞啊，只能私聊我才能投稿啊！")
     if not key:
-        await matcher.finish("不输入内容，小子你是想让我投稿什么？空气咩？")
+        await cave_add.finish("不输入内容，小子你是想让我投稿什么？空气咩？")
 
     caves = await cave_models.create(
         details=process_message(key), user_id=event.user_id
     )
-    await matcher.send("投稿成功！")
-    await matcher.finish(
+    await cave_add.send("投稿成功！")
+    await cave_add.finish(
         Message(
             f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time}\n----------------------"
         )
