@@ -74,7 +74,7 @@ configModel = {
     },
     "warnDict": {
         "friend": {"text": [], "id": []},
-        "group": {"text": ["绘画","挂","城"], "id": []},
+        "group": {"text": ["绘画", "挂", "城"], "id": []},
         "forward": {},
     },
     "allowAddFriednText": [],
