@@ -60,8 +60,8 @@ def process_message(original_message):
 async def _(matcher: Matcher, event: MessageEvent, args: Message = CommandArg()):
     key = str(args).strip()
     # 仅私聊
-    urllist=extract_image_urls(event.get_message())
-    if len(urllist)>1:
+    urllist = extract_image_urls(event.get_message())
+    if len(urllist) > 1:
         await cave_add.finish("只能投一张图哦")
     if not isinstance(event, PrivateMessageEvent):
         await cave_add.finish("别搞啊，只能私聊我才能投稿啊！")
