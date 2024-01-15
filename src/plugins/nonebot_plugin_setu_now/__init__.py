@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Annotated, Any, Any, Dict, Union, Union
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
 from nonebot import on_command, on_regex, require
@@ -28,7 +28,6 @@ from .models import SetuNotFindError, Setu
 from nonebot_plugin_tortoise_orm import add_model
 from PIL import UnidentifiedImageError
 from pathlib import Path
-from typing import Any, Union, Annotated
 from re import I, sub
 import asyncio
 
