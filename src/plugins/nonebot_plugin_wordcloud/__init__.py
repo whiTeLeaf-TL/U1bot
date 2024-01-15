@@ -1,5 +1,4 @@
-""" 词云
-"""
+"""词云"""
 from .utils import (
     admin_permission,
     ensure_group,
