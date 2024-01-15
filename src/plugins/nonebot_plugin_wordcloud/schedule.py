@@ -115,7 +115,8 @@ class Scheduler:
                     return time_astimezone(
                         schedule.time.replace(tzinfo=ZoneInfo("UTC"))
                     )
-                return plugin_config.wordcloud_default_schedule_time
+                else:
+                    return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
         self, target: saa.PlatformTarget, *, time: Optional[time] = None

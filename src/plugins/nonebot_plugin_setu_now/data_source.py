@@ -58,7 +58,6 @@ class SetuHandler:
         setu.img = await download_pic(
             url=setu.urls[SETU_SIZE],
             proxies=self.proxy,
-            file_mode=True,
             file_name=f"{setu.pid}.{setu.ext}",
         )
         await self.handler(setu)

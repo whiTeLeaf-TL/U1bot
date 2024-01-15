@@ -47,8 +47,7 @@ class Ncm:
 
     @staticmethod
     def save_user(session: str):
-        info = ncm_user_cache.search(Q["uid"] == "user")
-        if info:
+        if info := ncm_user_cache.search(Q["uid"] == "user"):
             info[0]['session'] = session
             ncm_user_cache.update(info[0], Q["uid"] == "user")
         else:
@@ -65,12 +64,11 @@ class Ncm:
             self.get_user_info()
             return True
         except Exception as e:
-            if str(e) == str({'code': 400, 'message': '登陆失败,请进行安全验证'}):
-                logger.error("缺少安全验证，请将账号留空进行二维码登录")
-                logger.info("自动切换为二维码登录↓")
-                self.get_qrcode()
-            else:
+            if str(e) != str({'code': 400, 'message': '登陆失败,请进行安全验证'}):
                 raise e
+            logger.error("缺少安全验证，请将账号留空进行二维码登录")
+            logger.info("自动切换为二维码登录↓")
+            self.get_qrcode()
             return False
 
     def get_user_info(self) -> str:
@@ -145,8 +143,7 @@ class Ncm:
         if lid:
             del_nid = []
             for i in nid:
-                info = music.search(Q["id"] == i)
-                if info:
+                if info := music.search(Q["id"] == i):
                     try:
                         tasks.append(asyncio.create_task(
                             self.upload_data_file(event=event, data=info[0])))
@@ -157,8 +154,7 @@ class Ncm:
                 nid.remove(j)
         else:
             nid = int(nid)
-            info = music.search(Q["id"] == nid)
-            if info:
+            if info := music.search(Q["id"] == nid):
                 try:
                     tasks.append(asyncio.create_task(
                         self.upload_data_file(event=event, data=info[0])))
@@ -208,17 +204,20 @@ class Ncm:
         :param nid:
         :return:
         """
-        ncm_check_cache.insert({"message_id": message_id,
-                                "type": "song",
-                                "nid": int(nid),
-                                "lid": 0,
-                                "ids": [],
-                                "lmsg": "",
-                                "bot_id": "",
-                                "time": int(time.time())})
+        ncm_check_cache.insert(
+            {
+                "message_id": message_id,
+                "type": "song",
+                "nid": nid,
+                "lid": 0,
+                "ids": [],
+                "lmsg": "",
+                "bot_id": "",
+                "time": int(time.time()),
+            }
+        )
 
     def get_playlist(self, lid: int, message_id: int):
-        lid = int(lid)
         data = self.api.playlist.GetPlaylistInfo(lid)
         # logger.info(data)
         if data["code"] == 200:
@@ -289,7 +288,7 @@ class Ncm:
             "from": fr,  # 判断来自单曲还是歌单
             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取时间
         }
-        if info := music.search(Q["id"] == nid):
+        if music.search(Q["id"] == nid):
             music.update(cf, Q["id"] == nid)
         else:
             music.insert(cf)
@@ -308,9 +307,9 @@ class Ncm:
 
 
 nncm = Ncm()
-if info := ncm_user_cache.search(Q.uid == "user"):
+if ncm_user_info := ncm_user_cache.search(Q.uid == "user"):
     logger.info("检测到缓存，自动加载用户")
-    nncm.load_user(info[0]['session'])
+    nncm.load_user(ncm_user_info[0]['session'])
     nncm.get_user_info()
 elif ncm_config.ncm_phone == "":
     logger.warning("您未填写账号,自动进入二维码登录模式")

@@ -75,7 +75,7 @@ def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
     frequency = analyse_message(message)
     # 词云参数
     wordcloud_options = {}
-    wordcloud_options |= plugin_config.wordcloud_options
+    wordcloud_options.update(plugin_config.wordcloud_options)
     wordcloud_options.setdefault(
         "font_path", str(plugin_config.wordcloud_font_path))
     wordcloud_options.setdefault("width", plugin_config.wordcloud_width)

@@ -17,7 +17,8 @@ def get_datetime_now_with_timezone() -> datetime:
     """获取当前时间，并包含时区信息"""
     if plugin_config.wordcloud_timezone:
         return datetime.now(ZoneInfo(plugin_config.wordcloud_timezone))
-    return datetime.now().astimezone()
+    else:
+        return datetime.now().astimezone()
 
 
 def get_datetime_fromisoformat_with_timezone(date_string: str) -> datetime:
@@ -37,7 +38,7 @@ def time_astimezone(time: time, tz: Optional[tzinfo] = None) -> time:
 
     如果 tz 为 None，则转换为本地时区
     """
-    local_time = datetime.combine(datetime.now(), time)
+    local_time = datetime.combine(datetime.today(), time)
     return local_time.astimezone(tz).timetz()
 
 
@@ -75,14 +76,14 @@ def get_mask_key(target: PlatformTarget = Depends(get_target)) -> str:
     qq_group-group_id=10000
     qq_guild_channel-channel_id=100000
     """
-    mask_keys = [
-        f"{target.platform_type.name}",
-        *[
+    mask_keys = [f"{target.platform_type.name}"]
+    mask_keys.extend(
+        [
             f"{key}={value}"
             for key, value in target.dict(exclude={"platform_type"}).items()
             if value is not None
-        ],
-    ]
+        ]
+    )
     return "-".join(mask_keys)
 
 

@@ -13,7 +13,6 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
 )
 from nonebot.plugin import PluginMetadata
-from numpy import record
 from .models import *
 from .utils import *
 from .config import Config

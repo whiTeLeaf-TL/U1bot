@@ -4,15 +4,15 @@ from nonebot.adapters.onebot.v11 import Bot
 import datetime
 
 
-def filterFriend(comment, type, allowTextList):
-    if type != 'friend':
+def filterFriend(comment, mode, allowTextList):
+    if mode != 'friend':
         return True
     if allowTextList == []:
         return True
     return any(allowText in comment for allowText in allowTextList)
 
 
-async def parseMsg(commandText, resMsg, font_size=32, isText=1):
+async def parseMsg(resMsg):
     if type(resMsg) is list:
         temp = ''.join(str(item)+'\n' for item in resMsg)
         temp = temp.replace("'", "").replace('"', '')
@@ -52,11 +52,11 @@ async def sendMsg(bot: Bot, recipientList, msg: str, op=0):
             await bot.send_group_msg(group_id=recipient, message=msg)
 
 
-def getExist(plainCommandtext: str, wholeMessageText: str, argsText: str):
+def getExist(plainCommandtext: str, wholeMessageText: str, argsText: str) -> str | bool:
     '''返回命令'''
     commandText = wholeMessageText[::-
                                    1].replace(argsText[::-1], '', 1)[::-1].strip()
-    return commandText if not plainCommandtext else plainCommandtext in commandText
+    return plainCommandtext in commandText if plainCommandtext else commandText
 
 
 def readTime(numDict: dict) -> dict:
@@ -74,19 +74,20 @@ def readTime(numDict: dict) -> dict:
     # num=int(data_list[0])sssssssss
     # old=datetime.datetime.strptime(data[type]["time"], "%Y-%m-%d %H:%M:%S.%f")
     # now = datetime.datetime.now()
-    for id in numDict:
-        for type in numDict[id].keys():
-            numDict[id][type]["time"] = datetime.datetime.strptime(
-                numDict[id][type]["time"], "%Y-%m-%d %H:%M:%S.%f")
+    for dictid in numDict:
+        for typemode in numDict[dictid].keys():
+            numDict[dictid][typemode]["time"] = datetime.datetime.strptime(
+                numDict[dictid][typemode]["time"], "%Y-%m-%d %H:%M:%S.%f")
     return numDict
 
 
 def writeTime(numDictPath, numDict: dict) -> dict:
     '''写时间'''
     numDictTemp = copy.deepcopy(numDict)
-    for id in numDictTemp:
-        for type in numDictTemp[id].keys():
-            numDictTemp[id][type]["time"] = str(numDictTemp[id][type]["time"])
+    for dictid in numDictTemp:
+        for typemode in numDictTemp[dictid].keys():
+            numDictTemp[dictid][typemode]["time"] = str(
+                numDictTemp[dictid][typemode]["time"])
     with open(numDictPath, 'w', encoding='utf-8') as fp:
         json.dump(numDictTemp, fp, ensure_ascii=False)
     return numDictTemp

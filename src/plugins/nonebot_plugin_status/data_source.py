@@ -87,6 +87,7 @@ def _get_disk_usage(path: str) -> Optional["sdiskusage"]:
         return psutil.disk_usage(path)
     except Exception as e:
         logger.warning(f"Could not get disk usage for {path}: {e!r}")
+        return None
 
 
 def get_disk_usage() -> Dict[str, "sdiskusage"]:
