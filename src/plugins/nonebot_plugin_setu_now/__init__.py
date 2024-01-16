@@ -1,4 +1,4 @@
-from typing import Annotated, Any, Any, Dict, Union
+from typing import Annotated, Any, Dict, Union
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
 from nonebot import on_command, on_regex, require
