@@ -29,7 +29,6 @@ with open(luckpath, "r", encoding="utf-8") as f:
     luckdata = json.load(f)
 
 
-
 @Luck.handle()
 async def _(matcher: Matcher, event: MessageEvent):
     # 读取数据库
