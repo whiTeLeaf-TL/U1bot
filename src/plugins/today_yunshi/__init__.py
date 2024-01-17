@@ -29,6 +29,7 @@ with open(luckpath, "r", encoding="utf-8") as f:
     luckdata = json.load(f)
 
 
+
 @Luck.handle()
 async def _(matcher: Matcher, event: MessageEvent):
     # 读取数据库
@@ -37,7 +38,9 @@ async def _(matcher: Matcher, event: MessageEvent):
     if member_model is None:
         # 如果没有数据则创建数据
         result_text, luckid = randomluck(str(event.user_id), {})
-        await MemberData.create(user_id=str(event.user_id), luckid=luckid, time=datetime.now())
+        await MemberData.create(
+            user_id=str(event.user_id), luckid=luckid, time=datetime.now()
+        )
 
         if isinstance(event, PrivateMessageEvent):
             await matcher.finish(result_text)
