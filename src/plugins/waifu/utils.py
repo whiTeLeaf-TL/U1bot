@@ -1,4 +1,5 @@
 import io
+from nonebot import logger
 import httpx
 import hashlib
 import asyncio
