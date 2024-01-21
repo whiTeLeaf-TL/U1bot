@@ -1,8 +1,7 @@
-from nonebot import require
 import contextlib
 import random
 
-from nonebot import logger, get_driver, on_command, on_message
+from nonebot import logger, get_driver, on_command, on_message, logger, require
 from datetime import datetime
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
@@ -17,8 +16,7 @@ from .models import *
 from .utils import *
 from .config import Config
 
-__plugin_meta__ = PluginMetadata(
-    name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -91,8 +89,7 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0,
-                  minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -408,7 +405,14 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             return False
 
         if at == user_id:
-            msg = f"恭喜你涩到了你自己！{MessageSegment.image(file=await user_img(user_id))}"
+            member = await bot.get_group_member_info(
+                group_id=group_id, user_id=user_id
+            )
+            msg = (
+                "恭喜你涩到了你自己！"
+                + MessageSegment.image(file=await user_img(user_id))
+                + f"『{(member['card'] or member['nickname'])}』！"
+            )
             await bot.send(event, msg, at_sender=True)
             return False
         X = random.randint(1, 100)
