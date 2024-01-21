@@ -184,6 +184,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             if (user_id := member["user_id"]) not in rule_out
             and member["last_sent_time"] > lastmonth
         ]
+        if 2854196310 in waifu_ids:
+            waifu_ids.remove(2854196310)
         if waifu_ids:
             waifu_id = random.choice(list(waifu_ids))
         else:
@@ -336,6 +338,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         for member in member_list
         if member["user_id"] not in rule_out and member["last_sent_time"] > lastmonth
     ]
+    if 2854196310 in member_list:
+        member_list.remove(2854196310)
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     if member_list:
         msg = "卡池：\n——————————————\n"
@@ -441,6 +445,8 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             and member["last_sent_time"] > lastmonth
             and member["user_id"] != int(bot.self_id)
         ]
+        if 2854196310 in yinpa_ids:
+            yinpa_ids.remove(2854196310)
         if yinpa_ids:
             yinpa_id = random.choice(yinpa_ids)
         else:
@@ -493,6 +499,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if member["user_id"] not in protect_set.user_id
         and member["last_sent_time"] > lastmonth
     ]
+    if 2854196310 in member_list:
+        del member_list[2854196310]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     msg = "卡池：\n——————————————\n" + "\n".join(
         [(member["card"] or member["nickname"]) for member in member_list[:80]]
