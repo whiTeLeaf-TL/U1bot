@@ -2,7 +2,7 @@
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
 ]
-plugins = ["nonebot_plugin_datastore","nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry","nonebot_plugin_cesaa", "nonebot_plugin_sentry","nonebot_plugin_localstore","nonebot_plugin_chatrecorder","nonebot_plugin_session","nonebot_plugin_saa","nonebot_plugin_orm"]
+plugins = ["nonebot_plugin_datastore","nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry","nonebot_plugin_cesaa","nonebot_plugin_localstore","nonebot_plugin_chatrecorder","nonebot_plugin_session","nonebot_plugin_saa","nonebot_plugin_orm"]
 plugin_dirs = ["src/plugins"]
 builtin_plugins = []
 
@@ -23,7 +23,6 @@ nonebot-plugin-htmlrender = "^0.2.3"
 nonebot-plugin-alconna = "^0.35.1"
 nonebot-plugin-memes-api = "^0.2.1"
 nonebot-plugin-eventexpiry = "^0.1.1"
-nonebot-plugin-sentry = "^1.0.1"
 nonebot-plugin-localstore = "^0.5.1"
 pil-utils = "^0.1.8"
 ujson = "^5.9.0"
