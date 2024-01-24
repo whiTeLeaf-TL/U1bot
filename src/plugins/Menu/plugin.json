@@ -39,6 +39,13 @@
                     "trigger_condition": "全字匹配",
                     "brief_des": "查看涩涩记录",
                     "detail_des": "查看当前群的群友今日透群友次数和被透的次数，记录是跨群的。也就是说群友在别的群挨透也会在记录里显示出来\n群友背地里玩的挺花（bushi）"
+                },
+                {
+                    "func": "本群cp",
+                    "trigger_method": "指令：本群cp",
+                    "trigger_condition": "全字匹配",
+                    "brief_des": "查看本群cp记录",
+                    "detail_des": "查看当前群本群cp"
                 }
             ]
         }
@@ -224,7 +231,13 @@
         "description": "看看别人的投稿，也可以自己投稿~",
         "usage": "投稿\n查看回声洞记录\n删除[序号]\n如：\n投稿",
         "extra": {
-            "menu_data": [
+            "menu_data": [{
+                    "func": "回声洞",
+                    "trigger_method": "回声洞",
+                    "trigger_condition": "群聊/私聊",
+                    "brief_des": "随机看回声洞的其中一条",
+                    "detail_des": "无"
+                },
                 {
                     "func": "投稿",
                     "trigger_method": "投稿/回声洞投稿",
@@ -494,9 +507,9 @@
         }
     },
     "18": {
-        "name": "识别动漫",
+        "name": "搜图片",
         "description": "查询图片中的人物",
-        "usage": "#识别动漫\n回复图片即可",
+        "usage": "搜图片",
         "extra": {
             "menu_data": [
                 {
@@ -505,7 +518,8 @@
                     "trigger_condition": "群聊/私聊",
                     "brief_des": "返回识别结果",
                     "detail_des": "回复图片即可"
-                },{
+                },
+                {
                     "func": "搜图",
                     "trigger_method": "搜图",
                     "trigger_condition": "群聊/私聊",
