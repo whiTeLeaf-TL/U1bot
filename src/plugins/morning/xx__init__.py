@@ -33,17 +33,22 @@ __plugin_meta__ = PluginMetadata(
 )
 
 # Good morning/night
-morning = on_command(cmd="早安", aliases={"哦哈哟", "おはよう"}, permission=GROUP, priority=12)
-night = on_command(cmd="晚安", aliases={"哦呀斯密", "おやすみ"}, permission=GROUP, priority=12)
+morning = on_command(cmd="早安", aliases={
+                     "哦哈哟", "おはよう"}, permission=GROUP, priority=12)
+night = on_command(cmd="晚安", aliases={
+                   "哦呀斯密", "おやすみ"}, permission=GROUP, priority=12)
 
 # Routine
 my_routine = on_command(cmd="我的作息", permission=GROUP, priority=12)
 group_routine = on_command(cmd="群友作息", permission=GROUP, priority=12)
 
 # Settings
-configure = on_command(cmd="早安设置", aliases={"晚安设置", "早晚安设置"}, permission=GROUP, priority=11, block=True)
-morning_setting = on_regex(pattern=r"^早安(开启|关闭|设置)( (时限|多重起床|超级亢奋)(( \d{1,2}){1,2})?)?$", permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN, priority=10, block=True)
-night_setting = on_regex(pattern=r"^晚安(开启|关闭|设置)( (时限|优质睡眠|深度睡眠)(( \d{1,2}){1,2})?)?$", permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN, priority=10, block=True)
+configure = on_command(cmd="早安设置", aliases={
+                       "晚安设置", "早晚安设置"}, permission=GROUP, priority=11, block=True)
+morning_setting = on_regex(
+    pattern=r"^早安(开启|关闭|设置)( (时限|多重起床|超级亢奋)(( \d{1,2}){1,2})?)?$", permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN, priority=10, block=True)
+night_setting = on_regex(pattern=r"^晚安(开启|关闭|设置)( (时限|优质睡眠|深度睡眠)(( \d{1,2}){1,2})?)?$",
+                         permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN, priority=10, block=True)
 
 
 @morning.handle()
@@ -65,9 +70,6 @@ async def good_morning(bot: Bot, matcher: Matcher, event: GroupMessageEvent, arg
 
     msg = morning_manager.get_morning_msg(str(gid), str(uid), sex_str)
     await matcher.finish(message=msg, at_sender=True)
-
-
-
 
 
 @night.handle()
@@ -104,7 +106,8 @@ async def _(matcher: Matcher, event: GroupMessageEvent):
 @group_routine.handle()
 async def _(bot: Bot, matcher: Matcher, event: GroupMessageEvent):
     gid = event.group_id
-    morning_count, night_count, uid = morning_manager.get_group_routine(str(gid))
+    morning_count, night_count, uid = morning_manager.get_group_routine(
+        str(gid))
     msg: str = f"今天已经有{morning_count}位群友早安了，{night_count}位群友晚安了~"
 
     if uid:

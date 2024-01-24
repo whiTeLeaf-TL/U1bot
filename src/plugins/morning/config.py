@@ -67,12 +67,15 @@ async def _() -> None:
     else:
         # If config.json exists, transfer it if it's of old version
         with open(config_json_path, 'r', encoding='utf-8') as f:
-            _c: Dict[str, Dict[str, Dict[str, Union[bool, int]]]] = json.load(f)
+            _c: Dict[str, Dict[str, Dict[str, Union[bool, int]]]
+                     ] = json.load(f)
             if "morning_intime" not in _c["morning"] or "night_intime" not in _c["night"]:
                 # Replace the old key configurations
                 try:
-                    _c["morning"].update({"morning_intime": _c["morning"].pop("get_up_intime")})
-                    _c["night"].update({"night_intime": _c["night"].pop("sleep_intime")})
+                    _c["morning"].update(
+                        {"morning_intime": _c["morning"].pop("get_up_intime")})
+                    _c["night"].update(
+                        {"night_intime": _c["night"].pop("sleep_intime")})
 
                     with open(config_json_path, 'w', encoding='utf-8') as f:
                         json.dump(_c, f, ensure_ascii=False, indent=4)
