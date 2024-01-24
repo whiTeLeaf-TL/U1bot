@@ -1,3 +1,5 @@
+from apscheduler.jobstores.base import JobLookupError
+from nonebot_plugin_apscheduler import scheduler
 from nonebot import require
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
@@ -10,8 +12,6 @@ from .config import morning_config
 from .utils import *
 
 require("nonebot_plugin_apscheduler")
-from nonebot_plugin_apscheduler import scheduler
-from apscheduler.jobstores.base import JobLookupError
 
 
 class MorningManager:
@@ -215,7 +215,8 @@ class MorningManager:
             if early_time < 0 or early_time > 24 or late_time < 0 or late_time > 24:
                 msg = "错误！您设置的时间未在0-24之间，要求：0 <= 时间 <= 24"
             else:
-                msg = self._change_set_time("morning", _setting, early_time, late_time)
+                msg = self._change_set_time(
+                    "morning", _setting, early_time, late_time)
 
                 # Change the data of daily good-morning/night scheduler and weekly sleeping time scheduler
                 self.daily_scheduler(early_time)
@@ -283,7 +284,8 @@ class MorningManager:
             if early_time < 0 or early_time > 24 or late_time < 0 or late_time > 24:
                 msg = "错误！您设置的时间未在0-24之间，要求：0 <= 时间 <= 24"
             else:
-                msg = self._change_set_time("night", _setting, early_time, late_time)
+                msg = self._change_set_time(
+                    "night", _setting, early_time, late_time)
         else:
             interval: int = param1
 
