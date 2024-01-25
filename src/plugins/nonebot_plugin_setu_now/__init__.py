@@ -2,7 +2,17 @@ from typing import Annotated, Any, Dict, Union
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
 from nonebot import on_command, on_regex, require
-from nonebot.adapters.onebot.v11 import GROUP, PRIVATE_FRIEND, Bot, Message, MessageEvent, MessageSegment, GroupMessageEvent, PrivateMessageEvent, Event
+from nonebot.adapters.onebot.v11 import (
+    GROUP,
+    PRIVATE_FRIEND,
+    Bot,
+    Message,
+    MessageEvent,
+    MessageSegment,
+    GroupMessageEvent,
+    PrivateMessageEvent,
+    Event,
+)
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.params import Depends, RegexGroup
@@ -59,8 +69,7 @@ setu_matcher = on_regex(
     permission=PRIVATE_FRIEND | GROUP,
 )
 
-setuopenorclose_matcher = on_command(
-    "setu开关", permission=SUPERUSER | GROUP_ADMIN)
+setuopenorclose_matcher = on_command("setu开关", permission=SUPERUSER | GROUP_ADMIN)
 
 
 @setuopenorclose_matcher.handle()
@@ -167,10 +176,13 @@ async def _(
                     await bind_message_data(message_id, setu.pid)
                     logger.debug(f"Message ID: {message_id}")
                 else:
-                    logger.debug(
-                        f"Using auto revoke API, interval: {WITHDRAW_TIME}")
+                    logger.debug(f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
-                        bot=bot, event=event, message=msg, revoke_interval=WITHDRAW_TIME, setu=setu
+                        bot=bot,
+                        event=event,
+                        message=msg,
+                        revoke_interval=WITHDRAW_TIME,
+                        setu=setu,
                     )
                 send_timer.stop()
                 global_speedlimiter.send_success()
@@ -240,7 +252,8 @@ async def autorevoke_send(
     event: Event,
     message: Union[str, Message, MessageSegment],
     at_sender: bool = False,
-    revoke_interval: int = 60, setu=None,
+    revoke_interval: int = 60,
+    setu=None,
     **kwargs,
 ) -> asyncio.TimerHandle:
     """发出消息指定时间后自动撤回
