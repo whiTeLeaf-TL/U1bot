@@ -131,7 +131,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         + random.choice(happy_end)
                         + MessageSegment.image(file=await user_img(waifu_id))
                     )
-                    waifulist, _=await Waifu.get_or_create(group_id=group_id)
+                    waifulist, _ = await Waifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
                             message_id=group_id
