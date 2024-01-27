@@ -16,8 +16,7 @@ from .models import *
 from .utils import *
 from .config import Config
 
-__plugin_meta__ = PluginMetadata(
-    name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -90,8 +89,7 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0,
-                  minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -289,7 +287,7 @@ if waifu_cd_bye > -1:
             await waifu_set.save()
             await rec.save()
             if random.randint(1, 2) == 1:
-                await bye.finish(random.choice(("嗯。", "...", "好。", "哦。", "行。")))
+                await bye.finish(random.choice(["嗯。", "...", "好。", "哦。", "行。"]))
             else:
                 await bye.finish(Message(f"[CQ:poke,qq={event.user_id}]"))
         else:
@@ -328,7 +326,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
     member_list = [
         member
         for member in member_list
-        if member["user_id"] not in rule_out and member["last_sent_time"] > lastmonth and member_list != 2854196310
+        if member["user_id"] not in rule_out
+        and member["last_sent_time"] > lastmonth
+        and member_list != 2854196310
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     if member_list:
@@ -401,9 +401,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             return False
 
         if at == user_id:
-            member = await bot.get_group_member_info(
-                group_id=group_id, user_id=user_id
-            )
+            member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
             msg = (
                 "恭喜你涩到了你自己！"
                 + MessageSegment.image(file=await user_img(user_id))
@@ -433,7 +431,8 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             for member in member_list
             if (user_id := member["user_id"]) not in protect_set
             and member["last_sent_time"] > lastmonth
-            and member["user_id"] != int(bot.self_id) and yinpa_ids != 2854196310
+            and member["user_id"] != int(bot.self_id)
+            and member["user_id"] != 2854196310
         ]
         if yinpa_ids:
             yinpa_id = random.choice(yinpa_ids)
