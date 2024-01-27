@@ -103,8 +103,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if event.to_me:
         await bot.send(event, "不可以啦~", at_sender=True)
         return False
-    group_id = event.group_id
     user_id = event.user_id
+    group_id = event.group_id
     protect_list = await WaifuProtect.get_or_none(group_id=group_id)
     if protect_list is not None and user_id in protect_list.user_id:
         return False
@@ -126,11 +126,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = (
-                        "这是你的CP！"
-                        + random.choice(happy_end)
-                        + MessageSegment.image(file=await user_img(waifu_id))
-                    )
+                    msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
                     waifulist, _ = await Waifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -142,8 +138,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~"
-                        + MessageSegment.image(file=await user_img(waifu_id))
+                        f"你已经有CP了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -153,6 +148,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                     + f"『{member['card'] or member['nickname']}』！"
                 )
             await bot.send(event, msg, at_sender=True)
+        return False
     if at:
         if at == rec.get(str(at)):
             X = HE
@@ -172,7 +168,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         member_list = [
             member
             for member in await bot.get_group_member_list(group_id=group_id)
-            if member["user_id"] != int(bot.self_id) and member["user_id"] != 2854196310
+            if member["user_id"] not in [int(bot.self_id), 2854196310]
         ]
         lastmonth = event.time - last_sent_time_filter
         rule_out = protect_list or set(rec.keys())
@@ -360,7 +356,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = ""
     for waifu_id in record_waifu.waifu:
         logger.info(waifu_id)
-        user_id = rec[str(waifu_id)]
+        user_id = rec.get(str(waifu_id))
         try:
             member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
             niknameA = member["card"] or member["nickname"]
