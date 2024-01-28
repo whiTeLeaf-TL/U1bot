@@ -138,7 +138,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        f"你已经有CP了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
+                        "你已经有CP了，不许花心哦~"+ MessageSegment.image(file=await user_img(waifu_id))
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -152,14 +152,13 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if at:
         if at == rec.get(str(at)):
             X = HE
-            del rec[waifu_id]
+            del rec[str(at)]
         else:
             X = random.randint(1, 100)
 
         if 0 < X <= HE:
             waifu_id = at
             tips = "恭喜你娶到了群友!\n" + tips
-            return False
         elif HE < X <= BE:
             waifu_id = user_id
 
