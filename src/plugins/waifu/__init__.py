@@ -16,8 +16,7 @@ from .models import *
 from .utils import *
 from .config import Config
 
-__plugin_meta__ = PluginMetadata(
-    name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -90,8 +89,7 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0,
-                  minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -126,7 +124,9 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
+                    msg = f"这是你的CP！{random.choice(happy_end)}" + MessageSegment.image(
+                        file=await user_img(waifu_id)
+                    )
                     waifulist, _ = await Waifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -138,7 +138,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~" + MessageSegment.image(file=await user_img(waifu_id))
+                        "你已经有CP了，不许花心哦~"
+                        + MessageSegment.image(file=await user_img(waifu_id))
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -207,7 +208,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta的cp："
+            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
