@@ -138,7 +138,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~"+ MessageSegment.image(file=await user_img(waifu_id))
+                        "你已经有CP了，不许花心哦~" + MessageSegment.image(file=await user_img(waifu_id))
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
