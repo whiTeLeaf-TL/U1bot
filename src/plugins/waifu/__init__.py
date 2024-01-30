@@ -46,6 +46,7 @@ no_waifu = [
     "智者不入爱河，建设美丽中国。",
     "智者不入爱河，我们终成富婆",
     "智者不入爱河，寡王一路硕博",
+    "娶不到就是娶不到，娶不到就多练！"
 ]
 
 happy_end = [
@@ -152,7 +153,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 )
             await bot.send(event, msg, at_sender=True)
         return False
-    if at:
+    if at and str(at) not in rec.keys() or protect_list:
         if at == rec.get(str(at)):
             X = HE
             del rec[str(at)]
@@ -173,11 +174,11 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             if member["user_id"] not in [int(bot.self_id), 2854196310]
         ]
         lastmonth = event.time - last_sent_time_filter
-        rule_out = protect_list or set(rec.keys())
+        rule_out = protect_list or rec.keys()
         waifu_ids = [
             user_id
             for member in member_list
-            if (user_id := member["user_id"]) not in rule_out
+            if str(user_id := member["user_id"]) not in rule_out
             and member["last_sent_time"] > lastmonth
         ]
         if waifu_ids:
