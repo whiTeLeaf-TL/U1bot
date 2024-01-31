@@ -153,7 +153,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 )
             await bot.send(event, msg, at_sender=True)
         return False
-    chooselist = rec.keys() or protect_list
+    chooselist = rec.keys() or protect_list or []
     if at and str(at) not in chooselist:
         if at == rec.get(str(at)):
             X = HE
@@ -233,6 +233,8 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
     record_CP.affect[user_id] = waifu_id
     record_CP.affect[waifu_id] = user_id
+    await record_CP.save()
+    await record_waifu.save()
     record_waifu.waifu.append(waifu_id)
     member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_id)
     msg = (
@@ -240,8 +242,6 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         + MessageSegment.image(file=await user_img(waifu_id))
         + f"『{(member['card'] or member['nickname'])}』！"
     )
-    await record_CP.save()
-    await record_waifu.save()
     await waifu.finish(msg, at_sender=True)
 
 
