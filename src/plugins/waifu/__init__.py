@@ -16,8 +16,7 @@ from .models import *
 from .utils import *
 from .config import Config
 
-__plugin_meta__ = PluginMetadata(
-    name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -46,7 +45,7 @@ no_waifu = [
     "智者不入爱河，建设美丽中国。",
     "智者不入爱河，我们终成富婆",
     "智者不入爱河，寡王一路硕博",
-    "娶不到就是娶不到，娶不到就多练！"
+    "娶不到就是娶不到，娶不到就多练！",
 ]
 
 happy_end = [
@@ -91,8 +90,7 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0,
-                  minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -113,9 +111,9 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     at = at[0] if at else None
     if protect_list is not None and at in protect_list.user_id:
         return False
-    tips = "伱的群友結婚对象是、"
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
+    tips = "伱的群友結婚对象是、"
     if (waifu_id := rec.get(str(user_id))) and waifu_id != user_id:
         try:
             member = await bot.get_group_member_info(
@@ -153,7 +151,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 )
             await bot.send(event, msg, at_sender=True)
         return False
-    if at and str(at) not in rec.keys() or protect_list:
+    chooselist = rec.keys() or protect_list
+    if at and str(at) not in chooselist:
         if at == rec.get(str(at)):
             X = HE
             del rec[str(at)]
@@ -211,7 +210,9 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta的cp："
+            "人家已经名花有主了~"
+            + MessageSegment.image(file=await user_img(waifu_cp))
+            + "ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
