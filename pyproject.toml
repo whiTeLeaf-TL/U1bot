@@ -2,7 +2,7 @@
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
 ]
-plugins = ["nonebot_plugin_datastore","nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry","nonebot_plugin_cesaa","nonebot_plugin_localstore","nonebot_plugin_chatrecorder","nonebot_plugin_session","nonebot_plugin_saa","nonebot_plugin_orm"]
+plugins = ["nonebot_plugin_datastore","nonebot_plugin_apscheduler", "nonebot_plugin_htmlrender","nonebot_plugin_alconna", "nonebot_plugin_memes_api","nonebot_plugin_tortoise_orm", "nonebot_plugin_eventexpiry","nonebot_plugin_cesaa","nonebot_plugin_localstore","nonebot_plugin_session","nonebot_plugin_saa","nonebot_plugin_orm"]
 plugin_dirs = ["src/plugins"]
 builtin_plugins = []
 
@@ -42,11 +42,11 @@ pillow = "^10.2.0"
 humanize = "^4.9.0"
 psutil = "^5.9.7"
 aiomysql = "^0.2.0"
-nonebot-plugin-chatrecorder = "^0.5.1"
 nonebot-plugin-cesaa = "^0.3.0"
 sqlalchemy = "^2.0.25"
 nonebot-plugin-orm = "^0.6.3"
 nonebot-plugin-session = "^0.2.3"
+snakeviz = "^2.2.0"
 
 [tool.poetry.group.test.dependencies]
 pytest-asyncio = "^0.23.3"
