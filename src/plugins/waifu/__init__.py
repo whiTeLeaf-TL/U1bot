@@ -16,7 +16,8 @@ from .models import *
 from .utils import *
 from .config import Config
 
-__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(
+    name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -90,7 +91,8 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0,
+                  minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
