@@ -44,7 +44,7 @@ async def _(bot: Bot, event: RequestEvent):
         print(autoType, addInfo, agreeAutoApprove)
         msg = '群号'+id+'，'+event.get_user_id()+notice_msg+event.comment + \
             '\n时间:{}'.format(time)
-        if addInfo["member_count"] != 0:
+        if addInfo["member_count"] != 0 or agreeAutoApprove != 0:
             status = '\n或因群人数少,已经添加成功'
             await sendMsg(bot, config[bot.self_id]['recipientList'], msg+status, 0)
             await bot.send_private_msg(user_id=event.user_id, message=welcome_msg)
