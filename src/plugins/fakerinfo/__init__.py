@@ -12,14 +12,19 @@ __plugin_meta__ = PluginMetadata(
 faker = Faker(locale='zh_CN')
 fakeinfo = on_command('伪造信息')
 
+
 def generate_family():
     # 随机生成家族前缀
-    prefix = random.choice(['火箭', '狂魔', '搵铁', '扥填', '飞天', '逆天', '谊读', '大话', '懒得', '扞雨', '盛世', '梦幻', '兰心', '嘻哈', '王者'])
+    prefix = random.choice(['火箭', '狂魔', '搵铁', '扥填', '飞天', '逆天',
+                           '谊读', '大话', '懒得', '扞雨', '盛世', '梦幻', '兰心', '嘻哈', '王者'])
     # 随机逆天字符
-    character = random.choice(['※', '★', '♪', '的', '╰', '♣', '♡', 'の', '之', ''])
+    character = random.choice(
+        ['※', '★', '♪', '的', '╰', '♣', '♡', 'の', '之', ''])
     # 随机生成家族后缀
-    suffix = random.choice(['家族', '和家', '战队', '基', '世家', '天下', '皇朝', '热情', '尊王', '寂寞', '星球', '担当', '兴趣'])
+    suffix = random.choice(
+        ['家族', '和家', '战队', '基', '世家', '天下', '皇朝', '热情', '尊王', '寂寞', '星球', '担当', '兴趣'])
     return prefix + character + suffix
+
 
 @fakeinfo.handle()
 async def handle_function(matcher: Matcher):
