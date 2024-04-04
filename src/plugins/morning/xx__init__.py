@@ -133,8 +133,7 @@ def parse_item(_key: str):
         if arg == "取消":
             await matcher.finish("操作已取消")
 
-        if arg == "时限" or arg == "多重起床" or arg == "超级亢奋" or \
-                arg == "优质睡眠" or arg == "深度睡眠":
+        if arg in ("时限", "多重起床", "超级亢奋", "优质睡眠", "深度睡眠"):
             matcher.set_arg("item", Message(arg))
         else:
             if _key == "morning":
