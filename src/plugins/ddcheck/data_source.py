@@ -22,7 +22,7 @@ vtb_list_path = data_path / "vtb_list.json"
 dir_path = Path(__file__).parent
 template_path = dir_path / "template"
 env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(template_path), enable_async=True
+    loader=jinja2.FileSystemLoader(template_path), enable_async=True, autoescape=True
 )
 
 raw_cookie = ddcheck_config.bilibili_cookie
