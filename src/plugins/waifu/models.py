@@ -28,7 +28,7 @@ class WaifuCP(Model):
         table = "waifu_cp"
 
 
-class Waifu(Model):
+class PWaifu(Model):
     group_id = fields.BigIntField(pk=True)
     # 字典
     waifu = fields.JSONField(default=[])

@@ -80,7 +80,7 @@ async def reset_record():
     yesterday = datetime(today.year, today.month, today.day, 0, 0, 0)
     logger.info(yesterday)
     await WaifuCP.filter(created_at__lt=yesterday).delete()
-    await Waifu.filter(created_at__lt=yesterday).delete()
+    await PWaifu.filter(created_at__lt=yesterday).delete()
     await WaifuLock.filter(created_at__lt=yesterday).delete()
     await Waifuyinppa1.filter(created_at__lt=yesterday).delete()
     await Waifuyinppa2.filter(created_at__lt=yesterday).delete()
@@ -114,8 +114,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if protect_list is not None and at in protect_list.user_id:
         return False
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
-    rec = rec.affect
     tips = "伱的群友結婚对象是、"
+    rec = rec.affect
     if (waifu_id := rec.get(str(user_id))) and waifu_id != user_id:
         try:
             member = await bot.get_group_member_info(
@@ -127,10 +127,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的CP！{random.choice(happy_end)}" + MessageSegment.image(
-                        file=await user_img(waifu_id)
-                    )
-                    waifulist, _ = await Waifu.get_or_create(group_id=group_id)
+                    msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
+                    waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
                             message_id=group_id
@@ -141,8 +139,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~"
-                        + MessageSegment.image(file=await user_img(waifu_id))
+                        f"你已经有CP了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -197,9 +194,9 @@ waifu = on_message(rule=waifu_rule, priority=90, block=True)
 
 @waifu.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
-    user_id = event.user_id
     waifu_id, tips = state["waifu"]
     group_id = event.group_id
+    user_id = event.user_id
     if waifu_id == user_id:
         record_cp, _ = await WaifuCP.get_or_create(group_id=group_id)
         record_cp.affect[user_id] = user_id
@@ -207,14 +204,12 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         await waifu.finish(random.choice(no_waifu), at_sender=True)
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
-    record_waifu, _ = await Waifu.get_or_create(group_id=group_id)
+    record_waifu, _ = await PWaifu.get_or_create(group_id=group_id)
     if waifu_id in rec:
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"
-            + MessageSegment.image(file=await user_img(waifu_cp))
-            + "ta的cp："
+            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
@@ -278,7 +273,7 @@ if waifu_cd_bye > -1:
         if Now > T:
             cd_bye[group_id][user_id] = [Now + waifu_cd_bye, 0, 0]
             rec = await WaifuCP.get(group_id=group_id)
-            waifu_set, _ = await Waifu.get_or_create(group_id=group_id)
+            waifu_set, _ = await PWaifu.get_or_create(group_id=group_id)
             waifu_id = rec.affect[str(user_id)]
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
@@ -305,12 +300,12 @@ if waifu_cd_bye > -1:
             else:
                 N += 1
             if N == 1:
-                msg = f"你的cd还有{round(cd/60,1)}分钟。"
+                msg = f"你的cd还有{round(cd/60, 1)}分钟。"
             elif N == 2:
-                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60,1)}分钟。"
+                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60, 1)}分钟。"
             elif N < 6:
                 T += 10
-                msg = f"还问！罚时！你的cd还有{round(cd/60,1)}+10分钟。"
+                msg = f"还问！罚时！你的cd还有{round(cd/60, 1)}+10分钟。"
             elif random.randint(0, 2) == 0:
                 await bye.finish("哼！")
             else:
@@ -356,7 +351,7 @@ cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
 @cp_list.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
-    record_waifu = await Waifu.get_or_none(group_id=group_id)
+    record_waifu = await PWaifu.get_or_none(group_id=group_id)
     if record_waifu is None or len(record_waifu.waifu) == 0:
         await cp_list.finish("本群暂无cp哦~")
     record_CP = await WaifuCP.get_or_none(group_id=group_id)
