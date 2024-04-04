@@ -114,8 +114,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if protect_list is not None and at in protect_list.user_id:
         return False
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
-    rec = rec.affect
     tips = "伱的群友結婚对象是、"
+    rec = rec.affect
     if (waifu_id := rec.get(str(user_id))) and waifu_id != user_id:
         try:
             member = await bot.get_group_member_info(
@@ -127,9 +127,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的CP！{random.choice(happy_end)}" + MessageSegment.image(
-                        file=await user_img(waifu_id)
-                    )
+                    msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -141,8 +139,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~"
-                        + MessageSegment.image(file=await user_img(waifu_id))
+                        f"你已经有CP了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -197,9 +194,9 @@ waifu = on_message(rule=waifu_rule, priority=90, block=True)
 
 @waifu.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
-    user_id = event.user_id
     waifu_id, tips = state["waifu"]
     group_id = event.group_id
+    user_id = event.user_id
     if waifu_id == user_id:
         record_cp, _ = await WaifuCP.get_or_create(group_id=group_id)
         record_cp.affect[user_id] = user_id
@@ -212,9 +209,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"
-            + MessageSegment.image(file=await user_img(waifu_cp))
-            + "ta的cp："
+            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
