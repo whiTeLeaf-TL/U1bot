@@ -5,7 +5,7 @@ import os
 from httpx import AsyncClient
 from PIL import Image
 
-from nonebot import logger, on_keyword, get_driver
+from nonebot import logger, on_keyword, get_plugin_config
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Event,
@@ -13,10 +13,11 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     PrivateMessageEvent,
     GroupMessageEvent,
-    MessageEvent
+    MessageEvent,
 )
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.params import Arg
+from nonebot.rule import Rule
 from nonebot.exception import ActionFailed
 from nonebot.internal.matcher import Matcher
 from nonebot.typing import T_State
@@ -37,17 +38,18 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters={"~onebot.v11"},
 )
 
-config: Config = Config.parse_obj(get_driver().config)
+config = get_plugin_config(Config)
 
 
 async def _cmd_check(event: MessageEvent):
     txt_msg = event.message.extract_plain_text().strip()
-    return config.animetrace_cmd in txt_msg
+    if config.animetrace_cmd in txt_msg:
+        return True
 
 
 acg_trace = on_keyword(
     config.animetrace_keyword,
-    rule=_cmd_check,
+    rule=Rule(_cmd_check),
     priority=config.animetrace_priority,
     block=True,
 )
@@ -118,7 +120,8 @@ async def main(bot: Bot, event: Event, state: T_State):
         await acg_trace.finish(f"没有识别到任何角色\ncontent:{content}", at_sender=True)
 
     # 构造消息
-    res_start_msg = Message(f"共识别到{char_nums}个角色")
+    res_start_msg = Message(
+        f"共识别到{char_nums}个角色")
     message_list = [res_start_msg]
     mode = state["mode"]
     for item in content["data"]:
@@ -142,7 +145,7 @@ async def main(bot: Bot, event: Event, state: T_State):
     # 发送消息
     try:
         nickname = config.nickname[0]
-    except Exception:
+    except:
         nickname = "anime trace"
     try:
         msgs = [
