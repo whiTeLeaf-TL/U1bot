@@ -27,13 +27,13 @@ async def parseMsg(resMsg):
     #     return MessageSegment.image(pic)
 
 
-async def getReferIdList(bot: Bot, idName='group_id', no_cache=True):
+async def getReferIdList(bot: Bot, idName='group_id'):
     '''获取朋友或群id列表'''
     if idName == 'user_id':
-        referInfoList = await bot.get_friend_list(no_cache=no_cache)
+        referInfoList = await bot.get_friend_list()
     else:
         idName = 'group_id'
-        referInfoList = await bot.get_group_list(no_cache=no_cache)
+        referInfoList = await bot.get_group_list()
     return [temp[idName] for temp in referInfoList]
 
 
