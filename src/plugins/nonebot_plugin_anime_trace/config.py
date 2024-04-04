@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Config(BaseModel):
     # 命令符
     animetrace_cmd: str = "#"
