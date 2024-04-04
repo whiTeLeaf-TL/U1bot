@@ -1,3 +1,14 @@
+from nonebot import require
+from nonebot.log import logger
+scheduler = require("nonebot_plugin_apscheduler").scheduler
+from pathlib import Path
+from .check_pass import check_cd, check_max
+import os
+import re
+import nonebot
+import requests
+import random
+import base64
 from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     MessageEvent,
@@ -12,9 +23,7 @@ from nonebot.exception import ActionFailed
 from nonebot.plugin import on_regex
 from nonebot.matcher import Matcher
 from nonebot.params import Arg
-from nonebot.log import logger
 from nonebot.typing import T_State
-from nonebot import require
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
@@ -58,19 +67,6 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-try:
-    scheduler = require("nonebot_plugin_apscheduler").scheduler
-except Exception:
-    scheduler = None
-    logger.warning("未安装定时插件依赖")
-from pathlib import Path
-from .check_pass import check_cd, check_max
-import os
-import re
-import nonebot
-import requests
-import random
-import base64
 
 what_eat = on_regex(
     r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)吃(什么|啥|点啥)$", priority=5
@@ -156,11 +152,11 @@ async def _(state: T_State, img: Message = Arg()):
     elif state['type'] in ['饮料', '饮品']:
         path = img_drink_path
 
-    dish_img = requests.get(url=img_url[0])
-    with open(path / str(state['name'] + ".jpg"), "wb") as f:
+    dish_img = requests.get(url=img_url[0], timeout=5)
+    with open(os.path.join(path, str(state['name'] + ".jpg")), "wb") as f:
         f.write(dish_img.content)
     await add_dish.finish(
-        f"成功添加{state['type']}:{state['name']}\n{MessageSegment.image(img_url)}"
+        f"成功添加{state['type']}:{state['name']}\n{MessageSegment.image(img_url[0])}"
     )
 
 
@@ -195,8 +191,8 @@ async def _(state: T_State, name: Message = Arg()):
 @view_all_dishes.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     # 正则匹配组
+    path = ""
     args = list(state['_matched_groups'])
-
     if args[1] in ["菜单", "菜品"]:
         path = img_eat_path
         all_name = all_file_eat_name
@@ -207,7 +203,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     # 合并转发
     msg_list = [f"{Bot_NICKNAME}查询到的{args[1]}如下"]
     for N, name in enumerate(all_name, start=1):
-        img = path / name
+        img = os.path.join(path, name)
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = f"base64://{base64.b64encode(img_bytes).decode()}"
@@ -239,11 +235,11 @@ async def wtd(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        msg = f"{Bot_NICKNAME}建议你喝: \n⭐{img.stem}⭐\n" + \
+        result_msg = f"{Bot_NICKNAME}建议你喝: \n⭐{img.stem}⭐\n" + \
             MessageSegment.image(base64_str)
         try:
             await what_drink.send(f"{Bot_NICKNAME}正在为你找好喝的……")
-            await what_drink.send(msg, at_sender=True)
+            await what_drink.send(result_msg, at_sender=True)
         except ActionFailed:
             await what_drink.finish("出错啦！没有找到好喝的~")
 
@@ -265,11 +261,11 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        msg = f"{Bot_NICKNAME}建议你吃: \n⭐{img.stem}⭐\n" + \
+        result_msg = f"{Bot_NICKNAME}建议你吃: \n⭐{img.stem}⭐\n" + \
             MessageSegment.image(base64_str)
         try:
             await what_eat.send(f"{Bot_NICKNAME}正在为你找好吃的……")
-            await what_eat.send(msg, at_sender=True)
+            await what_eat.send(result_msg, at_sender=True)
         except ActionFailed:
             await what_eat.finish("出错啦！没有找到好吃的~")
 
