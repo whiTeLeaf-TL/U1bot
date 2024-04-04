@@ -15,7 +15,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-nonebot2 = {extras = ["websockets"], version = "^2.2.1"}
 nonebot-plugin-datastore = "^1.1.2"
 nonebot-plugin-tortoise-orm = "^0.1.1"
 nonebot-plugin-apscheduler = "^0.3.0"
@@ -47,6 +46,11 @@ sqlalchemy = "^2.0.25"
 nonebot-plugin-orm = "^0.6.3"
 nonebot-plugin-session = "^0.2.3"
 snakeviz = "^2.2.0"
+bilireq = "^0.2.12"
+nonebot2 = {extras = ["fastapi"], version = "^2.2.1"}
+starlette = "^0.37.2"
+h11 = "^0.14.0"
+websockets = "^12.0"
 
 [tool.poetry.group.test.dependencies]
 pytest-asyncio = "^0.23.3"
