@@ -73,7 +73,7 @@ async def _(bot: Bot, event: RequestEvent):
                     numDict[bot.self_id][autoType], now)
     if agreeAutoApprove == 0 or num == -1:
         if num == -1:
-            status = f'\n此时增满{config[bot.self_id]['numControl']['maxNum']}人,未能再自动添加'
+            status = f"\n此时增满{config[bot.self_id]['numControl']['maxNum']}人,未能再自动添加"
         else:
             status = '\n未允许自动添加'
         requestorDict[bot.self_id][autoType][id] = {'flag': event.flag, 'comment': event.comment,
@@ -316,7 +316,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
     maxnum = config[bot.self_id]['numControl'][autoType]['maxNum']
     now = datetime.now()
     if parseTime(config[bot.self_id]['numControl'][autoType], numDict[bot.self_id][autoType], now) != -1:
-        await reFriendReqNum.send(message=f'未增满{maxnum}人,人数为{numDict[bot.self_id][autoType]['count']}上次添加时间{now}')
+        await reFriendReqNum.send(message=f'未增满{maxnum}人,人数为{numDict[bot.self_id][autoType]["count"]}上次添加时间{now}')
     argsText = argsText.replace('为', '').strip()
     if argsText.isdigit():
         numDict[bot.self_id][autoType]['count'] = int(argsText)
