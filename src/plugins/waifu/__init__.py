@@ -305,12 +305,12 @@ if waifu_cd_bye > -1:
             else:
                 N += 1
             if N == 1:
-                msg = f"你的cd还有{round(cd/60,1)}分钟。"
+                msg = f"你的cd还有{round(cd/60, 1)}分钟。"
             elif N == 2:
-                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60,1)}分钟。"
+                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60, 1)}分钟。"
             elif N < 6:
                 T += 10
-                msg = f"还问！罚时！你的cd还有{round(cd/60,1)}+10分钟。"
+                msg = f"还问！罚时！你的cd还有{round(cd/60, 1)}+10分钟。"
             elif random.randint(0, 2) == 0:
                 await bye.finish("哼！")
             else:
