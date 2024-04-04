@@ -150,7 +150,8 @@ async def get_reply(name: str) -> Union[str, bytes]:
     else:
         try:
             uid = await get_uid_by_name(name)
-            assert uid
+            if not uid:
+                raise AssertionError
         except Exception:
             logger.warning(traceback.format_exc())
             return "获取用户信息失败，请检查名称或使用uid查询"
