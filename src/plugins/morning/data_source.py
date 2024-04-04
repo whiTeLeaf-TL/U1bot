@@ -18,12 +18,12 @@ class MorningManager:
     def __init__(self):
         self._morning: Dict[
             str, Dict[str, Dict[str, Dict[str, Union[str, int, datetime, List[int]]]]]
-        ] = dict()
+        ] = {}
         self._morning_path: Path = morning_config.morning_path / "morning.json"
 
         self._config: Dict[
             str, Dict[str, Dict[str, Dict[str, Union[bool, int]]]]
-        ] = dict()
+        ] = {}
         self._config_path: Path = morning_config.morning_path / "config.json"
 
     def _init_group_data(self, gid: str) -> None:

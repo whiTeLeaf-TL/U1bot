@@ -110,7 +110,7 @@ def sleeptime_update(_lold: List[int], _sleep: timedelta) -> List[int]:
 
 def morning_json_update(_ofile: Dict[str, Dict[str, Dict[str, int]]]) -> Dict[str, Dict[str, Dict[str, Dict[str, Union[str, int, List[int]]]]]]:
     _nfile: Dict[str, Dict[str,
-                           Dict[str, Dict[str, Union[str, int, List[int]]]]]] = dict()
+                           Dict[str, Dict[str, Union[str, int, List[int]]]]]] = {}
 
     for gid in _ofile:
         # Create groups' info
