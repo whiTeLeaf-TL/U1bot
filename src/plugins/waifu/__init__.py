@@ -1,7 +1,7 @@
 import contextlib
 import random
 
-from nonebot import logger, get_driver, on_command, on_message, logger, require
+from nonebot import logger, get_driver, on_command, on_message, require
 from datetime import datetime
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
