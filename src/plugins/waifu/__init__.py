@@ -80,7 +80,7 @@ async def reset_record():
     yesterday = datetime(today.year, today.month, today.day, 0, 0, 0)
     logger.info(yesterday)
     await WaifuCP.filter(created_at__lt=yesterday).delete()
-    await Waifu.filter(created_at__lt=yesterday).delete()
+    await PWaifu.filter(created_at__lt=yesterday).delete()
     await WaifuLock.filter(created_at__lt=yesterday).delete()
     await Waifuyinppa1.filter(created_at__lt=yesterday).delete()
     await Waifuyinppa2.filter(created_at__lt=yesterday).delete()
@@ -130,7 +130,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                     msg = f"这是你的CP！{random.choice(happy_end)}" + MessageSegment.image(
                         file=await user_img(waifu_id)
                     )
-                    waifulist, _ = await Waifu.get_or_create(group_id=group_id)
+                    waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if user_id in waifulist:
                         waifulock, _ = await WaifuLock.get_or_create(
                             message_id=group_id
@@ -207,7 +207,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         await waifu.finish(random.choice(no_waifu), at_sender=True)
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
-    record_waifu, _ = await Waifu.get_or_create(group_id=group_id)
+    record_waifu, _ = await PWaifu.get_or_create(group_id=group_id)
     if waifu_id in rec:
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
@@ -278,7 +278,7 @@ if waifu_cd_bye > -1:
         if Now > T:
             cd_bye[group_id][user_id] = [Now + waifu_cd_bye, 0, 0]
             rec = await WaifuCP.get(group_id=group_id)
-            waifu_set, _ = await Waifu.get_or_create(group_id=group_id)
+            waifu_set, _ = await PWaifu.get_or_create(group_id=group_id)
             waifu_id = rec.affect[str(user_id)]
             rec.affect.pop(str(user_id))
             rec.affect.pop(str(waifu_id))
@@ -356,7 +356,7 @@ cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
 @cp_list.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
-    record_waifu = await Waifu.get_or_none(group_id=group_id)
+    record_waifu = await PWaifu.get_or_none(group_id=group_id)
     if record_waifu is None or len(record_waifu.waifu) == 0:
         await cp_list.finish("本群暂无cp哦~")
     record_CP = await WaifuCP.get_or_none(group_id=group_id)
