@@ -379,7 +379,7 @@ async def _(
                 schedule_time = get_time_fromisoformat_with_timezone(time)
             except ValueError:
                 await schedule_cmd.finish("请输入正确的时间，不然我没法理解呢！")
-        await schedule_service.add_schedule(target, time=schedule_time)
+        await schedule_service.add_schedule(target, ztime=schedule_time)
         await schedule_cmd.finish(
             f"已开启词云每日定时发送，发送时间为：{schedule_time}"
             if schedule_time

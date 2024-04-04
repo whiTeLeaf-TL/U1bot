@@ -70,21 +70,21 @@ class Scheduler:
                     )
                     logger.debug(f"已添加每日词云定时发送任务，发送时间：{time_str} UTC")
 
-    async def run_task(self, time: Optional[time] = None):
+    async def run_task(self, ztime: Optional[time] = None):
         """执行定时任务
 
         时间为 UTC 时间，并且没有时区信息
         如果没有传入时间，则执行默认定时任务
         """
         async with get_session() as session:
-            statement = select(Schedule).where(Schedule.time == time)
+            statement = select(Schedule).where(Schedule.time == ztime)
             results = await session.scalars(statement)
             schedules = results.all()
             # 如果该时间没有需要执行的定时任务，且不是默认任务则从任务列表中删除该任务
-            if time and not schedules:
-                self.schedules.pop(time.isoformat()).remove()
+            if ztime and not schedules:
+                self.schedules.pop(ztime.isoformat()).remove()
                 return
-            logger.info(f"开始发送每日词云，时间为 {time or '默认时间'}")
+            logger.info(f"开始发送每日词云，时间为 {ztime or '默认时间'}")
             for schedule in schedules:
                 target = schedule.saa_target
                 dt = get_datetime_now_with_timezone()
@@ -118,23 +118,23 @@ class Scheduler:
                 return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
-        self, target: saa.PlatformTarget, *, time: Optional[time] = None
+        self, target: saa.PlatformTarget, *, ztime: Optional[time] = None
     ):
         """添加定时任务
 
         时间需要带时区信息
         """
         # 将时间转换为 UTC 时间
-        if time:
-            time = time_astimezone(time, ZoneInfo("UTC"))
+        if ztime:
+            ztime = time_astimezone(ztime, ZoneInfo("UTC"))
 
         async with get_session() as session:
             statement = self.select_target_statement(target, session)
             results = await session.scalars(statement)
             if schedule := results.one_or_none():
-                schedule.time = time
+                schedule.time = ztime
             else:
-                schedule = Schedule(time=time, target=target.dict())
+                schedule = Schedule(time=ztime, target=target.dict())
                 session.add(schedule)
             await session.commit()
         await self.update()

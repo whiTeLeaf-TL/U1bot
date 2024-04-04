@@ -32,12 +32,12 @@ def get_datetime_fromisoformat_with_timezone(date_string: str) -> datetime:
     )
 
 
-def time_astimezone(time: time, tz: Optional[tzinfo] = None) -> time:
+def time_astimezone(ztime: time, tz: Optional[tzinfo] = None) -> time:
     """将 time 对象转换为指定时区的 time 对象
 
     如果 tz 为 None，则转换为本地时区
     """
-    local_time = datetime.combine(datetime.today(), time)
+    local_time = datetime.combine(datetime.now(), ztime)
     return local_time.astimezone(tz).timetz()
 
 
@@ -53,9 +53,9 @@ def get_time_fromisoformat_with_timezone(time_string: str) -> time:
     )
 
 
-def get_time_with_scheduler_timezone(time: time) -> time:
+def get_time_with_scheduler_timezone(ztime: time) -> time:
     """获取转换到 APScheduler 时区的时间"""
-    return time_astimezone(time, scheduler.timezone)
+    return time_astimezone(ztime, scheduler.timezone)
 
 
 def admin_permission():
@@ -75,14 +75,14 @@ def get_mask_key(target: PlatformTarget = Depends(get_target)) -> str:
     qq_group-group_id=10000
     qq_guild_channel-channel_id=100000
     """
-    mask_keys = [f"{target.platform_type.name}"]
-    mask_keys.extend(
-        [
+    mask_keys = [
+        f"{target.platform_type.name}",
+        *[
             f"{key}={value}"
             for key, value in target.dict(exclude={"platform_type"}).items()
             if value is not None
-        ]
-    )
+        ],
+    ]
     return "-".join(mask_keys)
 
 
