@@ -28,12 +28,10 @@ async def _(bot: Bot, event: RequestEvent):
         autoType = 'friend'
         agreeAutoApprove = config[bot.self_id]['agreeAutoApprove'][autoType]
         addInfo = await bot.get_stranger_info(user_id=int(id), no_cache=True)
-        msg = id+notice_msg+event.comment+'\n时间:{}'.format(time)
+        msg = f"{id}{notice_msg+event.comment}\n时间:{time}"
     elif isinstance(event, GroupRequestEvent):
         if event.sub_type != 'invite':
-            print(event.sub_type)
             return
-        print(event.sub_type)
         notice_msg = config[bot.self_id]["group_msg"]["notice_msg"]
         welcome_msg = config[bot.self_id]["group_msg"]["welcome_msg"]
         id = str(event.group_id)
@@ -41,9 +39,7 @@ async def _(bot: Bot, event: RequestEvent):
         agreeAutoApprove = config[bot.self_id]['agreeAutoApprove'][autoType]
         await sleep(0.5)
         addInfo = await bot.get_group_info(group_id=int(id), no_cache=True)
-        print(autoType, addInfo, agreeAutoApprove)
-        msg = '群号'+id+'，'+event.get_user_id()+notice_msg+event.comment + \
-            '\n时间:{}'.format(time)
+        msg = f'群号{id}，{event.get_user_id()+notice_msg+event.comment}\n时间:{time}'
         if addInfo["member_count"] != 0 or agreeAutoApprove != 0:
             status = '\n或因群人数少,已经添加成功'
             await sendMsg(bot, config[bot.self_id]['recipientList'], msg+status, 0)
@@ -77,8 +73,7 @@ async def _(bot: Bot, event: RequestEvent):
                     numDict[bot.self_id][autoType], now)
     if agreeAutoApprove == 0 or num == -1:
         if num == -1:
-            status = '\n此时增满{}人,未能再自动添加'.format(
-                config[bot.self_id]['numControl']['maxNum'])
+            status = f'\n此时增满{config[bot.self_id]['numControl']['maxNum']}人,未能再自动添加'
         else:
             status = '\n未允许自动添加'
         requestorDict[bot.self_id][autoType][id] = {'flag': event.flag, 'comment': event.comment,
@@ -110,7 +105,6 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     commandText = getExist('', text, argsText)
     if isinstance(commandText, bool):
         return
-    print(argsText)
     if '群聊' in argsText:
         argsText = argsText.replace('群聊', '').strip()
         autoType = 'group'
@@ -131,8 +125,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     elif "更改查看加返回数量" in commandText:
         resMsg = handle_view_num_command(bot, argsText)
     else:
-        print(4)
-        resMsg = '重载成功:\n{}'.format(configUtil.config[bot.self_id])
+        resMsg = f'重载成功:\n{configUtil.config[bot.self_id]}'
     if '重载配置' not in commandText:
         writeData(configPath, configUtil.config)
     resMsg = await parseMsg(resMsg)
@@ -140,14 +133,12 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
 
 def handle_view_num_command(bot, argsText):
-    print(3)
     if argsText.isdigit() and 0 < int(argsText) < 120:
         configUtil.config[bot.self_id]['maxViewNum'] = int(argsText)
-    return '更改成功,为\n{}'.format(configUtil.config[bot.self_id]['maxViewNum'])
+    return f"更改成功,为\n{configUtil.config[bot.self_id]['maxViewNum']}"
 
 
 def handle_time_unit_command(bot, argsText, autoType):
-    print(argsText, 1)
     if '时' in argsText:
         configUtil.config[bot.self_id]['numControl'][autoType]['unit'] = 'h'
     elif '分' in argsText:
@@ -158,7 +149,6 @@ def handle_time_unit_command(bot, argsText, autoType):
 
 
 def handle_max_time_command(bot, argsText, autoType):
-    print(2)
     if argsText.isdigit():
         time = int(argsText)
         if time > 0:
@@ -167,7 +157,6 @@ def handle_max_time_command(bot, argsText, autoType):
 
 
 def handle_max_num_command(bot, argsText, autoType):
-    print(2)
     if argsText.isdigit():
         maxNum = int(argsText)
         if maxNum > 0:
@@ -178,7 +167,6 @@ def handle_max_num_command(bot, argsText, autoType):
 
 
 async def handle_auto_approve_command(bot, argsText, autoType):
-    print(1)
     if argsText.isdigit() and autoType != 'all':
         if int(argsText) > 0:
             configUtil.config[bot.self_id]['agreeAutoApprove'][autoType] = 1
@@ -300,7 +288,6 @@ async def check_outdate(bot: Bot):
         else:
             ReferIdList = await getReferIdList(bot, 'user_id')
         requestorList = list(requestorDict[bot.self_id][requestorType])
-        print(ReferIdList)
         for requestor in requestorList:
             if int(requestor) in ReferIdList:
                 delList.append(requestor)
@@ -329,7 +316,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
     maxnum = config[bot.self_id]['numControl'][autoType]['maxNum']
     now = datetime.now()
     if parseTime(config[bot.self_id]['numControl'][autoType], numDict[bot.self_id][autoType], now) != -1:
-        await reFriendReqNum.send(message='未增满{}人,人数为{}上次添加时间{}'.format(maxnum, numDict[bot.self_id][autoType]['count'], now))
+        await reFriendReqNum.send(message=f'未增满{maxnum}人,人数为{numDict[bot.self_id][autoType]['count']}上次添加时间{now}')
     argsText = argsText.replace('为', '').strip()
     if argsText.isdigit():
         numDict[bot.self_id][autoType]['count'] = int(argsText)
@@ -337,8 +324,7 @@ async def _(bot: Bot, args: Message = CommandArg()):
         numDict[bot.self_id][autoType]['count'] = 0
     numDict[bot.self_id][autoType]['time'] = now
     writeTime(numDictPath, numDict)
-    await reFriendReqNum.finish('重置成功,为{}'.format(numDict[bot.self_id][autoType]['count']))
-
+    await reFriendReqNum.finish(f'重置成功,为{numDict[bot.self_id][autoType]["count"]}')
 addRecipient = on_command(
     "添加请求接收者", aliases={"删除请求接收者"}, block=True, priority=5, permission=SUPERUSER)
 
@@ -347,7 +333,6 @@ addRecipient = on_command(
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     check_dict_key_bot_id(config, requestorDict, numDict, bot)
     friend_list = await getReferIdList(bot, 'user_id')
-    print(friend_list)
     text = event.get_plaintext().strip()
     argsText = args.extract_plain_text()
     recipient = argsText
