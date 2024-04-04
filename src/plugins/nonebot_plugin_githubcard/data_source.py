@@ -1,14 +1,3 @@
-'''
-Author: Night-stars-1 nujj1042633805@gmail.com
-Date: 2023-10-01 21:25:18
-LastEditors: Night-stars-1 nujj1042633805@gmail.com
-LastEditTime: 2023-10-01 21:33:20
-Description:
-
-Copyright (c) 2023 by Night-stars-1, All Rights Reserved.
-'''
-
-
 import aiohttp
 from .config import githubcard_config
 
