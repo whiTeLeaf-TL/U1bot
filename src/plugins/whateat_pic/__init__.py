@@ -1,3 +1,11 @@
+import base64
+import random
+import requests
+import nonebot
+import re
+import os
+from .check_pass import check_cd, check_max
+from pathlib import Path
 from nonebot import require
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, Bot, Message, GroupMessageEvent
@@ -10,14 +18,6 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata, on_regex
 from nonebot.typing import T_State
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-from pathlib import Path
-from .check_pass import check_cd, check_max
-import os
-import re
-import nonebot
-import requests
-import random
-import base64
 
 __plugin_meta__ = PluginMetadata(
     name='今天吃什么？',
