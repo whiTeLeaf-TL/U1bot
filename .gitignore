@@ -149,3 +149,4 @@ src/plugins/nonebot_plugin_addFriend/num.json
 test.txt
 src/plugins/nonebot_plugin_addFriend/config.json
 src/plugins/nonebot_plugin_addFriend/requestor.json
+.vscode
