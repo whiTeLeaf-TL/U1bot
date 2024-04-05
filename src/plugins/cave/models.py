@@ -23,6 +23,7 @@ class cave_models(Model):
     details = fields.TextField()
     user_id = fields.BigIntField()
     time = fields.DatetimeField(auto_now_add=True)
+    anonymous = fields.BooleanField(default=False)
 
     class Meta:
         table = "cave_models"

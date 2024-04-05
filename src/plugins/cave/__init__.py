@@ -28,6 +28,7 @@ __plugin_meta__ = PluginMetadata(
 
 cave_main = on_command("回声洞")
 cave_add = on_command("投稿", aliases={"回声洞投稿"})
+cave_am_add = on_command("匿名投稿", aliases={"回声洞匿名投稿"})
 cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"})
 cave_view = on_command("查看")
 cave_del = on_command("删除")
@@ -78,6 +79,29 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         )
     )
 
+@cave_am_add.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    "匿名发布回声洞"
+    key = str(args).strip()
+    # 仅私聊
+    urllist = extract_image_urls(event.get_message())
+    if len(urllist) > 1:
+        await cave_add.finish("只能投一张图哦")
+    if not isinstance(event, PrivateMessageEvent):
+        await cave_add.finish("别搞啊，只能私聊我才能投稿啊！")
+    if not key:
+        await cave_add.finish("不输入内容，小子你是想让我投稿什么？空气咩？")
+
+    caves = await cave_models.create(
+        details=process_message(key), user_id=event.user_id, anonymous=True
+    )
+    await cave_add.send("匿名投稿成功！")
+    await cave_add.finish(
+        Message(
+            f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time}\n----------------------\n匿名投稿将会保存用户信息\n但其他用户无法看到作者"
+        )
+    )
+
 
 @cave_del.handle()
 async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
@@ -116,21 +140,21 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
     await data.save()
     await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
 
-
+# TODO 时间修复
 @cave_main.handle()
 async def _(matcher: Matcher):
     all_caves = await cave_models.all()
     random_cave = random.choice(all_caves)
+    displayname = "***（匿名投稿）" if random_cave.anonymous else random_cave.user_id
     result = f"编号:{random_cave.id}\n"
     result += "----------------------\n"
     result += f"内容：\n{random_cave.details}\n"
     result += "----------------------\n"
-    result += f"投稿人：{random_cave.user_id}\n"
+    result += f"投稿人：{displayname}\n"
     result += f"投稿时间：{random_cave.time}\n"
     result += "----------------------\n"
-    result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）"
+    result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await matcher.finish(Message(result))
-
 
 @cave_view.handle()
 async def _(matcher: Matcher, args: Message = CommandArg()):
@@ -142,14 +166,16 @@ async def _(matcher: Matcher, args: Message = CommandArg()):
     except Exception as e:
         logger.error(e)
         await matcher.finish("编号错误")
+    # 判断是否是匿名
+    displayname = "***（匿名投稿）" if cave.anonymous else cave.user_id
     result = f"编号:{cave.id}\n"
     result += "----------------------\n"
     result += f"内容：\n{cave.details}\n"
     result += "----------------------\n"
-    result += f"投稿人：{cave.user_id}\n"
+    result += f"投稿人：{displayname}\n"
     result += f"投稿时间：{cave.time}\n"
     result += "----------------------\n"
-    result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）"
+    result += "可以私聊我投稿内容啊！\n投稿 [内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await matcher.finish(Message(result))
 
 
