@@ -5,7 +5,6 @@ import requests
 from nonebot import get_driver, logger, on_command
 from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
-
 from nonebot.plugin import PluginMetadata
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -75,9 +74,10 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await cave_add.send("投稿成功！")
     await cave_add.finish(
         Message(
-            f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time}\n----------------------"
+            f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------"
         )
     )
+
 
 
 @cave_am_add.handle()
@@ -99,7 +99,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await cave_add.send("匿名投稿成功！")
     await cave_add.finish(
         Message(
-            f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time}\n----------------------\n匿名投稿将会保存用户信息\n但其他用户无法看到作者"
+            f"预览：\n编号：{caves.id}\n----------------------\n内容：\n{caves.details}\n----------------------\n投稿时间：{caves.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------\n匿名投稿将会保存用户信息\n但其他用户无法看到作者"
         )
     )
 
@@ -141,9 +141,6 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
     await data.save()
     await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
 
-# TODO 时间修复
-
-
 @cave_main.handle()
 async def _(matcher: Matcher):
     all_caves = await cave_models.all()
@@ -154,7 +151,7 @@ async def _(matcher: Matcher):
     result += f"内容：\n{random_cave.details}\n"
     result += "----------------------\n"
     result += f"投稿人：{displayname}\n"
-    result += f"投稿时间：{random_cave.time}\n"
+    result += f"投稿时间：{random_cave.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
     result += "----------------------\n"
     result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await matcher.finish(Message(result))
@@ -177,7 +174,7 @@ async def _(matcher: Matcher, args: Message = CommandArg()):
     result += f"内容：\n{cave.details}\n"
     result += "----------------------\n"
     result += f"投稿人：{displayname}\n"
-    result += f"投稿时间：{cave.time}\n"
+    result += f"投稿时间：{cave.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
     result += "----------------------\n"
     result += "可以私聊我投稿内容啊！\n投稿 [内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await matcher.finish(Message(result))
@@ -190,7 +187,7 @@ async def _(bot: Bot, event: MessageEvent):
     msg_list = [
         "回声洞记录如下：",
         *[
-            f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time}\n----------------------"
+            f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------"
             for i in all_caves
             if i.user_id == event.user_id
         ],
