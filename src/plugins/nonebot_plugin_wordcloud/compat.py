@@ -6,7 +6,7 @@ __all__ = ("model_validator",)
 
 
 if PYDANTIC_V2:
-    from pydantic import model_validator as model_validator
+    from pydantic import model_validator
 else:
     from pydantic import root_validator
 

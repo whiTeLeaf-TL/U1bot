@@ -81,7 +81,7 @@ def _migrate_old_data(ds_conn: Connection):
     logger.info("wordcloud: 迁移完成")
 
 
-async def data_migrate(conn: AsyncConnection):
+async def data_migrate(_):
     from nonebot_plugin_datastore.db import get_engine
 
     async with get_engine().connect() as ds_conn:

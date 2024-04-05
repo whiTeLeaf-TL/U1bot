@@ -57,11 +57,10 @@ class Config(BaseModel):
         values["wordcloud_default_schedule_time"] = default_schedule_time
         return values
 
-    def get_mask_path(self, key: Optional[str] = None) -> Path:
+    @staticmethod
+    def get_mask_path(key: Optional[str] = None) -> Path:
         """获取 mask 文件路径"""
-        if key is None:
-            return DATA_DIR / "mask.png"
-        return DATA_DIR / f"mask-{key}.png"
+        return DATA_DIR / "mask.png" if key is None else DATA_DIR / f"mask-{key}.png"
 
 
 global_config = get_driver().config
