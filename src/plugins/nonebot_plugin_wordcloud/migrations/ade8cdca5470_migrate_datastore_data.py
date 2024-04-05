@@ -55,7 +55,8 @@ def _migrate_old_data(ds_conn: Connection):
         return
 
     AlembicVersion = DsBase.classes.nonebot_plugin_wordcloud_alembic_version
-    version_num = ds_session.scalars(select(AlembicVersion.version_num)).one_or_none()
+    version_num = ds_session.scalars(
+        select(AlembicVersion.version_num)).one_or_none()
     if not version_num:
         return
     if version_num != "c0ecb94cc7a0":

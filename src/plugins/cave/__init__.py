@@ -79,6 +79,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         )
     )
 
+
 @cave_am_add.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
     "匿名发布回声洞"
@@ -141,6 +142,8 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
     await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
 
 # TODO 时间修复
+
+
 @cave_main.handle()
 async def _(matcher: Matcher):
     all_caves = await cave_models.all()
@@ -155,6 +158,7 @@ async def _(matcher: Matcher):
     result += "----------------------\n"
     result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await matcher.finish(Message(result))
+
 
 @cave_view.handle()
 async def _(matcher: Matcher, args: Message = CommandArg()):
