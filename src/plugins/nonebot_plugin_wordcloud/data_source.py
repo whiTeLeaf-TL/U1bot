@@ -63,7 +63,6 @@ def get_mask(key: str):
     default_mask_path = plugin_config.get_mask_path()
     if default_mask_path.exists():
         return np.array(Image.open(default_mask_path))
-    raise ValueError
 
 
 def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
@@ -77,8 +76,7 @@ def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
     # 词云参数
     wordcloud_options = {}
     wordcloud_options.update(plugin_config.wordcloud_options)
-    wordcloud_options.setdefault(
-        "font_path", str(plugin_config.wordcloud_font_path))
+    wordcloud_options.setdefault("font_path", str(plugin_config.wordcloud_font_path))
     wordcloud_options.setdefault("width", plugin_config.wordcloud_width)
     wordcloud_options.setdefault("height", plugin_config.wordcloud_height)
     wordcloud_options.setdefault(

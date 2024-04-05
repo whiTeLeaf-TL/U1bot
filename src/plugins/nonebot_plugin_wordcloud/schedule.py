@@ -1,15 +1,16 @@
 from datetime import time
 from typing import Dict, Optional, Tuple
-from zoneinfo import ZoneInfo
 
 import nonebot_plugin_saa as saa
 from apscheduler.job import Job
+from nonebot.compat import model_dump
 from nonebot.log import logger
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_cesaa import get_messages_plain_text
 from nonebot_plugin_orm import get_session
 from sqlalchemy import JSON, Select, cast, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from zoneinfo import ZoneInfo
 
 from .config import plugin_config
 from .data_source import get_wordcloud
@@ -49,7 +50,7 @@ class Scheduler:
             statement = (
                 select(Schedule.time)
                 .group_by(Schedule.time)
-                .where(Schedule.time != None)
+                .where(Schedule.time != None)  # noqa: E711
             )
             schedule_times = await session.scalars(statement)
             for schedule_time in schedule_times:
@@ -68,23 +69,25 @@ class Scheduler:
                         second=scheduler_time.second,
                         args=(schedule_time,),
                     )
-                    logger.debug(f"已添加每日词云定时发送任务，发送时间：{time_str} UTC")
+                    logger.debug(
+                        f"已添加每日词云定时发送任务，发送时间：{time_str} UTC"
+                    )
 
-    async def run_task(self, ztime: Optional[time] = None):
+    async def run_task(self, time: Optional[time] = None):
         """执行定时任务
 
         时间为 UTC 时间，并且没有时区信息
         如果没有传入时间，则执行默认定时任务
         """
         async with get_session() as session:
-            statement = select(Schedule).where(Schedule.time == ztime)
+            statement = select(Schedule).where(Schedule.time == time)
             results = await session.scalars(statement)
             schedules = results.all()
             # 如果该时间没有需要执行的定时任务，且不是默认任务则从任务列表中删除该任务
-            if ztime and not schedules:
-                self.schedules.pop(ztime.isoformat()).remove()
+            if time and not schedules:
+                self.schedules.pop(time.isoformat()).remove()
                 return
-            logger.info(f"开始发送每日词云，时间为 {ztime or '默认时间'}")
+            logger.info(f"开始发送每日词云，时间为 {time or '默认时间'}")
             for schedule in schedules:
                 target = schedule.saa_target
                 dt = get_datetime_now_with_timezone()
@@ -115,26 +118,27 @@ class Scheduler:
                     return time_astimezone(
                         schedule.time.replace(tzinfo=ZoneInfo("UTC"))
                     )
-                return plugin_config.wordcloud_default_schedule_time
+                else:
+                    return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
-        self, target: saa.PlatformTarget, *, ztime: Optional[time] = None
+        self, target: saa.PlatformTarget, *, time: Optional[time] = None
     ):
         """添加定时任务
 
         时间需要带时区信息
         """
         # 将时间转换为 UTC 时间
-        if ztime:
-            ztime = time_astimezone(ztime, ZoneInfo("UTC"))
+        if time:
+            time = time_astimezone(time, ZoneInfo("UTC"))
 
         async with get_session() as session:
             statement = self.select_target_statement(target, session)
             results = await session.scalars(statement)
             if schedule := results.one_or_none():
-                schedule.time = ztime
+                schedule.time = time
             else:
-                schedule = Schedule(time=ztime, target=target.dict())
+                schedule = Schedule(time=time, target=model_dump(target))
                 session.add(schedule)
             await session.commit()
         await self.update()
@@ -158,8 +162,10 @@ class Scheduler:
         """
         engine = session.get_bind()
         if engine.dialect.name == "mysql":
-            return select(Schedule).where(Schedule.target == cast(target.dict(), JSON))
-        return select(Schedule).where(Schedule.target == target.dict())
+            return select(Schedule).where(
+                Schedule.target == cast(model_dump(target), JSON)
+            )
+        return select(Schedule).where(Schedule.target == model_dump(target))
 
 
 schedule_service = Scheduler()

@@ -231,41 +231,49 @@
         "description": "看看别人的投稿，也可以自己投稿~",
         "usage": "投稿\n查看回声洞记录\n删除[序号]\n如：\n投稿",
         "extra": {
-            "menu_data": [{
-                    "func": "回声洞",
-                    "trigger_method": "回声洞",
-                    "trigger_condition": "群聊/私聊",
-                    "brief_des": "随机看回声洞的其中一条",
-                    "detail_des": "无"
-                },
-                {
-                    "func": "投稿",
-                    "trigger_method": "投稿/回声洞投稿",
-                    "trigger_condition": "仅私聊",
-                    "brief_des": "投稿到回声洞",
-                    "detail_des": "投稿\n将内容投稿到回声洞\n仅限私聊\n例如：\n投稿 内容"
-                },
-                {
-                    "func": "查看回声洞记录",
-                    "trigger_method": "查看回声洞记录/回声洞记录",
-                    "trigger_condition": "群聊/私聊",
-                    "brief_des": "查看回声洞的投稿记录（合并信息）",
-                    "detail_des": "例如\n查看回声洞记录\n回声洞记录\n他是合并信息，不怕刷屏咯"
-                },
-                {
-                    "func": "删除投稿",
-                    "trigger_method": "删除[序号]",
-                    "trigger_condition": "群聊/私聊",
-                    "brief_des": "删除指定序号的投稿（仅限自己的投稿）",
-                    "detail_des": "删除[序号]\n删除回声洞中指定序号的投稿\n群聊或私聊\n例如：\n删除1"
-                },
-                {
-                    "func": "查看",
-                    "trigger_method": "查看[序号]",
-                    "trigger_condition": "群聊/私聊",
-                    "brief_des": "查看指定序号的投稿",
-                    "detail_des": "查看[序号]\n群聊或私聊\n例如：\n查看1"
-                }
+            "menu_data": [
+              {
+                "func": "回声洞",
+                "trigger_method": "回声洞",
+                "trigger_condition": "群聊/私聊",
+                "brief_des": "随机看回声洞的其中一条",
+                "detail_des": "无"
+              },
+              {
+                "func": "投稿",
+                "trigger_method": "投稿/回声洞投稿",
+                "trigger_condition": "仅私聊",
+                "brief_des": "投稿到回声洞",
+                "detail_des": "将内容投稿到回声洞\n例如：投稿 内容"
+              },
+              {
+                "func": "匿名投稿",
+                "trigger_method": "匿名投稿/回声洞匿名投稿",
+                "trigger_condition": "仅私聊",
+                "brief_des": "匿名投稿到回声洞",
+                "detail_des": "将内容投稿到回声洞\n不同的是其他用户看不见，但用户数据还是会被保存\n例如：匿名投稿 内容"
+              },
+              {
+                "func": "查看回声洞记录",
+                "trigger_method": "查看回声洞记录/回声洞记录",
+                "trigger_condition": "群聊/私聊",
+                "brief_des": "查看回声洞的投稿记录（合并信息）",
+                "detail_des": "例如：查看回声洞记录、回声洞记录、他是合并信息，不怕刷屏咯"
+              },
+              {
+                "func": "删除投稿",
+                "trigger_method": "删除[序号]",
+                "trigger_condition": "群聊/私聊",
+                "brief_des": "删除指定序号的投稿（仅限自己的投稿）",
+                "detail_des": "删除[序号]\n删除回声洞中指定序号的投稿\n例如：删除1"
+              },
+              {
+                "func": "查看",
+                "trigger_method": "查看[序号]",
+                "trigger_condition": "群聊/私聊",
+                "brief_des": "查看指定序号的投稿",
+                "detail_des": "查看[序号]\n群聊或私聊\n例如：查看1"
+              }
             ],
             "menu_template": "default"
         }
