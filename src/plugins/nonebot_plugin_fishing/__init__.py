@@ -37,10 +37,10 @@ async def _fishing(event: Event):
     choice_result = choice()
     fish = choice_result[0]
     sleep_time = choice_result[1]
-    result = f"钓到了一条{fish}, 你把它收进了背包里"
+    result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
     await save_fish(user_id, fish)
     await asyncio.sleep(sleep_time)
-    await fishing.finish(result)
+    await fishing.finish(result, reply_message=True)
 
 
 @stats.handle()
@@ -56,5 +56,5 @@ async def _backpack(event: Event):
 
 
 @sell.handle()
-async def _sell(event: Event):
+async def _sell():
     await sell.finish("商店正在施工中…")
