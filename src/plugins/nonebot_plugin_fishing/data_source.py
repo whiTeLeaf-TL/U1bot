@@ -24,13 +24,14 @@ async def is_fishing(user_id: str) -> bool:
     session = get_session()
     async with session.begin():
         records = await session.execute(select(FishingRecord))
-        for record in records.scalars():
-            if record.user_id == user_id:
-                if record.time >= time_now:
-                    return False
-                return True
-        else:
-            return True
+        return next(
+            (
+                record.time < time_now
+                for record in records.scalars()
+                if record.user_id == user_id
+            ),
+            True,
+        )
 
 
 async def save_fish(user_id: str, fish_name: str) -> None:
@@ -55,36 +56,41 @@ async def save_fish(user_id: str, fish_name: str) -> None:
                 await session.execute(user_update)
                 await session.commit()
                 return
-        else:
-            data = {
-                fish_name: 1
-            }
-            dump_fishes = json.dumps(data)
-            new_record = FishingRecord(
-                user_id=user_id,
-                time=time_now + fishing_limit,
-                frequency=1,
-                fishes=dump_fishes,
-                coin=0
-            )
-            session.add(new_record)
-            await session.commit()
+        data = {
+            fish_name: 1
+        }
+        dump_fishes = json.dumps(data)
+        new_record = FishingRecord(
+            user_id=user_id,
+            time=time_now + fishing_limit,
+            frequency=1,
+            fishes=dump_fishes,
+            coin=0
+        )
+        session.add(new_record)
+        await session.commit()
 
 
 async def get_stats(user_id: str) -> str:
     session = get_session()
     async with session.begin():
         fishing_records = await session.execute(select(FishingRecord))
-        for fishing_record in fishing_records.scalars():
-            if fishing_record.user_id == user_id:
-                return f"你钓鱼了 {fishing_record.frequency} 次"
-        return "你还没有钓过鱼, 快去钓鱼吧"
+        return next(
+            (
+                f"你钓鱼了 {fishing_record.frequency} 次"
+                for fishing_record in fishing_records.scalars()
+                if fishing_record.user_id == user_id
+            ),
+            "你还没有钓过鱼, 快去钓鱼吧",
+        )
 
 
 def print_backpack(backpack: dict) -> str:
     _ = "\n"
-    result = [fish_name + "×" + str(quantity)
-              for fish_name, quantity in backpack.items()]
+    result = [
+        f"{fish_name}×{str(quantity)}"
+        for fish_name, quantity in backpack.items()
+    ]
     return "背包:\n" + _.join(result)
 
 
