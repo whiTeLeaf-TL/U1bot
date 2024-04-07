@@ -35,6 +35,7 @@ balance = on_command("balance", aliases={"余额"}, priority=5)
 
 @fishing.handle()
 async def _fishing(event: Event):
+    """钓鱼"""
     user_id = event.get_user_id()
     if not await is_fishing(user_id):
         await fishing.finish("河累了，休息一下吧")
@@ -50,18 +51,21 @@ async def _fishing(event: Event):
 
 @stats.handle()
 async def _stats(event: Event):
+    """统计信息"""
     user_id = event.get_user_id()
     await stats.finish(await get_stats(user_id))
 
 
 @backpack.handle()
 async def _backpack(event: Event):
+    """背包"""
     user_id = event.get_user_id()
     await backpack.finish(await get_backpack(user_id))
 
 
 @sell.handle()
 async def _sell(event: Event, arg: Message = CommandArg()):
+    """卖鱼"""
     fish_name = arg.extract_plain_text()
     if fish_name == "":
         await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
@@ -71,5 +75,6 @@ async def _sell(event: Event, arg: Message = CommandArg()):
 
 @balance.handle()
 async def _balance(event: Event):
+    """余额"""
     user_id = event.get_user_id()
     await balance.finish(await get_balance(user_id))
