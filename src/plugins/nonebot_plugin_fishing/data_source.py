@@ -22,6 +22,7 @@ def choice() -> tuple:
 
 
 def get_price(fish_name: str) -> int:
+    """获取鱼的价格"""
     config_fishes = config.fishes
     return [fish["price"]
             for fish in config_fishes
