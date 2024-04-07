@@ -126,7 +126,7 @@ async def get_backpack(user_id: str) -> str:
 async def sell_fish(user_id: str, fish_name: str) -> str:
     """
     卖鱼
-    
+
     参数：
       - user_id: 将要卖鱼的用户唯一标识符，用于区分谁正在卖鱼
       - fish_name: 将要卖鱼的鱼名称
