@@ -31,6 +31,7 @@ def get_price(fish_name: str) -> int:
 
 
 async def is_fishing(user_id: str) -> bool:
+    """判断是否正在钓鱼"""
     time_now = int(time.time())
     session = get_session()
     async with session.begin():
@@ -46,6 +47,7 @@ async def is_fishing(user_id: str) -> bool:
 
 
 async def save_fish(user_id: str, fish_name: str) -> None:
+    """向数据库写入鱼以持久化保存"""
     time_now = int(time.time())
     fishing_limit = config.fishing_limit
     session = get_session()
@@ -83,6 +85,7 @@ async def save_fish(user_id: str, fish_name: str) -> None:
 
 
 async def get_stats(user_id: str) -> str:
+    """获取钓鱼统计信息"""
     session = get_session()
     async with session.begin():
         fishing_records = await session.execute(select(FishingRecord))
@@ -97,6 +100,7 @@ async def get_stats(user_id: str) -> str:
 
 
 def print_backpack(backpack: dict) -> str:
+    """输出背包内容"""
     _ = "\n"
     result = [
         f"{fish_name}×{str(quantity)}"
@@ -106,6 +110,7 @@ def print_backpack(backpack: dict) -> str:
 
 
 async def get_backpack(user_id: str) -> str:
+    """从数据库查询背包内容"""
     session = get_session()
     async with session.begin():
         fishes_records = await session.execute(select(FishingRecord))
@@ -119,6 +124,16 @@ async def get_backpack(user_id: str) -> str:
 
 
 async def sell_fish(user_id: str, fish_name: str) -> str:
+    """
+    卖鱼
+    
+    参数：
+      - user_id: 将要卖鱼的用户唯一标识符，用于区分谁正在卖鱼
+      - fish_name: 将要卖鱼的鱼名称
+
+    返回：
+      - (str): 待回复的文本
+    """
     session = get_session()
     async with session.begin():
         fishes_records = await session.execute(select(FishingRecord))
@@ -146,6 +161,7 @@ async def sell_fish(user_id: str, fish_name: str) -> str:
 
 
 async def get_balance(user_id: str) -> str:
+    """获取余额"""
     session = get_session()
     async with session.begin():
         fishes_records = await session.execute(select(FishingRecord))
