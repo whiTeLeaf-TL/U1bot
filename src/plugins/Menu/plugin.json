@@ -591,10 +591,10 @@
         },
         {
           "func": "卖鱼",
-          "trigger_method": "卖鱼",
+          "trigger_method": "卖鱼 <鱼的名称>",
           "trigger_condition": "群聊/私聊",
           "brief_des": "学林北卖鱼，走十年弯路~",
-          "detail_des": "无"
+          "detail_des": "卖鱼可以获得通用货币！"
         }
       ],
       "menu_template": "default"
