@@ -104,7 +104,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 
 
 @cave_del.handle()
-async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
+async def _(bot: Bot, event: MessageEvent):
     Message_text = str(event.message)
     deletion_reasons = extract_deletion_reason(Message_text)[0]
     key = deletion_reasons["序号"]
@@ -113,11 +113,11 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
     try:
         key = int(key)
     except ValueError:
-        await matcher.finish("请输入正确的序号")
+        await cave_del.finish("请输入正确的序号")
     try:
         data = await cave_models.get(id=key)
     except Exception:
-        await matcher.finish("没有这个序号的投稿")
+        await cave_del.finish("没有这个序号的投稿")
     # 判断是否是超级用户或者是投稿人
     if str(event.user_id) in SUPERUSER:
         try:
@@ -132,17 +132,17 @@ async def _(bot: Bot, matcher: Matcher, event: MessageEvent):
     elif event.user_id == data.user_id:
         await data.delete()
         await data.save()
-        await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}")
+        await cave_del.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}")
     else:
-        await matcher.finish("你不是投稿人，也不是作者的，你想干咩？")
+        await cave_del.finish("你不是投稿人，也不是作者的，你想干咩？")
     result = data.details
     await data.delete()
     await data.save()
-    await matcher.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
+    await cave_del.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
 
 
 @cave_main.handle()
-async def _(matcher: Matcher):
+async def _():
     all_caves = await cave_models.all()
     random_cave = random.choice(all_caves)
     displayname = "***（匿名投稿）" if random_cave.anonymous else random_cave.user_id
@@ -154,19 +154,19 @@ async def _(matcher: Matcher):
     result += f"投稿时间：{random_cave.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
     result += "----------------------\n"
     result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
-    await matcher.finish(Message(result))
+    await cave_main.finish(Message(result))
 
 
 @cave_view.handle()
-async def _(matcher: Matcher, args: Message = CommandArg()):
+async def _(args: Message = CommandArg()):
     key = str(args).strip()
     if not key:
-        await matcher.finish("请输入编号")
+        await cave_view.finish("请输入编号")
     try:
         cave = await cave_models.get(id=int(key))
     except Exception as e:
         logger.error(e)
-        await matcher.finish("编号错误")
+        await cave_view.finish("编号错误")
     # 判断是否是匿名
     displayname = "***（匿名投稿）" if cave.anonymous else cave.user_id
     result = f"编号:{cave.id}\n"
@@ -177,7 +177,7 @@ async def _(matcher: Matcher, args: Message = CommandArg()):
     result += f"投稿时间：{cave.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
     result += "----------------------\n"
     result += "可以私聊我投稿内容啊！\n投稿 [内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
-    await matcher.finish(Message(result))
+    await cave_view.finish(Message(result))
 
 
 @cave_history.handle()
