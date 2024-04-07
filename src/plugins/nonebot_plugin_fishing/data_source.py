@@ -10,6 +10,7 @@ from .model import FishingRecord
 
 fishing_coin_name = config.fishing_coin_name
 
+
 def choice() -> tuple:
     config_fishes = config.fishes
     weights = [weight["weight"] for weight in config_fishes]
@@ -19,13 +20,15 @@ def choice() -> tuple:
     )
     return choices[0]["name"], choices[0]["frequency"]
 
+
 def get_price(fish_name: str) -> int:
     config_fishes = config.fishes
     return [fish["price"]
             for fish in config_fishes
             if fish["name"] == fish_name
-            ][0]  # 抽象推导式 :)  
-            # @xiaozhu2007: 确实挺抽象的
+            ][0]  # 抽象推导式 :)
+    # @xiaozhu2007: 确实挺抽象的
+
 
 async def is_fishing(user_id: str) -> bool:
     time_now = int(time.time())
@@ -113,6 +116,7 @@ async def get_backpack(user_id: str) -> str:
                     return "你的背包里空无一物"
                 return print_backpack(load_fishes)
         return "你的背包里空无一物"
+
 
 async def sell_fish(user_id: str, fish_name: str) -> str:
     session = get_session()
