@@ -30,10 +30,10 @@ class Config(BaseModel):
             "frequency": 10,
             "weight": 1,
             "price": 50
-        },
+        }
     ]
 
-    fishing_limit: int = 60
+    fishing_limit: int = 30
 
 
 config = get_plugin_config(Config)
