@@ -36,4 +36,5 @@ class Config(BaseModel):
     fishing_limit: int = 30            # 钓鱼间隔 (s)
     fishing_coin_name: str = "次元币"  # 货币名称
 
+
 config = get_plugin_config(Config)
