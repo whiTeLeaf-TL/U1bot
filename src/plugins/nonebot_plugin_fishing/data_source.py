@@ -24,11 +24,10 @@ def choice() -> tuple:
 def get_price(fish_name: str) -> int:
     """获取鱼的价格"""
     config_fishes = config.fishes
-    return [fish["price"]
-            for fish in config_fishes
-            if fish["name"] == fish_name
-            ][0]  # 抽象推导式 :)
-    # @xiaozhu2007: 确实挺抽象的
+    return next(
+        (fish["price"] for fish in config_fishes if fish["name"] == fish_name),
+        0,
+    )
 
 
 async def is_fishing(user_id: str) -> bool:
@@ -118,9 +117,7 @@ async def get_backpack(user_id: str) -> str:
         for fishes_record in fishes_records.scalars():
             if fishes_record.user_id == user_id:
                 load_fishes = json.loads(fishes_record.fishes)
-                if load_fishes == {}:
-                    return "你的背包里空无一物"
-                return print_backpack(load_fishes)
+                return "你的背包里空无一物" if load_fishes == {} else print_backpack(load_fishes)
         return "你的背包里空无一物"
 
 
@@ -137,28 +134,26 @@ async def sell_fish(user_id: str, fish_name: str) -> str:
     """
     session = get_session()
     async with session.begin():
-        fishes_records = await session.execute(select(FishingRecord))
-        for fishes_record in fishes_records.scalars():
-            if fishes_record.user_id == user_id:
-                loads_fishes = json.loads(fishes_record.fishes)
-                for fish_name_in_backpack in loads_fishes:
-                    if fish_name == fish_name_in_backpack:
-                        if loads_fishes == {}:
-                            return "查无此鱼"
-                        fish_price = get_price(fish_name)
-                        loads_fishes[fish_name] -= 1
-                        if loads_fishes[fish_name] == 0:
-                            loads_fishes = {}
-                        dump_fishes = json.dumps(loads_fishes)
-                        user_update = update(FishingRecord).where(FishingRecord.user_id == user_id).values(
-                            coin=fishes_record.coin + fish_price,
-                            fishes=dump_fishes
-                        )
-                        await session.execute(user_update)
-                        await session.commit()
-                        return f"你以 {fish_price} {fishing_coin_name} / 条的价格卖出了 {fish_name}"
+        fishes_records = await session.execute(select(FishingRecord).where(FishingRecord.user_id == user_id))
+        if fishes_record := fishes_records.scalars().first():
+            loads_fishes = json.loads(fishes_record.fishes)
+            if fish_name in loads_fishes and loads_fishes[fish_name] > 0:
+                fish_price = get_price(fish_name)
+                loads_fishes[fish_name] -= 1
+                if loads_fishes[fish_name] == 0:
+                    del loads_fishes[fish_name]
+                dump_fishes = json.dumps(loads_fishes)
+                user_update = update(FishingRecord).where(FishingRecord.user_id == user_id).values(
+                    coin=fishes_record.coin + fish_price,
+                    fishes=dump_fishes
+                )
+                await session.execute(user_update)
+                await session.commit()
+                return f"你以 {fish_price} {fishing_coin_name} / 条的价格卖出了 {fish_name}"
+            else:
                 return "查无此鱼"
-        return "还没钓鱼就想卖鱼？"
+        else:
+            return "还没钓鱼就想卖鱼？"
 
 
 async def get_balance(user_id: str) -> str:
@@ -166,7 +161,11 @@ async def get_balance(user_id: str) -> str:
     session = get_session()
     async with session.begin():
         fishes_records = await session.execute(select(FishingRecord))
-        for fishes_record in fishes_records.scalars():
-            if fishes_record.user_id == user_id:
-                return f"你有 {fishes_record.coin} {fishing_coin_name}"
-        return "你什么也没有 :)"
+        return next(
+            (
+                f"你有 {fishes_record.coin} {fishing_coin_name}"
+                for fishes_record in fishes_records.scalars()
+                if fishes_record.user_id == user_id
+            ),
+            "你什么也没有 :)",
+        )
