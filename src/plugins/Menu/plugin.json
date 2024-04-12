@@ -595,6 +595,13 @@
           "trigger_condition": "群聊/私聊",
           "brief_des": "学林北卖鱼，走十年弯路~",
           "detail_des": "卖鱼可以获得通用货币！"
+        },
+        {
+          "func": "余额",
+          "trigger_method": "余额",
+          "trigger_condition": "群聊/私聊",
+          "brief_des": "卖鱼赚钱，何尝不是一般幸福的滋味？",
+          "detail_des": "无"
         }
       ],
       "menu_template": "default"
