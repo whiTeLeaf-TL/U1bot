@@ -132,13 +132,13 @@ async def _(bot: Bot, event: MessageEvent):
     elif event.user_id == data.user_id:
         await data.delete()
         await data.save()
-        await cave_del.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}")
+        await cave_del.finish(Message(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}"))
     else:
         await cave_del.finish("你不是投稿人，也不是作者的，你想干咩？")
     result = data.details
     await data.delete()
     await data.save()
-    await cave_del.finish(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}")
+    await cave_del.finish(Message(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}"))
 
 
 @cave_main.handle()
@@ -187,7 +187,8 @@ async def _(bot: Bot, event: MessageEvent):
     msg_list = [
         "回声洞记录如下：",
         *[
-            f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------"
+            Message(
+                f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------")
             for i in all_caves
             if i.user_id == event.user_id
         ],
