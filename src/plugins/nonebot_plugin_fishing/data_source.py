@@ -1,4 +1,3 @@
-from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent, PrivateMessageEvent
 )
@@ -34,22 +33,6 @@ def get_price(fish_name: str) -> int:
         (fish["price"] for fish in config_fishes if fish["name"] == fish_name),
         0,
     )
-
-
-async def is_fishing(user_id: str) -> bool:
-    """判断是否正在钓鱼"""
-    time_now = int(time.time())
-    session = get_session()
-    async with session.begin():
-        records = await session.execute(select(FishingRecord))
-        return next(
-            (
-                record.time < time_now
-                for record in records.scalars()
-                if record.user_id == user_id
-            ),
-            True,
-        )
 
 
 async def save_fish(user_id: str, fish_name: str) -> None:
