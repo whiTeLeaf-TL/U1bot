@@ -44,7 +44,7 @@ async def _fishing(event: Event):
     fish = choice_result[0]
     sleep_time = choice_result[1]
     result = ""
-    if fish =="河":
+    if fish == "河":
         result = "* 河累了，休息..等等...你钓到了一条河？！"
     else:
         result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
