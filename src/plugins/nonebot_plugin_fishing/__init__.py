@@ -9,12 +9,17 @@ import asyncio
 
 from .config import Config
 from .data_source import (choice,
-                          is_fishing,
+                          is_fishing, switch_fish,
                           get_stats,
                           save_fish,
                           get_backpack,
                           sell_fish,
-                          get_balance)
+                          get_balance, get_switch_fish)
+from nonebot.adapters.onebot.v11 import (
+    GroupMessageEvent, PrivateMessageEvent
+)
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+from nonebot.permission import SUPERUSER
 
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
@@ -26,11 +31,15 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters=None
 )
 
-fishing = on_command("fishing", aliases={"钓鱼"}, priority=5)
+
+fishing = on_command("fishing", aliases={
+                     "钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额"}, priority=5)
+switch = on_command("fish_switch", aliases={
+                    "开关钓鱼"}, priority=5, permission=GROUP_ADMIN | SUPERUSER)
 
 
 @fishing.handle()
@@ -83,3 +92,12 @@ async def _balance(event: Event):
     """余额"""
     user_id = event.get_user_id()
     await balance.finish(await get_balance(user_id), reply_message=True)
+
+
+@switch.handle()
+async def _switch(event: GroupMessageEvent | PrivateMessageEvent):
+    """钓鱼开关"""
+    if await switch_fish(event):
+        await switch.finish("钓鱼开关已打开")
+    else:
+        await switch.finish("钓鱼开关已关闭")
