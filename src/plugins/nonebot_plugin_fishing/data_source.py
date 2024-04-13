@@ -1,3 +1,7 @@
+from nonebot.typing import T_State
+from nonebot.adapters.onebot.v11 import (
+    GroupMessageEvent, PrivateMessageEvent
+)
 import random
 import time
 import json
@@ -6,7 +10,7 @@ from sqlalchemy import update
 from nonebot_plugin_orm import get_session
 
 from .config import config
-from .model import FishingRecord
+from .model import FishingRecord, FishingSwitch
 
 fishing_coin_name = config.fishing_coin_name
 
@@ -170,4 +174,46 @@ async def get_balance(user_id: str) -> str:
                 if fishes_record.user_id == user_id
             ),
             "你什么也没有 :)",
+        )
+
+
+async def switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
+    """钓鱼开关切换，没有就创建"""
+    if isinstance(event, PrivateMessageEvent):
+        return True
+    session = get_session()
+    async with session.begin():
+        switchs = await session.execute(select(FishingSwitch))
+        for switch in switchs.scalars():
+            if switch.group_id == event.group_id:
+                result = switch.switch
+                user_update = update(FishingSwitch).where(FishingSwitch.group_id == event.group_id).values(
+                    switch=not result
+                )
+                await session.execute(user_update)
+                await session.commit()
+                return not result
+        new_switch = FishingSwitch(
+            group_id=event.group_id,
+            switch=False
+        )
+        session.add(new_switch)
+        await session.commit()
+        return False
+
+
+async def get_switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
+    """获取钓鱼开关"""
+    if isinstance(event, PrivateMessageEvent):
+        return True
+    session = get_session()
+    async with session.begin():
+        switchs = await session.execute(select(FishingSwitch))
+        return next(
+            (
+                switch.switch
+                for switch in switchs.scalars()
+                if switch.group_id == event.group_id
+            ),
+            True,
         )

@@ -10,3 +10,8 @@ class FishingRecord(Model):
     frequency: Mapped[int]
     fishes: Mapped[str] = mapped_column(TEXT)
     coin: Mapped[int] = mapped_column(default=0)
+
+
+class FishingSwitch(Model):
+    group_id: Mapped[int] = mapped_column(primary_key=True)
+    switch: Mapped[bool] = mapped_column(default=True)

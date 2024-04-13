@@ -70,7 +70,7 @@ setu_matcher = on_regex(
 )
 
 setuopenorclose_matcher = on_command(
-    "setu开关", permission=SUPERUSER | GROUP_ADMIN)
+    "setu开关", aliases={'色图开关', "涩图开关"}, permission=SUPERUSER | GROUP_ADMIN)
 
 
 @setuopenorclose_matcher.handle()
