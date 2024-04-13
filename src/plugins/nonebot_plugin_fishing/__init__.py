@@ -43,9 +43,14 @@ async def _fishing(event: Event):
     choice_result = choice()
     fish = choice_result[0]
     sleep_time = choice_result[1]
-    result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
+    result = ""
+    if fish =="河":
+        result = "* 河累了，休息..等等...你钓到了一条河？！"
+    else:
+        result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
     await save_fish(user_id, fish)
     await asyncio.sleep(sleep_time)
+    # result = "* 你钓了一整天，什么也没钓到，但是你的技术有所提升了！"
     await fishing.finish(result, reply_message=True)
 
 
