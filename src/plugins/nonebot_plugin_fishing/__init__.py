@@ -53,14 +53,14 @@ async def _fishing(event: Event):
 async def _stats(event: Event):
     """统计信息"""
     user_id = event.get_user_id()
-    await stats.finish(await get_stats(user_id))
+    await stats.finish(await get_stats(user_id), reply_message=True)
 
 
 @backpack.handle()
 async def _backpack(event: Event):
     """背包"""
     user_id = event.get_user_id()
-    await backpack.finish(await get_backpack(user_id))
+    await backpack.finish(await get_backpack(user_id), reply_message=True)
 
 
 @sell.handle()
@@ -70,11 +70,11 @@ async def _sell(event: Event, arg: Message = CommandArg()):
     if fish_name == "":
         await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
     user_id = event.get_user_id()
-    await sell.finish(await sell_fish(user_id, fish_name))
+    await sell.finish(await sell_fish(user_id, fish_name), reply_message=True)
 
 
 @balance.handle()
 async def _balance(event: Event):
     """余额"""
     user_id = event.get_user_id()
-    await balance.finish(await get_balance(user_id))
+    await balance.finish(await get_balance(user_id), reply_message=True)
