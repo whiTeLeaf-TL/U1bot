@@ -7,9 +7,9 @@ from nonebot.params import CommandArg
 
 import asyncio
 
-from .config import Config
+from .config import Config, config
 from .data_source import (choice,
-                          is_fishing, switch_fish,
+                          switch_fish,
                           get_stats,
                           save_fish,
                           get_backpack,
@@ -20,7 +20,10 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
-
+from nonebot.adapters.onebot.v11.helpers import (
+    Cooldown,
+    CooldownIsolateLevel,
+)
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
     description="你甚至可以电子钓鱼",
@@ -42,12 +45,18 @@ switch = on_command("fish_switch", aliases={
                     "开关钓鱼"}, priority=5, permission=GROUP_ADMIN | SUPERUSER)
 
 
-@fishing.handle()
+@fishing.handle(
+    parameterless=[
+        Cooldown(
+            cooldown=config.fishing_limit,
+            prompt="河累了，休息一下吧",
+            isolate_level=CooldownIsolateLevel.USER,
+        )
+    ]
+)
 async def _fishing(event: Event):
     """钓鱼"""
     user_id = event.get_user_id()
-    if not await is_fishing(user_id):
-        await fishing.finish("河累了，休息一下吧")
     await fishing.send("正在钓鱼…")
     choice_result = choice()
     fish = choice_result[0]
