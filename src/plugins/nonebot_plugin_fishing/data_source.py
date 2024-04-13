@@ -183,16 +183,16 @@ async def switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
         return True
     session = get_session()
     async with session.begin():
-        switchs = await session.execute(select(FishingSwitch))
-        for switch in switchs.scalars():
-            if switch.group_id == event.group_id:
-                result = switch.switch
-                user_update = update(FishingSwitch).where(FishingSwitch.group_id == event.group_id).values(
-                    switch=not result
-                )
-                await session.execute(user_update)
-                await session.commit()
-                return not result
+        switchs = await session.execute(select(FishingSwitch).where(FishingSwitch.group_id == event.group_id))
+        switch = switchs.scalars().first()
+        if switch:
+            result = switch.switch
+            user_update = update(FishingSwitch).where(FishingSwitch.group_id == event.group_id).values(
+                switch=not result
+            )
+            await session.execute(user_update)
+            await session.commit()
+            return not result
         new_switch = FishingSwitch(
             group_id=event.group_id,
             switch=False
@@ -208,12 +208,6 @@ async def get_switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> boo
         return True
     session = get_session()
     async with session.begin():
-        switchs = await session.execute(select(FishingSwitch))
-        return next(
-            (
-                switch.switch
-                for switch in switchs.scalars()
-                if switch.group_id == event.group_id
-            ),
-            True,
-        )
+        switchs = await session.execute(select(FishingSwitch).where(FishingSwitch.group_id == event.group_id))
+        switch = switchs.scalars().first()
+        return switch.switch if switch else True
