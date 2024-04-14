@@ -32,7 +32,8 @@ class SetuHandler:
         self.reverse_proxy_url = REVERSE_PROXY
         self.handler = handler
         self.setu_instance_list: List[Setu] = []
-        self.semaphore = asyncio.Semaphore(10)  # Limit the number of concurrent downloads
+        # Limit the number of concurrent downloads
+        self.semaphore = asyncio.Semaphore(10)
 
     async def refresh_api_info(self):
         data = {
@@ -54,8 +55,10 @@ class SetuHandler:
             setu_api_data_instance = SetuApiData(**data)
             if len(setu_api_data_instance.data) == 0:
                 raise SetuNotFindError()
-            logger.debug(f"API Responsed {len(setu_api_data_instance.data)} image")
-            self.setu_instance_list = [Setu(data=i) for i in setu_api_data_instance.data]
+            logger.debug(
+                f"API Responsed {len(setu_api_data_instance.data)} image")
+            self.setu_instance_list = [Setu(data=i)
+                                       for i in setu_api_data_instance.data]
         except Exception as e:
             logger.error(f"Error occurred while refreshing API info: {e}")
 
