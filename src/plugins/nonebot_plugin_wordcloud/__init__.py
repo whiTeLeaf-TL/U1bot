@@ -1,20 +1,26 @@
 """词云"""
 
-from .utils import (
-    admin_permission,
-    ensure_group,
-    get_datetime_fromisoformat_with_timezone,
-    get_datetime_now_with_timezone,
-    get_mask_key,
-    get_time_fromisoformat_with_timezone,
-)
-from .schedule import schedule_service
-from .data_source import get_wordcloud
-from .config import Config, plugin_config
-from . import migrations
-from PIL import Image
-from nonebot_plugin_session import Session, SessionIdType, extract_session
-from nonebot_plugin_cesaa import get_messages_plain_text
+from nonebot import require
+
+require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_alconna")
+require("nonebot_plugin_cesaa")
+
+import re
+from datetime import datetime, timedelta
+from io import BytesIO
+from typing import Optional, Union
+
+import nonebot_plugin_alconna as alc
+import nonebot_plugin_saa as saa
+from arclet.alconna import ArparmaBehavior
+from arclet.alconna.arparma import Arparma
+from nonebot import get_driver
+from nonebot.adapters import Bot, Event, Message
+from nonebot.params import Arg, Depends
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata, inherit_supported_adapters
+from nonebot.typing import T_State
 from nonebot_plugin_alconna import (
     Alconna,
     AlconnaMatch,
@@ -28,26 +34,22 @@ from nonebot_plugin_alconna import (
     on_alconna,
     store_true,
 )
-from nonebot.typing import T_State
-from nonebot.plugin import PluginMetadata, inherit_supported_adapters
-from nonebot.permission import SUPERUSER
-from nonebot.params import Arg, Depends
-from nonebot.adapters import Bot, Event, Message
-from nonebot import get_driver
-from arclet.alconna.arparma import Arparma
-from arclet.alconna import ArparmaBehavior
-import nonebot_plugin_saa as saa
-import nonebot_plugin_alconna as alc
-from typing import Optional, Union
-from io import BytesIO
-from datetime import datetime, timedelta
-import re
-from nonebot import require
+from nonebot_plugin_cesaa import get_messages_plain_text
+from nonebot_plugin_session import Session, SessionIdType, extract_session
+from PIL import Image
 
-require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_alconna")
-require("nonebot_plugin_cesaa")
-
+from . import migrations
+from .config import Config, plugin_config
+from .data_source import get_wordcloud
+from .schedule import schedule_service
+from .utils import (
+    admin_permission,
+    ensure_group,
+    get_datetime_fromisoformat_with_timezone,
+    get_datetime_now_with_timezone,
+    get_mask_key,
+    get_time_fromisoformat_with_timezone,
+)
 
 get_driver().on_startup(schedule_service.update)
 
@@ -96,11 +98,10 @@ __plugin_meta__ = PluginMetadata(
 
 
 class SameTime(ArparmaBehavior):
-    @staticmethod
-    def operate(interface: Arparma):
-        data_type = interface.query("type")
-        requested_time = interface.query("time")
-        if data_type is None and requested_time:
+    def operate(self, interface: Arparma):
+        type = interface.query("type")
+        time = interface.query("time")
+        if type is None and time:
             interface.behave_fail()
 
 
@@ -120,7 +121,9 @@ wordcloud_cmd = on_alconna(
 def wrapper(slot: Union[int, str], content: Optional[str]) -> str:
     if slot == "my" and content:
         return "--my"
-    return content if slot == "type" and content else ""
+    elif slot == "type" and content:
+        return content
+    return ""  # pragma: no cover
 
 
 wordcloud_cmd.shortcut(
@@ -140,12 +143,12 @@ def parse_datetime(key: str):
     async def _key_parser(
         matcher: AlconnaMatcher,
         state: T_State,
-        dateTimeOrMessage: Union[datetime, Message] = Arg(key),
+        input: Union[datetime, Message] = Arg(key),
     ):
-        if isinstance(dateTimeOrMessage, datetime):
+        if isinstance(input, datetime):
             return
 
-        plaintext = dateTimeOrMessage.extract_plain_text()
+        plaintext = input.extract_plain_text()
         try:
             state[key] = get_datetime_fromisoformat_with_timezone(plaintext)
         except ValueError:
@@ -156,57 +159,54 @@ def parse_datetime(key: str):
 
 @wordcloud_cmd.handle(parameterless=[Depends(ensure_group)])
 async def handle_first_receive(
-    state: T_State, timeRange: Optional[str] = None, time: Optional[str] = None
+    state: T_State, type: Optional[str] = None, time: Optional[str] = None
 ):
     dt = get_datetime_now_with_timezone()
 
-    if not timeRange:
+    if not type:
         await wordcloud_cmd.finish(__plugin_meta__.usage)
 
-    if timeRange == "今日":
+    if type == "今日":
         state["start"] = dt.replace(hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
-    elif timeRange == "昨日":
+    elif type == "昨日":
         state["stop"] = dt.replace(hour=0, minute=0, second=0, microsecond=0)
         state["start"] = state["stop"] - timedelta(days=1)
-    elif timeRange == "本周":
+    elif type == "本周":
         state["start"] = dt.replace(
             hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(days=dt.weekday())
         state["stop"] = dt
-    elif timeRange == "上周":
+    elif type == "上周":
         state["stop"] = dt.replace(
             hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(days=dt.weekday())
         state["start"] = state["stop"] - timedelta(days=7)
-    elif timeRange == "本月":
-        state["start"] = dt.replace(
-            day=1, hour=0, minute=0, second=0, microsecond=0)
+    elif type == "本月":
+        state["start"] = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
-    elif timeRange == "上月":
+    elif type == "上月":
         state["stop"] = dt.replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         ) - timedelta(microseconds=1)
         state["start"] = state["stop"].replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
-    elif timeRange == "年度":
+    elif type == "年度":
         state["start"] = dt.replace(
             month=1, day=1, hour=0, minute=0, second=0, microsecond=0
         )
         state["stop"] = dt
-    elif timeRange == "历史":
+    elif type == "历史":
         if time:
             plaintext = time
             if match := re.match(r"^(.+?)(?:~(.+))?$", plaintext):
                 start = match[1]
                 stop = match[2]
                 try:
-                    state["start"] = get_datetime_fromisoformat_with_timezone(
-                        start)
+                    state["start"] = get_datetime_fromisoformat_with_timezone(start)
                     if stop:
-                        state["stop"] = get_datetime_fromisoformat_with_timezone(
-                            stop)
+                        state["stop"] = get_datetime_fromisoformat_with_timezone(stop)
                     else:
                         # 如果没有指定结束日期，则认为是所给日期的当天的词云
                         state["start"] = state["start"].replace(
@@ -368,7 +368,7 @@ schedule_cmd.shortcut(
 
 @schedule_cmd.handle(parameterless=[Depends(ensure_group)])
 async def _(
-    ztime: Optional[str] = None,
+    time: Optional[str] = None,
     action_type: Query[str] = AlconnaQuery("action.action_type.value", "状态"),
     target: saa.PlatformTarget = Depends(saa.get_target),
 ):
@@ -381,9 +381,9 @@ async def _(
         )
     elif action_type.result == "开启":
         schedule_time = None
-        if ztime:
+        if time:
             try:
-                schedule_time = get_time_fromisoformat_with_timezone(ztime)
+                schedule_time = get_time_fromisoformat_with_timezone(time)
             except ValueError:
                 await schedule_cmd.finish("请输入正确的时间，不然我没法理解呢！")
         await schedule_service.add_schedule(target, time=schedule_time)
