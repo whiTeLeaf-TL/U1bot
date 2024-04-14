@@ -55,8 +55,7 @@ def _migrate_old_data(ds_conn: Connection):
         return
 
     AlembicVersion = DsBase.classes.nonebot_plugin_wordcloud_alembic_version
-    version_num = ds_session.scalars(
-        select(AlembicVersion.version_num)).one_or_none()
+    version_num = ds_session.scalars(select(AlembicVersion.version_num)).one_or_none()
     if not version_num:
         return
     if version_num != "c0ecb94cc7a0":
@@ -81,7 +80,7 @@ def _migrate_old_data(ds_conn: Connection):
     logger.info("wordcloud: 迁移完成")
 
 
-async def data_migrate(_):
+async def data_migrate(conn: AsyncConnection):
     from nonebot_plugin_datastore.db import get_engine
 
     async with get_engine().connect() as ds_conn:

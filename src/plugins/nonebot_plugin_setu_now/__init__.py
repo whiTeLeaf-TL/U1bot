@@ -102,16 +102,11 @@ async def _(event: GroupMessageEvent):
 async def _(
     bot: Bot,
     event: Union[PrivateMessageEvent, GroupMessageEvent],
-    # state: T_State,
     regex_group: Annotated[tuple[Any, ...], RegexGroup()],
     white_list_record=Depends(get_group_white_list_record),
 ):
-    # await setu_matcher.finish("服务器维护喵，暂停服务抱歉喵")
-    # 是否为群聊
     if isinstance(event, GroupMessageEvent):
-        # if await SetuSwitch.get_or_none(group_id=event.group_id):
-        #     await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")0
-        # 检测开关是否开启，如果为none则默认开启，如果为false则关闭
+
         record = await SetuSwitch.get_or_none(group_id=event.group_id)
         if record is not None and not record.switch:
             await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")
@@ -131,8 +126,6 @@ async def _(
         tags = list(map(lambda tplist: tplist.split("或"), key.split()))
         key = ""
 
-    # 仅在私聊中开启
-    # r18 = True if (isinstance(event, PrivateMessageEvent) and r18) else False
     if r18:
         if isinstance(event, PrivateMessageEvent):
             r18 = True

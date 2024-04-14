@@ -12,12 +12,11 @@ from .config import config
 from .model import FishingRecord, FishingSwitch
 
 fishing_coin_name = config.fishing_coin_name
+config_fishes = config.fishes
+config_fishes.append({"name": "河", "frequency": 3, "weight": 2, "price": 2000})
 
 
 def choice() -> tuple:
-    config_fishes = config.fishes
-    config_fishes.append(
-        {"name": "河", "frequency": 3, "weight": 2, "price": 2000})
     weights = [weight["weight"] for weight in config_fishes]
     choices = random.choices(
         config_fishes,
@@ -28,7 +27,6 @@ def choice() -> tuple:
 
 def get_price(fish_name: str) -> int:
     """获取鱼的价格"""
-    config_fishes = config.fishes
     return next(
         (fish["price"] for fish in config_fishes if fish["name"] == fish_name),
         0,
