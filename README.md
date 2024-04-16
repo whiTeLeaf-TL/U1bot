@@ -5,10 +5,27 @@ U1bot 是一个基于 Nonebot2 框架下的QQ机器人项目，致力于在QQ中
 
 ## 如何开始
 
+### CLI 玩家
+
+作者平时都这么玩，一般会确保这个方法是可用的
+
 1. 安装 poetry： `pip install poetry`
 2. 安装依赖： `poetry install`
 3. 运行： `poetry run python bot.py`
 
+### 折腾类玩家
+
+在配置的时候会有点抽象...
+
+1. 确保已有一个可用的 Nonebot2 环境，要求使用虚拟环境。
+2. 复制并按文件注释修改配置文件 `.env`
+3. 复制 `src/plugins` 下所有文件到对应位置，并在 `pyproject.toml` 中注明位置
+4. 使用你喜欢的工具安装好依赖和适配器（`nb adapter install nonebot-adapter-onebot`）
+5. 使用 `nb-cli` 启动（`nb run` 或先生成入口文件并用 `python bot.py`启动）
+
+### 不喜折腾玩家
+
+你可以联系我们提供远程安装服务。
 
 ## 必填环境变量
 
