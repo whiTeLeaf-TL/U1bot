@@ -591,9 +591,23 @@
         },
         {
           "func": "卖鱼",
-          "trigger_method": "卖鱼",
+          "trigger_method": "卖鱼 <鱼的名称>",
           "trigger_condition": "群聊/私聊",
           "brief_des": "学林北卖鱼，走十年弯路~",
+          "detail_des": "卖鱼可以获得通用货币！"
+        },
+        {
+          "func": "余额",
+          "trigger_method": "余额",
+          "trigger_condition": "群聊/私聊",
+          "brief_des": "卖鱼赚钱，何尝不是一般幸福的滋味？",
+          "detail_des": "无"
+        },
+        {
+          "func": "开关钓鱼",
+          "trigger_method": "开关钓鱼",
+          "trigger_condition": "群聊(管理员)",
+          "brief_des": "太吵了？不让钓鱼了！",
           "detail_des": "无"
         }
       ],

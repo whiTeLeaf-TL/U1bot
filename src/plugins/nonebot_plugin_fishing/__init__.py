@@ -2,59 +2,111 @@ from nonebot import on_command, require
 
 require("nonebot_plugin_orm")  # noqa
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters import Event
+from nonebot.adapters import Event, Message
+from nonebot.params import CommandArg
 
 import asyncio
 
-from .config import Config
+from .config import Config, config
 from .data_source import (choice,
-                          is_fishing,
+                          switch_fish,
                           get_stats,
                           save_fish,
-                          get_backpack)
-
+                          get_backpack,
+                          sell_fish,
+                          get_balance, get_switch_fish)
+from nonebot.adapters.onebot.v11 import (
+    GroupMessageEvent, PrivateMessageEvent
+)
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11.helpers import (
+    Cooldown,
+    CooldownIsolateLevel,
+)
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
     description="你甚至可以电子钓鱼",
     usage="发送“钓鱼”，放下鱼竿。",
     type="application",
     homepage="https://github.com/C14H22O/nonebot-plugin-fishing",
-    config=Config
+    config=Config,
+    supported_adapters=None
 )
 
-fishing = on_command("fishing", aliases={"钓鱼"})
-stats = on_command("stats", aliases={"统计信息"})
-backpack = on_command("backpack", aliases={"背包"})
-sell = on_command("sell", aliases={"卖鱼"})
+
+fishing = on_command("fishing", aliases={
+                     "钓鱼"}, priority=5, rule=get_switch_fish)
+stats = on_command("stats", aliases={"统计信息"}, priority=5)
+backpack = on_command("backpack", aliases={"背包"}, priority=5)
+sell = on_command("sell", aliases={"卖鱼"}, priority=5)
+balance = on_command("balance", aliases={"余额"}, priority=5)
+switch = on_command("fish_switch", aliases={
+                    "开关钓鱼"}, priority=5, permission=GROUP_ADMIN | SUPERUSER)
 
 
-@fishing.handle()
+@fishing.handle(
+    parameterless=[
+        Cooldown(
+            cooldown=config.fishing_limit,
+            prompt="河累了，休息一下吧",
+            isolate_level=CooldownIsolateLevel.USER,
+        )
+    ]
+)
 async def _fishing(event: Event):
+    """钓鱼"""
     user_id = event.get_user_id()
-    if not await is_fishing(user_id):
-        await fishing.finish("河累了, 休息一下吧")
     await fishing.send("正在钓鱼…")
     choice_result = choice()
     fish = choice_result[0]
     sleep_time = choice_result[1]
-    result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
+    result = ""
+    if fish == "河":
+        result = "* 河累了，休息..等等...你钓到了一条河？！"
+    else:
+        result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
     await save_fish(user_id, fish)
     await asyncio.sleep(sleep_time)
+    # result = "* 你钓了一整天，什么也没钓到，但是你的技术有所提升了！"
     await fishing.finish(result, reply_message=True)
 
 
 @stats.handle()
 async def _stats(event: Event):
+    """统计信息"""
     user_id = event.get_user_id()
-    await stats.finish(await get_stats(user_id))
+    await stats.finish(await get_stats(user_id), reply_message=True)
 
 
 @backpack.handle()
 async def _backpack(event: Event):
+    """背包"""
     user_id = event.get_user_id()
-    await backpack.finish(await get_backpack(user_id))
+    await backpack.finish(await get_backpack(user_id), reply_message=True)
 
 
 @sell.handle()
-async def _sell():
-    await sell.finish("商店正在施工中…")
+async def _sell(event: Event, arg: Message = CommandArg()):
+    """卖鱼"""
+    fish_name = arg.extract_plain_text()
+    if fish_name == "":
+        await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
+    user_id = event.get_user_id()
+    await sell.finish(await sell_fish(user_id, fish_name), reply_message=True)
+
+
+@balance.handle()
+async def _balance(event: Event):
+    """余额"""
+    user_id = event.get_user_id()
+    await balance.finish(await get_balance(user_id), reply_message=True)
+
+
+@switch.handle()
+async def _switch(event: GroupMessageEvent | PrivateMessageEvent):
+    """钓鱼开关"""
+    if await switch_fish(event):
+        await switch.finish("钓鱼开关已打开")
+    else:
+        await switch.finish("钓鱼开关已关闭")

@@ -9,6 +9,8 @@ from nonebot.log import logger
 from .utils import download_pic
 from .config import PROXY, API_URL, SETU_SIZE, REVERSE_PROXY
 from .models import Setu, SetuApiData, SetuNotFindError
+import aiohttp
+import asyncio
 
 CACHE_PATH = Path(store.get_cache_dir("nonebot_plugin_setu_now"))
 if not CACHE_PATH.exists():
@@ -30,6 +32,8 @@ class SetuHandler:
         self.reverse_proxy_url = REVERSE_PROXY
         self.handler = handler
         self.setu_instance_list: List[Setu] = []
+        # Limit the number of concurrent downloads
+        self.semaphore = asyncio.Semaphore(10)
 
     async def refresh_api_info(self):
         data = {
@@ -42,24 +46,29 @@ class SetuHandler:
         }
         headers = {"Content-Type": "application/json"}
 
-        async with AsyncClient(proxies=self.proxy) as client:  # type: ignore
-            res = await client.post(
-                self.api_url, json=data, headers=headers, timeout=60
-            )
-        data = res.json()
-        setu_api_data_instance = SetuApiData(**data)
-        if len(setu_api_data_instance.data) == 0:
-            raise SetuNotFindError()
-        logger.debug(f"API Responsed {len(setu_api_data_instance.data)} image")
-        for i in setu_api_data_instance.data:
-            self.setu_instance_list.append(Setu(data=i))
+        try:
+            async with AsyncClient(proxies=self.proxy) as client:  # type: ignore
+                res = await client.post(
+                    self.api_url, json=data, headers=headers, timeout=60
+                )
+            data = res.json()
+            setu_api_data_instance = SetuApiData(**data)
+            if len(setu_api_data_instance.data) == 0:
+                raise SetuNotFindError()
+            logger.debug(
+                f"API Responsed {len(setu_api_data_instance.data)} image")
+            self.setu_instance_list = [Setu(data=i)
+                                       for i in setu_api_data_instance.data]
+        except Exception as e:
+            logger.error(f"Error occurred while refreshing API info: {e}")
 
     async def prep_handler(self, setu: Setu):
-        setu.img = await download_pic(
-            url=setu.urls[SETU_SIZE],
-            proxies=self.proxy,
-            file_name=f"{setu.pid}.{setu.ext}",
-        )
+        async with self.semaphore:  # Use semaphore to limit the number of concurrent downloads
+            setu.img = await download_pic(
+                url=setu.urls[SETU_SIZE],
+                proxies=self.proxy,
+                file_name=f"{setu.pid}.{setu.ext}",
+            )
         await self.handler(setu)
 
     async def process_request(self):
