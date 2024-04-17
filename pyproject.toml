@@ -21,7 +21,6 @@ nonebot-plugin-apscheduler = "^0.3.0"
 nonebot-plugin-htmlrender = "^0.2.3"
 nonebot-plugin-alconna = "^0.35.1"
 nonebot-plugin-memes-api = "^0.2.1"
-nonebot-plugin-eventexpiry = "^0.1.1"
 nonebot-plugin-localstore = "^0.5.1"
 pil-utils = "^0.1.8"
 ujson = "^5.9.0"
@@ -51,6 +50,8 @@ nonebot2 = {extras = ["fastapi"], version = "^2.2.1"}
 starlette = "^0.37.2"
 h11 = "^0.14.0"
 websockets = "^12.0"
+nonebot-adapter-onebot = "^2.4.3"
+nonebot-plugin-eventexpiry = "^0.1.1"
 
 [tool.poetry.group.test.dependencies]
 pytest-asyncio = "^0.23.3"

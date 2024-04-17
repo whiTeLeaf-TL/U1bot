@@ -75,7 +75,7 @@ happy_end = [
 
 
 async def reset_record():
-    logger.info("重置娶群友记录")
+    logger.info("定时重置娶群友记录")
     today = datetime.now()
     yesterday = datetime(today.year, today.month, today.day, 0, 0, 0)
     logger.info(yesterday)
@@ -86,9 +86,18 @@ async def reset_record():
     await Waifuyinppa2.filter(created_at__lt=yesterday).delete()
 
 
+async def mo_reset_record():
+    logger.info("手动重置娶群友记录")
+    await WaifuCP.all().delete()
+    await PWaifu.all().delete()
+    await WaifuLock.all().delete()
+    await Waifuyinppa1.all().delete()
+    await Waifuyinppa2.all().delete()
+
+
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append_handler(
-    reset_record
+    mo_reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
 scheduler.add_job(reset_record, "cron", hour=0,
@@ -177,7 +186,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if str(user_id := member["user_id"]) not in rule_out
-            and member["last_sent_time"] > lastmonth
+            # and member["last_sent_time"] > lastmonth
         ]
         if waifu_ids:
             waifu_id = random.choice(list(waifu_ids))
@@ -330,7 +339,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in rule_out
-        and member["last_sent_time"] > lastmonth
+        # and member["last_sent_time"] > lastmonth
         and member_list != 2854196310
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
@@ -433,7 +442,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if (user_id := member["user_id"]) not in protect_set
-            and member["last_sent_time"] > lastmonth
+            # and member["last_sent_time"] > lastmonth
             and member["user_id"] != int(bot.self_id)
             and member["user_id"] != 2854196310
         ]
@@ -487,7 +496,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in protect_set.user_id
-        and member["last_sent_time"] > lastmonth
+        # and member["last_sent_time"] > lastmonth
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     msg = "卡池：\n——————————————\n" + "\n".join(
