@@ -147,7 +147,7 @@ def print_backpack(backpack: dict[str, List[int]]) -> list:
             个数:数量
             长度:[]
     """
-    msg_list =[]
+    msg_list = []
     for fish_name, fish_info in backpack.items():
         result = f"{fish_name}:\n"
         result += f"  个数:{len(fish_info)}\n"
@@ -156,7 +156,7 @@ def print_backpack(backpack: dict[str, List[int]]) -> list:
     return msg_list
 
 
-async def get_backpack(user_id: str) -> str|list:
+async def get_backpack(user_id: str) -> str | list:
     """从数据库查询背包内容"""
     session = get_session()
     async with session.begin():
