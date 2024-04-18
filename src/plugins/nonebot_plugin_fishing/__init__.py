@@ -1,3 +1,4 @@
+import random
 from nonebot import on_command, require
 
 require("nonebot_plugin_orm")  # noqa
@@ -8,7 +9,7 @@ from nonebot.params import CommandArg
 import asyncio
 
 from .config import Config, config
-from .data_source import (choice,
+from .data_source import (choice, get_quality,
                           switch_fish,
                           get_stats,
                           save_fish,
@@ -16,7 +17,7 @@ from .data_source import (choice,
                           sell_fish,
                           get_balance, get_switch_fish)
 from nonebot.adapters.onebot.v11 import (
-    GroupMessageEvent, PrivateMessageEvent
+    GroupMessageEvent, PrivateMessageEvent, MessageEvent, Message, Bot
 )
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
 from nonebot.permission import SUPERUSER
@@ -24,6 +25,7 @@ from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
     CooldownIsolateLevel,
 )
+from nonebot import get_driver
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
     description="你甚至可以电子钓鱼",
@@ -34,7 +36,8 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters=None
 )
 
-
+Bot_NICKNAME = list(get_driver().config.nickname)
+Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
 fishing = on_command("fishing", aliases={
                      "钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
@@ -58,15 +61,16 @@ async def _fishing(event: Event):
     """钓鱼"""
     user_id = event.get_user_id()
     await fishing.send("正在钓鱼…")
-    choice_result = choice()
-    fish = choice_result[0]
-    sleep_time = choice_result[1]
+    fish = choice()
+    fish_name = fish[0]
+    fish_long = fish[1]
+    sleep_time = random.randint(1, 6)
     result = ""
     if fish == "河":
         result = "* 河累了，休息..等等...你钓到了一条河？！"
     else:
-        result = f"* 你钓到了 {fish}×1 并把它收进了背包里"
-    await save_fish(user_id, fish)
+        result = f"* 你钓到了一条 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
+    await save_fish(user_id, fish_name, fish_long)
     await asyncio.sleep(sleep_time)
     # result = "* 你钓了一整天，什么也没钓到，但是你的技术有所提升了！"
     await fishing.finish(result, reply_message=True)
@@ -80,10 +84,11 @@ async def _stats(event: Event):
 
 
 @backpack.handle()
-async def _backpack(event: Event):
+async def _backpack(bot: Bot, event: MessageEvent):
     """背包"""
     user_id = event.get_user_id()
-    await backpack.finish(await get_backpack(user_id), reply_message=True)
+    fmt = await get_backpack(user_id)
+    return fmt if isinstance(fmt, str) else await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, fmt)
 
 
 @sell.handle()
@@ -110,3 +115,37 @@ async def _switch(event: GroupMessageEvent | PrivateMessageEvent):
         await switch.finish("钓鱼开关已打开")
     else:
         await switch.finish("钓鱼开关已关闭")
+
+
+async def send_forward_msg(
+    bot: Bot,
+    event: MessageEvent,
+    name: str,
+    uin: str,
+    msgs: list,
+) -> dict:
+    """
+    发送转发消息的异步函数。
+
+    参数:
+        bot (Bot): 机器人实例
+        event (MessageEvent): 消息事件
+        name (str): 转发消息的名称
+        uin (str): 转发消息的 UIN
+        msgs (list): 转发的消息列表
+
+    返回:
+        dict: API 调用结果
+    """
+
+    def to_json(msg: Message):
+        return {"type": "node", "data": {"name": name, "uin": uin, "content": msg}}
+
+    messages = [to_json(msg) for msg in msgs]
+    if isinstance(event, GroupMessageEvent):
+        return await bot.call_api(
+            "send_group_forward_msg", group_id=event.group_id, messages=messages
+        )
+    return await bot.call_api(
+        "send_private_forward_msg", user_id=event.user_id, messages=messages
+    )
