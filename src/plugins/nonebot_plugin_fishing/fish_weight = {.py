@@ -1,3 +1,4 @@
+import random
 fish_weight = {
     "普通": {
         "weight": 100,
@@ -30,8 +31,8 @@ fish_weight = {
         "long": (1000, 4000),
     }
 }
-import random
 quality = random.choice(list(fish_weight.keys()))
 fish_quality_weight = [fish_weight[key]["weight"] for key in fish_weight]
-result = random.choices(list(fish_weight.keys()), weights=fish_quality_weight)[0]
+result = random.choices(list(fish_weight.keys()),
+                        weights=fish_quality_weight)[0]
 print(result)
