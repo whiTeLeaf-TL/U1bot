@@ -1,5 +1,5 @@
 from typing import Annotated, Any, Dict, Union
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN,GROUP_OWNER
 from nonebot.permission import SUPERUSER
 from nonebot import on_command, on_regex, require
 from nonebot.adapters.onebot.v11 import (
@@ -70,7 +70,7 @@ setu_matcher = on_regex(
 )
 
 setuopenorclose_matcher = on_command(
-    "setu开关", aliases={'色图开关', "涩图开关"}, permission=SUPERUSER | GROUP_ADMIN)
+    "setu开关", aliases={'色图开关', "涩图开关"}, permission=SUPERUSER | GROUP_ADMIN|GROUP_OWNER)
 
 
 @setuopenorclose_matcher.handle()
