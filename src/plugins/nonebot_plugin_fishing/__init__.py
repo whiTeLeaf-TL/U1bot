@@ -19,7 +19,7 @@ from .data_source import (choice, get_quality,
 from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent, PrivateMessageEvent, MessageEvent, Message, Bot
 )
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN,GROUP_OWNER
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
@@ -45,7 +45,7 @@ backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额"}, priority=5)
 switch = on_command("fish_switch", aliases={
-                    "开关钓鱼"}, priority=5, permission=GROUP_OWNER|GROUP_ADMIN | SUPERUSER)
+                    "开关钓鱼"}, priority=5, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER)
 
 
 @fishing.handle(
