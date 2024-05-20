@@ -13,7 +13,7 @@ from nonebot import logger, on_type, on_message, on_command
 from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent, GroupMessageEvent, Bot
 from . import server_status, status_config, status_permission, switchFile
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN,GROUP_OWNER
 
 
 async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
@@ -62,7 +62,7 @@ if status_config.server_status_enabled:
     私聊发送戳一戳
     """
 
-switchst = on_command("状态开关", permission=SUPERUSER | GROUP_ADMIN)
+switchst = on_command("状态开关", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 
 @switchst.handle()
