@@ -13,7 +13,7 @@ from nonebot import logger, on_type, on_message, on_command
 from nonebot.adapters.onebot.v11 import PokeNotifyEvent, PrivateMessageEvent, GroupMessageEvent, Bot
 from . import server_status, status_config, status_permission, switchFile
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN,GROUP_OWNER
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 
 
 async def switch_status(bot: Bot, event: PokeNotifyEvent) -> bool:
