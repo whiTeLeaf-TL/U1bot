@@ -186,7 +186,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if str(user_id := member["user_id"]) not in rule_out
-            # and member["last_sent_time"] > lastmonth
+            and member["last_sent_time"] > lastmonth
         ]
         if waifu_ids:
             waifu_id = random.choice(list(waifu_ids))
@@ -339,7 +339,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in rule_out
-        # and member["last_sent_time"] > lastmonth
+        and member["last_sent_time"] > lastmonth
         and member_list != 2854196310
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
@@ -442,7 +442,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if (user_id := member["user_id"]) not in protect_set
-            # and member["last_sent_time"] > lastmonth
+            and member["last_sent_time"] > lastmonth
             and member["user_id"] != int(bot.self_id)
             and member["user_id"] != 2854196310
         ]
@@ -496,7 +496,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in protect_set.user_id
-        # and member["last_sent_time"] > lastmonth
+        and member["last_sent_time"] > lastmonth
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     msg = "卡池：\n——————————————\n" + "\n".join(
