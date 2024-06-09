@@ -41,7 +41,7 @@ async def user_img(user_id: int) -> str:
 def text_to_png(msg):
     """文字转png"""
     output = io.BytesIO()
-    Text2Image.from_text(msg, 50, spacing=10).to_image("white", (20, 20)).save(
+    Text2Image.from_text(msg, 50, spacing=10, fontname="Source Han Sans CN", font_fallback=False).to_image("white", (20, 20)).save(
         output, format="png"
     )
     return output
@@ -50,7 +50,7 @@ def text_to_png(msg):
 def bbcode_to_png(msg, spacing: int = 10):
     """bbcode文字转png"""
     output = io.BytesIO()
-    Text2Image.from_bbcode_text(msg, 50, spacing=spacing).to_image(
+    Text2Image.from_bbcode_text(msg, 50, spacing=spacing, fontname="Source Han Sans CN", font_fallback=False).to_image(
         "white", (20, 20)
     ).save(output, format="png")
     return output

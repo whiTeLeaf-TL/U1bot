@@ -138,17 +138,17 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 if waifu_id == at:
                     msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
-                    if user_id in waifulist:
+                    if str(user_id) in waifulist.waifu:
                         waifulock, _ = await WaifuLock.get_or_create(
                             message_id=group_id
                         )
-                        waifulock.lock[waifu_id] = user_id
-                        waifulock.lock[user_id] = waifu_id
+                        waifulock.lock[str(waifu_id)] = user_id
+                        waifulock.lock[str(user_id)] = waifu_id
                         await waifulock.save()
                         msg += "\ncp已锁！"
                 else:
                     msg = (
-                        f"你已经有CP了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
+                        "你已经有CP了，不许花心哦~"+MessageSegment.image(file=await user_img(waifu_id))
                         + f"你的CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -159,8 +159,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                 )
             await bot.send(event, msg, at_sender=True)
         return False
-    chooselist = rec.keys() or protect_list or []
-    if at and str(at) not in chooselist:
+    chooselist = rec.keys() or protect_list.user_id if protect_list else []
+    if at and str(at) not in list(chooselist):
         if at == rec.get(str(at)):
             X = HE
             del rec[str(at)]
@@ -181,7 +181,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             if member["user_id"] not in [int(bot.self_id), 2854196310]
         ]
         lastmonth = event.time - last_sent_time_filter
-        rule_out = protect_list or rec.keys()
+        rule_out = protect_list.user_id if protect_list else [] or rec.keys()
         waifu_ids = [
             user_id
             for member in member_list
@@ -203,12 +203,14 @@ waifu = on_message(rule=waifu_rule, priority=90, block=True)
 
 @waifu.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
+    waifu_id: int
+    tips: str
     waifu_id, tips = state["waifu"]
     group_id = event.group_id
     user_id = event.user_id
     if waifu_id == user_id:
         record_cp, _ = await WaifuCP.get_or_create(group_id=group_id)
-        record_cp.affect[user_id] = user_id
+        record_cp.affect[str(user_id)] = user_id
         await record_cp.save()
         await waifu.finish(random.choice(no_waifu), at_sender=True)
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
@@ -227,7 +229,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         X = random.randint(1, 100)
         if X > NTR:
             record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
-            record_CP.affect[user_id] = user_id
+            record_CP.affect[str(user_id)] = user_id
         else:
             rec.pop(waifu_cp)
             with contextlib.suppress(Exception):
@@ -235,11 +237,11 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             await waifu.send(msg + "\n但是...", at_sender=True)
             await asyncio.sleep(1)
     record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
-    record_CP.affect[user_id] = waifu_id
-    record_CP.affect[waifu_id] = user_id
+    record_CP.affect[str(user_id)] = waifu_id
+    record_CP.affect[str(waifu_id)] = user_id
+    record_waifu.waifu.append(waifu_id)
     await record_CP.save()
     await record_waifu.save()
-    record_waifu.waifu.append(waifu_id)
     member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_id)
     msg = (
         tips
@@ -252,7 +254,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
 async def check_divorce_rule(event):
     if isinstance(event, GroupMessageEvent):
         waifu_cp_instance = await WaifuCP.get_or_none(group_id=event.group_id)
-        if waifu_cp_instance:
+        if waifu_cp_instance is not None:
             user_affect = waifu_cp_instance.affect.get(
                 str(event.user_id), event.user_id
             )
@@ -292,16 +294,13 @@ if waifu_cd_bye > -1:
             record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
             if group_id in record_lock.lock:
                 if waifu_id in record_lock.lock:
-                    del record_lock.lock[waifu_id]
-                if user_id in record_lock.lock[group_id]:
-                    del record_lock.lock[user_id]
+                    del record_lock.lock[str(waifu_id)]
+                if user_id in record_lock.lock:
+                    del record_lock.lock[str(user_id)]
                 await record_lock.save()
             await waifu_set.save()
             await rec.save()
-            if random.randint(1, 2) == 1:
-                await bye.finish(random.choice(["嗯。", "...", "好。", "哦。", "行。"]))
-            else:
-                await bye.finish(Message(f"[CQ:poke,qq={event.user_id}]"))
+            await bye.finish(random.choice(["嗯。", "...", "好。", "哦。", "行。"]))
         else:
             if A > Now:
                 A = Now
@@ -364,11 +363,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if record_waifu is None or len(record_waifu.waifu) == 0:
         await cp_list.finish("本群暂无cp哦~")
     record_CP = await WaifuCP.get_or_none(group_id=group_id)
+    if record_CP is None:
+        raise ValueError("record_CP is None")
     rec = record_CP.affect
     msg = ""
     for waifu_id in record_waifu.waifu:
         logger.info(waifu_id)
         user_id = rec.get(str(waifu_id))
+        if not user_id:
+            continue
         try:
             member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
             niknameA = member["card"] or member["nickname"]
@@ -522,7 +525,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     record.sort(key=lambda x: x[1], reverse=True)
     if msg := "\n".join(
         [
-            f"[align=left]{nickname}[/align][align=right]今日透群友 {times} 次[/align]"
+            f"[align=left]{
+                nickname}[/align][align=right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
@@ -551,7 +555,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "涩涩记录②：\n——————————————\n"
     if msg := "\n".join(
         [
-            f"[align=left]{nickname}[/align][align=right]今日被透 {times} 次[/align]"
+            f"[align=left]{
+                nickname}[/align][align=right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
