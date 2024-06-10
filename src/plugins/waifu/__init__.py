@@ -525,8 +525,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     record.sort(key=lambda x: x[1], reverse=True)
     if msg := "\n".join(
         [
-            f"[align=left]{
-                nickname}[/align][align=right]今日透群友 {times} 次[/align]"
+            f"[align = left]{
+                nickname}[/align][align = right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
@@ -555,8 +555,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "涩涩记录②：\n——————————————\n"
     if msg := "\n".join(
         [
-            f"[align=left]{
-                nickname}[/align][align=right]今日被透 {times} 次[/align]"
+            f"[align = left]{
+                nickname}[/align][align = right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
