@@ -3,13 +3,13 @@ from .config import Config
 from nonebot import get_driver
 from typing import Tuple
 
-# 获取配置cd时间
+# 获取配置 cd 时间
 cd = Config.parse_obj(get_driver().config.dict()).whateat_cd
 max_count = Config.parse_obj(get_driver().config.dict()).whateat_max
 
 
 def check_cd(last_time: int) -> Tuple[bool, int, int]:
-    # 检查cd
+    # 检查 cd
     current_time = int(time.time())
     delta_time = current_time - last_time
     if delta_time < cd:

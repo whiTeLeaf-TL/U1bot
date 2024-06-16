@@ -141,18 +141,20 @@ async def get_stats(user_id: str) -> str:
 
 
 def print_backpack(backpack: dict[str, List[int]]) -> list:
-    """输出背包内容
-    背包:
-        xxx鱼:
-            个数:数量
-            长度:[]
-    """
+    """输出背包内容"""
     msg_list = []
-    for fish_name, fish_info in backpack.items():
-        result = f"{fish_name}:\n"
-        result += f"  个数:{len(fish_info)}\n"
-        result += f"  总长度:{sum(fish_info)}\n"
-        msg_list.append(result)
+    backpack_list = list(backpack.items())
+
+    # 将背包分每 10 条为一个列表
+    for i in range(0, len(backpack_list), 20):
+        msg_list.append(
+            "\n".join(
+                [
+                    f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
+                    for fish_name, fish_info in backpack_list[i:i + 20]
+                ]
+            )
+        )
     return msg_list
 
 
@@ -170,7 +172,7 @@ async def get_backpack(user_id: str) -> str | list:
 
 async def sell_fish(user_id: str, fish_name: str) -> str:
     """
-    卖鱼(一次性卖完)
+    卖鱼 (一次性卖完)
 
     参数：
       - user_id: 将要卖鱼的用户唯一标识符，用于区分谁正在卖鱼
