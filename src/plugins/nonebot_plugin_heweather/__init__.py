@@ -11,7 +11,7 @@ from .config import DEBUG, QWEATHER_APIKEY, QWEATHER_APITYPE, Config
 __plugin_meta__ = PluginMetadata(
     name="天气",
     description="来看看今天的天气吧！",
-    usage="天气+地名 / 地名+天气",
+    usage="天气 + 地名 / 地名 + 天气",
     type="application",
     homepage="https://github.com/kexue-z/nonebot-plugin-heweather",
     config=Config,
@@ -36,7 +36,7 @@ async def _(matcher: Matcher, event: MessageEvent):
     if args := event.get_plaintext().split("天气"):
         city = args[0].strip() or args[1].strip()
         if not city:
-            await weather.finish("地点是...空气吗?? >_<")
+            await weather.finish("地点是...空气吗？ >_<")
 
         # 判断指令前后是否都有内容，如果是则结束，否则跳过。
         if (args[0].strip() == "") == (args[1].strip() == ""):
@@ -54,7 +54,7 @@ async def _(matcher: Matcher, event: MessageEvent):
     if DEBUG:
         debug_save_img(img)
 
-    await weather.finish(MessageSegment.image(img))
+    await weather.finish(MessageSegment.image(img), reply_message=True)
 
 
 def debug_save_img(img: bytes) -> None:

@@ -8,8 +8,8 @@ import re
 
 __plugin_meta__ = PluginMetadata(
     name="githubcard",
-    description="检测GitHub仓库链接并自动发送卡片信息（适用于Onebot V11）",
-    usage='通过正则表达式检测Github链接',
+    description="检测 GitHub 仓库链接并自动发送卡片信息（适用于 Onebot V11）",
+    usage='通过正则表达式检测 Github 链接',
     type='application',
     homepage='https://github.com/ElainaFanBoy/nonebot_plugin_githubcard',
     supported_adapters={"~onebot.v11"},

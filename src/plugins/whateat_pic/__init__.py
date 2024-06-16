@@ -88,7 +88,7 @@ all_file_eat_name = os.listdir(str(img_eat_path))
 img_drink_path = Path(os.path.join(os.path.dirname(__file__), "drink_pic"))
 all_file_drink_name = os.listdir(str(img_drink_path))
 
-# 载入bot名字
+# 载入 bot 名字
 Bot_NICKNAME = list(nonebot.get_driver().config.nickname)
 Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "脑积水"
 
@@ -101,7 +101,7 @@ async def _(matcher: Matcher, state: T_State):
         matcher.set_arg("name", args[2])
 
 
-@del_dish.got("name", prompt="请告诉我你要删除哪个菜品或饮料,发送“取消”可取消操作")
+@del_dish.got("name", prompt="请告诉我你要删除哪个菜品或饮料，发送“取消”可取消操作")
 async def _(state: T_State, name: Message = Arg()):
     if str(name) == "取消":
         await del_dish.finish("已取消")
@@ -138,7 +138,7 @@ async def _(state: T_State, img: Message = Arg()):
         await add_dish.finish("已取消")
     img_url = extract_image_urls(img)
     if not img_url:
-        await add_dish.finish("没有找到图片(╯▔皿▔)╯，请稍后重试", at_sender=True)
+        await add_dish.finish("没有找到图片 (╯▔皿▔)╯，请稍后重试", at_sender=True)
 
     if state['type'] in ['菜品', '菜单']:
         path = img_eat_path
@@ -163,7 +163,7 @@ async def _(matcher: Matcher, state: T_State):
     elif args[1] in ["饮料", "饮品"]:
         state['type'] = "喝的"
 
-    # 设置下一步got的arg
+    # 设置下一步 got 的 arg
     if args[2]:
         matcher.set_arg("name", args[2])
 
@@ -205,7 +205,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, msg_list)
 
 
-# 初始化内置时间的last_time
+# 初始化内置时间的 last_time
 time = 0
 # 用户数据
 user_count = {}
@@ -217,7 +217,7 @@ async def wtd(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
     check_result, remain_time, new_last_time = check_cd(time)
     if not check_result:
         time = new_last_time
-        await what_drink.finish(f"cd冷却中,还有{remain_time}秒", at_sender=True)
+        await what_drink.finish(f"cd 冷却中，还有{remain_time}秒", at_sender=True)
     else:
         is_max, user_count = check_max(msg, user_count)
         if is_max:
@@ -228,7 +228,7 @@ async def wtd(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        result_msg = f"{Bot_NICKNAME}建议你喝: \n⭐{img.stem}⭐\n" + \
+        result_msg = f"{Bot_NICKNAME}建议你喝：\n⭐{img.stem}⭐\n" + \
             MessageSegment.image(base64_str)
         try:
             await what_drink.send(f"{Bot_NICKNAME}正在为你找好喝的……")
@@ -243,7 +243,7 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
     check_result, remain_time, new_last_time = check_cd(time)
     if not check_result:
         time = new_last_time
-        await what_eat.finish(f"cd冷却中,还有{remain_time}秒", at_sender=True)
+        await what_eat.finish(f"cd 冷却中，还有{remain_time}秒", at_sender=True)
     else:
         is_max, user_count = check_max(msg, user_count)
         if is_max:
@@ -254,7 +254,7 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         with open(img, 'rb') as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        result_msg = f"{Bot_NICKNAME}建议你吃: \n⭐{img.stem}⭐\n" + \
+        result_msg = f"{Bot_NICKNAME}建议你吃：\n⭐{img.stem}⭐\n" + \
             MessageSegment.image(base64_str)
         try:
             await what_eat.send(f"{Bot_NICKNAME}正在为你找好吃的……")
@@ -272,7 +272,7 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~分割区~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# 每日0点重置用户数据
+# 每日 0 点重置用户数据
 def reset_user_count():
     global user_count
     user_count = {}
@@ -286,15 +286,15 @@ except ActionFailed as e:
 
 # 上限回复消息
 max_msg = (
-    "你今天吃的够多了！不许再吃了(´-ωก`)",
-    "吃吃吃，就知道吃，你都吃饱了！明天再来(▼皿▼#)",
-    "(*｀へ´*)你猜我会不会再给你发好吃的图片",
+    "你今天吃的够多了！不许再吃了 (´-ωก`)",
+    "吃吃吃，就知道吃，你都吃饱了！明天再来 (▼皿▼#)",
+    "(*｀へ´*) 你猜我会不会再给你发好吃的图片",
     f"没得吃的了，{Bot_NICKNAME}的食物都被你这坏蛋吃光了！",
-    "你在等我给你发好吃的？做梦哦！你都吃那么多了，不许再吃了！ヽ(≧Д≦)ノ",
+    "你在等我给你发好吃的？做梦哦！你都吃那么多了，不许再吃了！ヽ (≧Д≦) ノ",
 )
 
 
-# 调用合并转发api函数
+# 调用合并转发 api 函数
 async def send_forward_msg(
     bot: Bot,
     event: MessageEvent,

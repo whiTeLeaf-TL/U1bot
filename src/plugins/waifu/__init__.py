@@ -46,7 +46,7 @@ no_waifu = [
     "智者不入爱河，建设美丽中国。",
     "智者不入爱河，我们终成富婆",
     "智者不入爱河，寡王一路硕博",
-    "娶不到就是娶不到，娶不到就多练！",
+    "娶不到就是娶不+-到，娶不到就多练！",
 ]
 
 happy_end = [
@@ -136,7 +136,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
+                    msg = f"这是你的CP！{random.choice(happy_end)}"+MessageSegment.image(file=await user_img(waifu_id))
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if str(user_id) in waifulist.waifu:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -220,7 +220,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta的cp："
+            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta的cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
