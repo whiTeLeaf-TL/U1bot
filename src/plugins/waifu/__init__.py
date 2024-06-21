@@ -8,7 +8,6 @@ from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
-    Message,
     MessageSegment,
 )
 from nonebot.plugin import PluginMetadata
@@ -52,7 +51,7 @@ no_waifu = [
 happy_end = [
     "好耶~",
     "婚礼？启动！",
-    "需要咱主持婚礼吗qwq",
+    "需要咱主持婚礼吗 qwq",
     "不许秀恩爱！",
     "(响起婚礼进行曲♪)",
     "比翼从此添双翅，连理于今有合枝。\n琴瑟和鸣鸳鸯栖，同心结结永相系。",
@@ -66,7 +65,7 @@ happy_end = [
     "一生一世两情相悦，三世尘缘四世同喜",
     "玉楼光辉花并蒂，金屋春暖月初圆。",
     "笙韵谱成同生梦，烛光笑对含羞人。",
-    "祝你们百年好合,白头到老。",
+    "祝你们百年好合，白头到老。",
     "祝你们生八个。",
 ]
 
@@ -136,7 +135,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的CP！{random.choice(happy_end)}"+MessageSegment.image(file=await user_img(waifu_id))
+                    msg = f"这是你的 CP！{random.choice(happy_end)}"+MessageSegment.image(file=await user_img(waifu_id))
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if str(user_id) in waifulist.waifu:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -145,17 +144,17 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         waifulock.lock[str(waifu_id)] = user_id
                         waifulock.lock[str(user_id)] = waifu_id
                         await waifulock.save()
-                        msg += "\ncp已锁！"
+                        msg += "\ncp 已锁！"
                 else:
                     msg = (
-                        "你已经有CP了，不许花心哦~"+MessageSegment.image(file=await user_img(waifu_id))
-                        + f"你的CP：{member['card'] or member['nickname']}"
+                        "你已经有 CP 了，不许花心哦~"+MessageSegment.image(file=await user_img(waifu_id))
+                        + f"你的 CP：{member['card'] or member['nickname']}"
                     )
             else:
                 msg = (
                     tips
                     + MessageSegment.image(file=await user_img(waifu_id))
-                    + f"『{member['card'] or member['nickname']}』！"
+                    + f"『{member['card'] or member['nickname']}』!"
                 )
             await bot.send(event, msg, at_sender=True)
         return False
@@ -186,7 +185,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if str(user_id := member["user_id"]) not in rule_out
-            and member["last_sent_time"] > lastmonth
+            # and member["last_sent_time"] > lastmonth
         ]
         if waifu_ids:
             waifu_id = random.choice(list(waifu_ids))
@@ -220,12 +219,12 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta的cp："
+            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta 的 cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
         if waifu_id in record_lock.lock.keys():
-            await waifu.finish(msg + "\n本对cp已锁！", at_sender=True)
+            await waifu.finish(msg + "\n本对 cp 已锁！", at_sender=True)
         X = random.randint(1, 100)
         if X > NTR:
             record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
@@ -246,7 +245,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     msg = (
         tips
         + MessageSegment.image(file=await user_img(waifu_id))
-        + f"『{(member['card'] or member['nickname'])}』！"
+        + f"『{(member['card'] or member['nickname'])}』!"
     )
     await waifu.finish(msg, at_sender=True)
 
@@ -308,12 +307,12 @@ if waifu_cd_bye > -1:
             else:
                 N += 1
             if N == 1:
-                msg = f"你的cd还有{round(cd/60, 1)}分钟。"
+                msg = f"你的 cd 还有{round(cd/60, 1)}分钟。"
             elif N == 2:
-                msg = f"你已经问过了哦~ 你的cd还有{round(cd/60, 1)}分钟。"
+                msg = f"你已经问过了哦~ 你的 cd 还有{round(cd/60, 1)}分钟。"
             elif N < 6:
                 T += 10
-                msg = f"还问！罚时！你的cd还有{round(cd/60, 1)}+10分钟。"
+                msg = f"还问！罚时！你的 cd 还有{round(cd/60, 1)}+10 分钟。"
             elif random.randint(0, 2) == 0:
                 await bye.finish("哼！")
             else:
@@ -338,7 +337,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in rule_out
-        and member["last_sent_time"] > lastmonth
+        # and member["last_sent_time"] > lastmonth
         and member_list != 2854196310
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
@@ -351,7 +350,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await waifu_list.finish("群友已经被娶光了。下次早点来吧。")
 
 
-# 查看本群CP
+# 查看本群 CP
 
 cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
 
@@ -361,7 +360,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     group_id = event.group_id
     record_waifu = await PWaifu.get_or_none(group_id=group_id)
     if record_waifu is None or len(record_waifu.waifu) == 0:
-        await cp_list.finish("本群暂无cp哦~")
+        await cp_list.finish("本群暂无 cp 哦~")
     record_CP = await WaifuCP.get_or_none(group_id=group_id)
     if record_CP is None:
         raise ValueError("record_CP is None")
@@ -387,7 +386,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
         msg += f"♥ {niknameA} | {niknameB}\n"
     await cp_list.finish(
-        MessageSegment.image(text_to_png("本群CP：\n——————————————\n" + msg[:-1]))
+        MessageSegment.image(text_to_png("本群 CP：\n——————————————\n" + msg[:-1]))
     )
 
 
@@ -420,7 +419,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             msg = (
                 "恭喜你涩到了你自己！"
                 + MessageSegment.image(file=await user_img(user_id))
-                + f"『{(member['card'] or member['nickname'])}』！"
+                + f"『{(member['card'] or member['nickname'])}』!"
             )
             await bot.send(event, msg, at_sender=True)
             return False
@@ -445,7 +444,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             user_id
             for member in member_list
             if (user_id := member["user_id"]) not in protect_set
-            and member["last_sent_time"] > lastmonth
+            # and member["last_sent_time"] > lastmonth
             and member["user_id"] != int(bot.self_id)
             and member["user_id"] != 2854196310
         ]
@@ -478,7 +477,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         msg = (
             tips
             + MessageSegment.image(file=await user_img(yinpa_id))
-            + f"『{(member['card'] or member['nickname'])}』！"
+            + f"『{(member['card'] or member['nickname'])}』!"
         )
         await yinpa.finish(msg, at_sender=True)
 
@@ -499,7 +498,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         member
         for member in member_list
         if member["user_id"] not in protect_set.user_id
-        and member["last_sent_time"] > lastmonth
+        # and member["last_sent_time"] > lastmonth
     ]
     member_list.sort(key=lambda x: x["last_sent_time"], reverse=True)
     msg = "卡池：\n——————————————\n" + "\n".join(
