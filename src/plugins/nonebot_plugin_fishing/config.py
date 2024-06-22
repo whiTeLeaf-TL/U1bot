@@ -36,6 +36,7 @@ class Config(BaseModel):
         "虾",
         "鲭鱼",
         "龙虾",
+        "鲑鱼",
         "鱿鱼",
         "海星",
         "鳗鱼"
@@ -45,6 +46,7 @@ class Config(BaseModel):
         "林北卖的鱼",
         "林北的四文鱼",
         "小杂鱼~♡",
+        "痛苦的鲑鱼",
         "金钓鱼竿",
         "金鲤鱼",
         "金螃蟹",
@@ -64,6 +66,7 @@ class Config(BaseModel):
         "心海",
         "虚空鳗鱼",
         "烤激光鱼",
+        "鲑鱼大帝",
         "虚空珍珠",
         "虚空鱼"
     ]
@@ -71,7 +74,6 @@ class Config(BaseModel):
     fish_hidden_fire: list = [
         "河",
         "Mr.ling",
-        "liuzhen932",
         "haitang",
         "闪耀珍珠",
         "隐火水母",
