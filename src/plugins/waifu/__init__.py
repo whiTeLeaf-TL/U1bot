@@ -386,7 +386,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
         msg += f"♥ {niknameA} | {niknameB}\n"
     await cp_list.finish(
-        MessageSegment.image(text_to_png("本群 CP：\n——————————————\n" + msg[:-1]))
+        MessageSegment.image(text_to_png(
+            "本群 CP：\n——————————————\n" + msg[:-1]))
     )
 
 
@@ -524,8 +525,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     record.sort(key=lambda x: x[1], reverse=True)
     if msg := "\n".join(
         [
-            f"[align = left]{
-                nickname}[/align][align = right]今日透群友 {times} 次[/align]"
+            f"[align= left]{
+                nickname}[/align][align= right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
@@ -554,8 +555,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "涩涩记录②：\n——————————————\n"
     if msg := "\n".join(
         [
-            f"[align = left]{
-                nickname}[/align][align = right]今日被透 {times} 次[/align]"
+            f"[align= left]{
+                nickname}[/align][align= right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
