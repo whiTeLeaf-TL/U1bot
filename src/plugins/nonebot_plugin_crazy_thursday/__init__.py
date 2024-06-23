@@ -38,12 +38,12 @@ async def get_weekday_jp(arg: Annotated[str, RegexStr()]) -> str:
 
 @crazy_cn.handle()
 async def _(matcher: Matcher, weekday: Annotated[str, Depends(get_weekday_cn)]):
-    await matcher.finish(randomKFC(weekday))
+    await matcher.finish(randomKFC(weekday), reply_message=True)
 
 
 @crazy_jp.handle()
 async def _(matcher: Matcher, weekday: Annotated[str, Depends(get_weekday_jp)]):
-    await matcher.finish(randomKFC(weekday))
+    await matcher.finish(randomKFC(weekday), reply_message=True)
 
 
 def randomKFC(day: str) -> str:
