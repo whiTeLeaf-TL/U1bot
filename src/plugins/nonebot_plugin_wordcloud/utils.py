@@ -18,8 +18,7 @@ def get_datetime_now_with_timezone() -> datetime:
     """获取当前时间，并包含时区信息"""
     if plugin_config.wordcloud_timezone:
         return datetime.now(ZoneInfo(plugin_config.wordcloud_timezone))
-    else:
-        return datetime.now().astimezone()
+    return datetime.now().astimezone()
 
 
 def get_datetime_fromisoformat_with_timezone(date_string: str) -> datetime:

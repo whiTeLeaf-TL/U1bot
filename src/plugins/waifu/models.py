@@ -1,6 +1,4 @@
-from re import L
 
-from nonebot import logger
 
 # 导入插件方法
 from nonebot_plugin_tortoise_orm import add_model
