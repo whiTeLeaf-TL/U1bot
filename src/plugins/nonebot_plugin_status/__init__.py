@@ -8,10 +8,11 @@
 """
 
 from pathlib import Path
+
 __author__ = "yanyongyu"
 
-import inspect
 import contextlib
+import inspect
 from typing import Any, Dict
 
 from jinja2 import Environment
@@ -22,17 +23,17 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from .config import Config
-from .helpers import humanize_date, relative_time, humanize_delta
 from .data_source import (
-    get_uptime,
+    get_bot_connect_time,
     get_cpu_status,
     get_disk_usage,
-    per_cpu_status,
-    get_swap_status,
     get_memory_status,
-    get_bot_connect_time,
     get_nonebot_run_time,
+    get_swap_status,
+    get_uptime,
+    per_cpu_status,
 )
+from .helpers import humanize_date, humanize_delta, relative_time
 
 __plugin_meta__ = PluginMetadata(
     name="服务器状态查看",
@@ -50,8 +51,7 @@ __plugin_meta__ = PluginMetadata(
 
 global_config = get_driver().config
 status_config = Config.parse_obj(global_config)
-status_permission = (
-    status_config.server_status_only_superusers or None) and SUPERUSER
+status_permission = (status_config.server_status_only_superusers or None) and SUPERUSER
 
 _ev = Environment(
     trim_blocks=True, lstrip_blocks=True, autoescape=True, enable_async=True
@@ -88,7 +88,7 @@ if not switchPath.exists():
 switchFile = Path("data/switch.json")
 if not switchFile.exists():
     switchFile.touch()
-    switchFile.write_text('{}', encoding='utf-8')
+    switchFile.write_text("{}", encoding="utf-8")
 
 if not set(_t_vars).issubset(KNOWN_VARS):
     raise ValueError(
@@ -122,6 +122,7 @@ async def render_template() -> str:
 async def server_status(matcher: Matcher):
     """Server status matcher handler."""
     await matcher.send(message=await render_template())
+
 
 with contextlib.suppress(ImportError):
     import nonebot.adapters.onebot.v11  # noqa: F401

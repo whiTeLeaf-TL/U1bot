@@ -1,10 +1,10 @@
-from nonebot.adapters.onebot.v11 import Bot, Event, MessageEvent, GroupMessageEvent
-from nonebot import on_command
-from nonebot.permission import SUPERUSER
-from nonebot.message import event_preprocessor
-from nonebot import get_driver, logger
+from nonebot import get_driver, logger, on_command
+from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, MessageEvent
 from nonebot.exception import IgnoredException
-from .import blacklist
+from nonebot.message import event_preprocessor
+from nonebot.permission import SUPERUSER
+
+from . import blacklist
 
 superusers = get_driver().config.superusers
 report = on_command("反馈开发者")
@@ -19,10 +19,15 @@ async def report_handle(bot: Bot, event: Event):
         group_info = await bot.get_group_info(group_id=event.group_id)
         group_name = group_info["group_name"]
         for id in superusers:
-            await bot.send_private_msg(user_id=int(id), message=f"来自群【{group_name}】的用户 {event.get_user_id()} 反馈：{msg}")
+            await bot.send_private_msg(
+                user_id=int(id),
+                message=f"来自群【{group_name}】的用户 {event.get_user_id()} 反馈：{msg}",
+            )
         await report.finish("已反馈，感谢您的支持！")
     for id in superusers:
-        await bot.send_private_msg(user_id=int(id), message=f"用户 {event.get_user_id()} 反馈：{msg}")
+        await bot.send_private_msg(
+            user_id=int(id), message=f"用户 {event.get_user_id()} 反馈：{msg}"
+        )
     await report.finish("已反馈，感谢您的支持！")
 
 
@@ -51,7 +56,9 @@ check_blacklist = on_command("查看黑名单", permission=SUPERUSER)
 async def check_black_list():
     if len(blacklist.blacklist["blacklist"]) == 0:
         await check_blacklist.finish("当前无黑名单用户")
-    await check_blacklist.send(f"当前黑名单用户: {', '.join(blacklist.blacklist['blacklist'])}")
+    await check_blacklist.send(
+        f"当前黑名单用户：{', '.join(blacklist.blacklist['blacklist'])}"
+    )
 
 
 @event_preprocessor
@@ -60,5 +67,5 @@ def blacklist_processor(event: MessageEvent):
     if uid in superusers:
         return
     if uid in blacklist.blacklist["blacklist"]:
-        logger.debug(f"用户 {uid} 在黑名单中, 忽略本次消息")
+        logger.debug(f"用户 {uid} 在黑名单中，忽略本次消息")
         raise IgnoredException("黑名单用户")

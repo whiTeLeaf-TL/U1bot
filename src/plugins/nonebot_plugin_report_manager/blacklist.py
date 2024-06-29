@@ -1,8 +1,9 @@
 import contextlib
 from pathlib import Path
 from typing import Literal
-from nonebot.adapters.onebot.v11 import MessageEvent
+
 from nonebot import get_driver
+from nonebot.adapters.onebot.v11 import MessageEvent
 
 try:
     import ujson as json

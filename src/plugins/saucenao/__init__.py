@@ -1,19 +1,19 @@
-from .data_source import SauceNAO
 from random import choice
 
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
+from nonebot import get_driver, on_command
+from nonebot import logger as log
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import Cooldown, extract_image_urls
+from nonebot.plugin import PluginMetadata
 
 from .config import Config
-from nonebot import on_command, get_driver, logger as log
-from nonebot.plugin import PluginMetadata
+from .data_source import SauceNAO
 
 conf = Config.parse_obj(get_driver().config.dict())
 
-__plugin_meta__ = PluginMetadata(name="以图搜图",
-                                 description="找不到图片啊~",
-                                 usage="以图搜图",
-                                 config=Config)
+__plugin_meta__ = PluginMetadata(
+    name="以图搜图", description="找不到图片啊~", usage="以图搜图", config=Config
+)
 
 
 _search_flmt_notice = choice(["太快了啊！", "冷静1下", "歇会歇会~~"])

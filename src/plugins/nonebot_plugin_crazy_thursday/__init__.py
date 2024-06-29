@@ -1,12 +1,14 @@
 import random
+from pathlib import Path
 from typing import Annotated, List
 
+import ujson as json
 from nonebot import on_regex
 from nonebot.matcher import Matcher
 from nonebot.params import Depends, RegexStr
 from nonebot.plugin import PluginMetadata
 
-from .config import *
+from .config import crazy_config
 
 __crazy_thursday_version__ = "v0.2.7"
 __crazy_thursday_usages__ = f"""
@@ -77,10 +79,10 @@ def randomKFC(day: str) -> str:
     # Get the weekday group index
     idx: int = tb.index(day) // 3 * 3
 
-    # json数据存放路径
+    # json 数据存放路径
     path: Path = crazy_config.crazy_path / "post.json"
 
-    # 将json对象加载到数组
+    # 将 json 对象加载到数组
     with open(path, "r", encoding="utf-8") as f:
         kfc = json.load(f).get("post")
 

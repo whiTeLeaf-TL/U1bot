@@ -1,18 +1,20 @@
-import time
 import asyncio
-from typing import List, Optional
+import time
 from pathlib import Path
+from typing import List, Optional
 
 import nonebot_plugin_localstore as store
 from httpx import AsyncClient
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 
-from .config import SETU_PATH, SEND_INTERVAL
+from .config import SEND_INTERVAL, SETU_PATH
 from .perf_timer import PerfTimer
 
 
-async def download_pic(url: str, proxies: Optional[str] = None, file_name="") -> Optional[Path]:
+async def download_pic(
+    url: str, proxies: Optional[str] = None, file_name=""
+) -> Optional[Path]:
     headers = {
         "Referer": "https://accounts.pixiv.net/login?lang=zh&source=pc&view_type=page&ref=wwwtop_accounts_index",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) "
@@ -27,7 +29,9 @@ async def download_pic(url: str, proxies: Optional[str] = None, file_name="") ->
     client = AsyncClient(proxies=proxies, timeout=5)
     try:
         # type: ignore # params={"proxies": [proxies]}
-        async with client.stream(method="GET", url=url, headers=headers, timeout=15) as response:
+        async with client.stream(
+            method="GET", url=url, headers=headers, timeout=15
+        ) as response:
             if response.status_code != 200:
                 logger.warning(
                     f"Image respond status code error: {response.status_code}"

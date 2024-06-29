@@ -1,31 +1,41 @@
 import random
-from nonebot import on_command, require
 
-require("nonebot_plugin_orm")  # noqa
-from nonebot.plugin import PluginMetadata
-from nonebot.adapters import Event, Message
-from nonebot.params import CommandArg
+from nonebot import on_command, require
 
 import asyncio
 
-from .config import Config, config
-from .data_source import (choice, get_quality,
-                          switch_fish,
-                          get_stats,
-                          save_fish,
-                          get_backpack,
-                          sell_fish,
-                          get_balance, get_switch_fish)
+from nonebot import get_driver
+from nonebot.adapters import Event, Message
 from nonebot.adapters.onebot.v11 import (
-    GroupMessageEvent, PrivateMessageEvent, MessageEvent, Message, Bot
+    Bot,
+    GroupMessageEvent,
+    MessageEvent,
+    PrivateMessageEvent,
 )
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
-from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
     CooldownIsolateLevel,
 )
-from nonebot import get_driver
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
+
+from .config import Config, config
+from .data_source import (
+    choice,
+    get_backpack,
+    get_balance,
+    get_quality,
+    get_stats,
+    get_switch_fish,
+    save_fish,
+    sell_fish,
+    switch_fish,
+)
+
+require("nonebot_plugin_orm")  # noqa
+
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
     description="你甚至可以电子钓鱼",
@@ -33,19 +43,22 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/C14H22O/nonebot-plugin-fishing",
     config=Config,
-    supported_adapters=None
+    supported_adapters=None,
 )
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={
-                     "钓鱼"}, priority=5, rule=get_switch_fish)
+fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额"}, priority=5)
-switch = on_command("fish_switch", aliases={
-                    "开关钓鱼"}, priority=5, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER)
+switch = on_command(
+    "fish_switch",
+    aliases={"开关钓鱼"},
+    priority=5,
+    permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
+)
 
 
 @fishing.handle(
@@ -88,7 +101,11 @@ async def _backpack(bot: Bot, event: MessageEvent):
     """背包"""
     user_id = event.get_user_id()
     fmt = await get_backpack(user_id)
-    return fmt if isinstance(fmt, str) else await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, fmt)
+    return (
+        fmt
+        if isinstance(fmt, str)
+        else await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, fmt)
+    )
 
 
 @sell.handle()

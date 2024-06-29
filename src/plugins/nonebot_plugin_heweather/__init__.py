@@ -1,12 +1,12 @@
 from nonebot import on_keyword
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 
-from .render_pic import render
-from .weather_data import Weather, ConfigError, CityNotFoundError
 from .config import DEBUG, QWEATHER_APIKEY, QWEATHER_APITYPE, Config
+from .render_pic import render
+from .weather_data import CityNotFoundError, ConfigError, Weather
 
 __plugin_meta__ = PluginMetadata(
     name="天气",
@@ -41,8 +41,7 @@ async def _(matcher: Matcher, event: MessageEvent):
         # 判断指令前后是否都有内容，如果是则结束，否则跳过。
         if (args[0].strip() == "") == (args[1].strip() == ""):
             await weather.finish()
-    w_data = Weather(city_name=city, api_key=QWEATHER_APIKEY,
-                     api_type=QWEATHER_APITYPE)
+    w_data = Weather(city_name=city, api_key=QWEATHER_APIKEY, api_type=QWEATHER_APITYPE)
     try:
         await w_data.load_data()
     except CityNotFoundError:

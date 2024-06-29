@@ -1,5 +1,5 @@
 from nonebot_plugin_orm import Model
-from sqlalchemy import String, TEXT
+from sqlalchemy import TEXT, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 

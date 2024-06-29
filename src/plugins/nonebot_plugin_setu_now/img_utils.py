@@ -1,11 +1,11 @@
 from io import BytesIO
+from pathlib import Path
 from random import choice, randint
 from typing import Union
-from pathlib import Path
 
-from PIL import Image, ImageFilter
-from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot.log import logger
+from PIL import Image, ImageFilter
 
 from .config import SEND_AS_BYTES
 from .perf_timer import PerfTimer
@@ -140,5 +140,4 @@ def image_segment_convert(img: Union[Path, Image.Image, bytes]) -> MessageSegmen
     return MessageSegment.image(image_bytesio)  # type: ignore
 
 
-EFFECT_FUNC_LIST = [do_nothing, draw_frame,
-                    random_flip, random_lines, random_rotate]
+EFFECT_FUNC_LIST = [do_nothing, draw_frame, random_flip, random_lines, random_rotate]

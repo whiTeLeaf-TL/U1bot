@@ -9,15 +9,17 @@
 
 __author__ = "yanyongyu"
 import json
+
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
+
 from . import server_status, status_config, status_permission, switchFile
 
 
 async def switch_status(event: GroupMessageEvent) -> bool:
     if isinstance(event, GroupMessageEvent):
         # 读取状态
-        with open(switchFile, 'r', encoding='utf-8') as f:
+        with open(switchFile, "r", encoding="utf-8") as f:
             switch = json.load(f)
         if str(event.group_id) not in switch:
             return True

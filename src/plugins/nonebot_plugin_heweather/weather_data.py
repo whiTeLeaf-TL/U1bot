@@ -1,22 +1,19 @@
 import asyncio
-from typing import Union, Optional
+from typing import Optional, Union
 
+from httpx import AsyncClient, Response
 from nonebot.log import logger
-from httpx import Response, AsyncClient
 
-from .model import AirApi, NowApi, DailyApi, WarningApi, HourlyApi
-
-
-class APIError(Exception):
-    ...
+from .model import AirApi, DailyApi, HourlyApi, NowApi, WarningApi
 
 
-class ConfigError(Exception):
-    ...
+class APIError(Exception): ...
 
 
-class CityNotFoundError(Exception):
-    ...
+class ConfigError(Exception): ...
+
+
+class CityNotFoundError(Exception): ...
 
 
 class Weather:
@@ -28,7 +25,7 @@ class Weather:
             self.url_air = "https://api.qweather.com/v7/air/now"
             self.url_hourly = "https://api.qweather.com/v7/weather/24h"
             self.forecast_days = 7
-            logger.info("使用商业版API")
+            logger.info("使用商业版 API")
         elif self.api_type in [0, 1]:
             self.url_weather_api = "https://devapi.qweather.com/v7/weather/"
             self.url_geoapi = "https://geoapi.qweather.com/v2/city/"
@@ -37,14 +34,14 @@ class Weather:
             self.url_hourly = "https://devapi.qweather.com/v7/weather/24h"
             if self.api_type == 0:
                 self.forecast_days = 3
-                logger.info("使用普通版API")
+                logger.info("使用普通版 API")
             else:
                 self.forecast_days = 7
-                logger.info("使用个人开发版API")
+                logger.info("使用个人开发版 API")
         else:
             raise ConfigError(
-                "api_type 必须是为 (int)0 -> 普通版, (int)1 -> 个人开发版, (int)2 -> 商业版"
-                f"\n当前为: ({type(self.api_type)}){self.api_type}"
+                "api_type 必须是为 (int)0 -> 普通版，(int)1 -> 个人开发版，(int)2 -> 商业版"
+                f"\n当前为：({type(self.api_type)}){self.api_type}"
             )
 
     def __init__(self, city_name: str, api_key: str, api_type: Union[int, str] = 0):
@@ -53,7 +50,7 @@ class Weather:
         self.api_type = int(api_type)
         self.__url__()
 
-        self.__reference = "\n请参考: https://dev.qweather.com/docs/start/status-code/"
+        self.__reference = "\n请参考：https://dev.qweather.com/docs/start/status-code/"
         self.city_id = None
         self.now = None
         self.daily = None
@@ -91,14 +88,14 @@ class Weather:
         if res["code"] == "404":
             raise CityNotFoundError()
         if res["code"] != "200":
-            raise APIError(f'错误! 错误代码: {res["code"]}{self.__reference}')
+            raise APIError(f'错误！错误代码：{res["code"]}{self.__reference}')
         self.city_name = res["location"][0]["name"]
         return res["location"][0]["id"]
 
     def _data_validate(self):
         if self.now.code != "200" or self.daily.code != "200":
             raise APIError(
-                f"错误! 请检查配置! 错误代码: now: {self.now.code}  daily: {self.daily.code}  "
+                f"错误！请检查配置！错误代码：now: {self.now.code}  daily: {self.daily.code}  "
                 + f'air: {self.air.code if self.air else "None"}  '
                 + f'warning: {self.warning.code if self.warning else "None"}'
                 + self.__reference

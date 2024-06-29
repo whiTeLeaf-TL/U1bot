@@ -1,5 +1,6 @@
 import base64
 import re
+
 import requests
 
 
@@ -15,7 +16,7 @@ def process_message(original_message):
     ):
         image_url = url_match[1]
 
-        # 将图片URL转换为Base64
+        # 将图片 URL 转换为 Base64
         base64_image = url_to_base64(image_url)
 
         return re.sub(
@@ -26,6 +27,6 @@ def process_message(original_message):
     return original_message
 
 
-# 覆盖一个txt文件
+# 覆盖一个 txt 文件
 with open("test.txt", "w", encoding="utf-8") as f:
     f.write(process_message(input()))

@@ -14,10 +14,9 @@ addmax = 6
 blackLogPath = f"{basedir}/blackLog.txt"
 
 
-def check_dict_key_bot_id(configbot: dict,
-                          requestor_dict: dict,
-                          numDictbot: dict,
-                          bot: Bot):
+def check_dict_key_bot_id(
+    configbot: dict, requestor_dict: dict, numDictbot: dict, bot: Bot
+):
     print(1)
     if configbot.get(bot.self_id) is None:
         configbot[bot.self_id] = copy.deepcopy(configModel)
@@ -80,18 +79,21 @@ configModel = {
     "allowAddFriednText": [],
     "botName": "姚奕",
     "friend_msg": {
-        "notice_msg": "请求添加好友,验证消息为",
-        "welcome_msg": "你吼，我是姚奕！我的信息都会在我的说说更新，绝对不会骚扰到你滴！\n同时，如果有疑问，可以发送help哦",
+        "notice_msg": "请求添加好友，验证消息为",
+        "welcome_msg": "你吼，我是姚奕！我的信息都会在我的说说更新，绝对不会骚扰到你滴！\n同时，如果有疑问，可以发送 help 哦",
     },
-    "group_msg": {"notice_msg": "发送群邀请,验证消息为", "welcome_msg": "很高兴有你的邀请，但要等我一下！"},
+    "group_msg": {
+        "notice_msg": "发送群邀请，验证消息为",
+        "welcome_msg": "很高兴有你的邀请，但要等我一下！",
+    },
     "statusDict": {
         "blackDict": {
-            "friend": {"status": "拉黑QQ,已拒绝,仅作提示"},
-            "group": {"status": "拉黑群聊,已拒绝,仅作提示"},
+            "friend": {"status": "拉黑 QQ，已拒绝，仅作提示"},
+            "group": {"status": "拉黑群聊，已拒绝，仅作提示"},
         },
         "warnDict": {
-            "friend": {"status": "警告QQ,手动同意,是否同意"},
-            "group": {"status": "警告群聊,手动同意,是否同意"},
+            "friend": {"status": "警告 QQ，手动同意，是否同意"},
+            "group": {"status": "警告群聊，手动同意，是否同意"},
         },
     },
 }

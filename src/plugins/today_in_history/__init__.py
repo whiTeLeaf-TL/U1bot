@@ -1,21 +1,24 @@
-from .config import Config
-from nonebot_plugin_htmlrender import text_to_pic
-from nonebot_plugin_apscheduler import scheduler
 import json
 from datetime import date
 
 import httpx
 import nonebot
-from nonebot import require, get_driver, on_fullmatch
+from nonebot import get_driver, on_fullmatch, require
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_apscheduler import scheduler
+from nonebot_plugin_htmlrender import text_to_pic
+
+from .config import Config
 
 require("nonebot_plugin_apscheduler")
 
-__plugin_meta__ = PluginMetadata(name="历史上的今天",
-                                 description="让我们看看今天在过去都发生了什么吧!",
-                                 usage="指令:历史上的今天",
-                                 config=Config)
+__plugin_meta__ = PluginMetadata(
+    name="历史上的今天",
+    description="让我们看看今天在过去都发生了什么吧!",
+    usage="指令:历史上的今天",
+    config=Config,
+)
 
 plugin_config = Config.parse_obj(get_driver().config.dict())
 if plugin_config.history_inform_time is None:
@@ -35,9 +38,11 @@ config_test = on_fullmatch("test")
 async def _():
     await config_test.send(f"time={hour}:{minute}")
     await config_test.send(
-        f"is_list={isinstance(plugin_config.history_inform_time, list)}")
+        f"is_list={isinstance(plugin_config.history_inform_time, list)}"
+    )
     await config_test.send(
-        f"is_str={isinstance(plugin_config.history_inform_time, str)}")
+        f"is_str={isinstance(plugin_config.history_inform_time, str)}"
+    )
     await config_test.send(f"is_None={plugin_config.history_inform_time is None}")
 
 
@@ -60,7 +65,7 @@ def text_handle(text: str) -> dict:
         address_end = text.find(">", address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head:address_end + 1]
+        text_middle = text[address_head : address_end + 1]
         text = text.replace(text_middle, "")
 
     # 去除api返回内容中不符合json格式的部分
@@ -71,7 +76,7 @@ def text_handle(text: str) -> dict:
         address_end = text.find('"cover":', address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head + 8:address_end - 2]
+        text_middle = text[address_head + 8 : address_end - 2]
         address_head = address_end
         text = text.replace(text_middle, "")
 
@@ -82,11 +87,10 @@ def text_handle(text: str) -> dict:
         address_end = text.find('"festival"', address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head + 9:address_end - 2]
+        text_middle = text[address_head + 9 : address_end - 2]
         if '"' in text_middle:
             text_middle = text_middle.replace('"', " ")
-            text = text[:address_head + 9] + text_middle + text[address_end -
-                                                                2:]
+            text = text[: address_head + 9] + text_middle + text[address_end - 2 :]
         address_head = address_end
 
     return json.loads(text)

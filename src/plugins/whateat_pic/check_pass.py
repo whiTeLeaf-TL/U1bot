@@ -1,7 +1,9 @@
 import time
-from .config import Config
-from nonebot import get_driver
 from typing import Tuple
+
+from nonebot import get_driver
+
+from .config import Config
 
 # 获取配置 cd 时间
 cd = Config.parse_obj(get_driver().config.dict()).whateat_cd
@@ -13,7 +15,7 @@ def check_cd(last_time: int) -> Tuple[bool, int, int]:
     current_time = int(time.time())
     delta_time = current_time - last_time
     if delta_time < cd:
-        return False, cd-delta_time, last_time
+        return False, cd - delta_time, last_time
     return True, 0, current_time
 
 

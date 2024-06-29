@@ -10,7 +10,7 @@
 __author__ = "yanyongyu"
 
 
-from pydantic import Extra, BaseModel
+from pydantic import BaseModel, Extra
 
 CPU_TEMPLATE = r"CPU: {{ '%02d' % cpu_usage }}%"
 """Default CPU status template."""

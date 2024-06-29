@@ -1,16 +1,15 @@
-from typing import List, Callable
+import asyncio
 from asyncio import gather
 from pathlib import Path
+from typing import Callable, List
 
 import nonebot_plugin_localstore as store
 from httpx import AsyncClient
 from nonebot.log import logger
 
-from .utils import download_pic
-from .config import PROXY, API_URL, SETU_SIZE, REVERSE_PROXY
+from .config import API_URL, PROXY, REVERSE_PROXY, SETU_SIZE
 from .models import Setu, SetuApiData, SetuNotFindError
-import aiohttp
-import asyncio
+from .utils import download_pic
 
 CACHE_PATH = Path(store.get_cache_dir("nonebot_plugin_setu_now"))
 if not CACHE_PATH.exists():
@@ -55,10 +54,10 @@ class SetuHandler:
             setu_api_data_instance = SetuApiData(**data)
             if len(setu_api_data_instance.data) == 0:
                 raise SetuNotFindError()
-            logger.debug(
-                f"API Responsed {len(setu_api_data_instance.data)} image")
-            self.setu_instance_list = [Setu(data=i)
-                                       for i in setu_api_data_instance.data]
+            logger.debug(f"API Responsed {len(setu_api_data_instance.data)} image")
+            self.setu_instance_list = [
+                Setu(data=i) for i in setu_api_data_instance.data
+            ]
         except Exception as e:
             logger.error(f"Error occurred while refreshing API info: {e}")
 

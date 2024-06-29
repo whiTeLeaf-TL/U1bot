@@ -7,10 +7,12 @@ from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 
 __plugin_meta__ = PluginMetadata(
-    name='答案之书',
-    description='愿一切无解都有解！解除你的迷惑，终结你的纠结！',
+    name="答案之书",
+    description="愿一切无解都有解！解除你的迷惑，终结你的纠结！",
     usage=(
-        "翻看答案 + 问题\n" "问题 + 翻看答案\n" "数据来源于吉林美术出版社2018年9月第1版的《神奇的答案之书》，数据著作权为原作者张权所有。"
+        "翻看答案 + 问题\n"
+        "问题 + 翻看答案\n"
+        "数据来源于吉林美术出版社2018年9月第1版的《神奇的答案之书》，数据著作权为原作者张权所有。"
     ),
 )
 

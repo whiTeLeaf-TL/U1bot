@@ -1,17 +1,18 @@
+import re
+
 from nonebot import get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.plugin import PluginMetadata, on_regex
+
 from .config import Config
 from .data_source import get_github_reposity_information
-from nonebot.plugin import on_regex, PluginMetadata
-
-import re
 
 __plugin_meta__ = PluginMetadata(
     name="githubcard",
     description="检测 GitHub 仓库链接并自动发送卡片信息（适用于 Onebot V11）",
-    usage='通过正则表达式检测 Github 链接',
-    type='application',
-    homepage='https://github.com/ElainaFanBoy/nonebot_plugin_githubcard',
+    usage="通过正则表达式检测 Github 链接",
+    type="application",
+    homepage="https://github.com/ElainaFanBoy/nonebot_plugin_githubcard",
     supported_adapters={"~onebot.v11"},
     extra={
         "unique_name": "githubcard",
@@ -22,12 +23,11 @@ __plugin_meta__ = PluginMetadata(
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
-github = on_regex(
-    r"https?://github\.com/([^/]+/[^/]+)", priority=10, block=False)
+github = on_regex(r"https?://github\.com/([^/]+/[^/]+)", priority=10, block=False)
 
 
 def match_link_parts(link):
-    pattern = r'https?://github\.com/([^/]+/[^/]+)'
+    pattern = r"https?://github\.com/([^/]+/[^/]+)"
     return match.group(0) if (match := re.search(pattern, link)) else None
 
 

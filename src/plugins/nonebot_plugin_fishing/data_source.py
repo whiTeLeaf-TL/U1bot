@@ -1,15 +1,13 @@
-from nonebot import logger
-from nonebot.adapters.onebot.v11 import (
-    GroupMessageEvent, PrivateMessageEvent
-)
+import json
 import random
 import time
-import json
-from sqlalchemy import select
-from sqlalchemy import update
+from typing import List
+
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
+from sqlalchemy import select, update
+
 from .config import config
-from typing import List, Tuple
 from .model import FishingRecord, FishingSwitch
 
 fishing_coin_name = config.fishing_coin_name
@@ -21,42 +19,12 @@ fish_void = config.fish_void
 fish_fire = config.fish_hidden_fire
 
 fish = {
-    "普通": {
-        "weight": 100,
-        "price_mpr": 0.1,
-        "long": (1, 30),
-        "fish": fish_common
-    },
-    "腐烂": {
-        "weight": 20,
-        "price_mpr": 0.05,
-        "long": (15, 45),
-        "fish": fish_rotten
-    },
-    "发霉": {
-        "weight": 15,
-        "price_mpr": 0.08,
-        "long": (20, 150),
-        "fish": fish_moldy
-    },
-    "金": {
-        "weight": 5,
-        "price_mpr": 0.15,
-        "long": (125, 800),
-        "fish": fish_golden
-    },
-    "虚空": {
-        "weight": 3,
-        "price_mpr": 0.2,
-        "long": (800, 4000),
-        "fish": fish_void
-    },
-    "隐火": {
-        "weight": 1,
-        "price_mpr": 0.2,
-        "long": (1000, 4000),
-        "fish": fish_fire
-    }
+    "普通": {"weight": 100, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
+    "腐烂": {"weight": 20, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
+    "发霉": {"weight": 15, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
+    "金": {"weight": 5, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
+    "虚空": {"weight": 3, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
+    "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
 }
 
 
@@ -67,7 +35,9 @@ def choice() -> tuple[str, int]:
     fish_quality_weight = [fish[key]["weight"] for key in fish_quality]
     quality = random.choices(fish_quality, weights=fish_quality_weight)[0]
     # 挑鱼
-    return random.choice(fish[quality]["fish"]), random.randint(fish[quality]["long"][0], fish[quality]["long"][1])
+    return random.choice(fish[quality]["fish"]), random.randint(
+        fish[quality]["long"][0], fish[quality]["long"][1]
+    )
 
 
 def get_quality(fish_name: str) -> str:
@@ -95,31 +65,32 @@ async def save_fish(user_id: str, fish_name: str, fish_long: int) -> None:
         records = await session.execute(select(FishingRecord))
         for record in records.scalars():
             if record.user_id == user_id:
-                loads_fishes: dict[str, List[int]
-                                   ] = json.loads(record.fishes)
+                loads_fishes: dict[str, List[int]] = json.loads(record.fishes)
                 try:
                     loads_fishes[fish_name].append(fish_long)
                 except KeyError:
                     loads_fishes[fish_name] = [fish_long]
                 dump_fishes = json.dumps(loads_fishes)
-                user_update = update(FishingRecord).where(FishingRecord.user_id == user_id).values(
-                    time=time_now + fishing_limit,
-                    frequency=record.frequency + 1,
-                    fishes=dump_fishes
+                user_update = (
+                    update(FishingRecord)
+                    .where(FishingRecord.user_id == user_id)
+                    .values(
+                        time=time_now + fishing_limit,
+                        frequency=record.frequency + 1,
+                        fishes=dump_fishes,
+                    )
                 )
                 await session.execute(user_update)
                 await session.commit()
                 return
-        data = {
-            fish_name: [fish_long]
-        }
+        data = {fish_name: [fish_long]}
         dump_fishes = json.dumps(data)
         new_record = FishingRecord(
             user_id=user_id,
             time=time_now + fishing_limit,
             frequency=1,
             fishes=dump_fishes,
-            coin=0
+            coin=0,
         )
         session.add(new_record)
         await session.commit()
@@ -151,7 +122,7 @@ def print_backpack(backpack: dict[str, List[int]]) -> list:
             "\n".join(
                 [
                     f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
-                    for fish_name, fish_info in backpack_list[i:i + 20]
+                    for fish_name, fish_info in backpack_list[i : i + 20]
                 ]
             )
         )
@@ -166,7 +137,9 @@ async def get_backpack(user_id: str) -> str | list:
         for fishes_record in fishes_records.scalars():
             if fishes_record.user_id == user_id:
                 load_fishes = json.loads(fishes_record.fishes)
-                return print_backpack(load_fishes) if load_fishes else "你的背包里空无一物"
+                return (
+                    print_backpack(load_fishes) if load_fishes else "你的背包里空无一物"
+                )
         return "你的背包里空无一物"
 
 
@@ -194,9 +167,10 @@ async def sell_fish(user_id: str, fish_name: str) -> str:
                 coin = fishes_record.coin + price
                 del load_fishes[fish_name]
                 dump_fishes = json.dumps(load_fishes)
-                user_update = update(FishingRecord).where(FishingRecord.user_id == user_id).values(
-                    fishes=dump_fishes,
-                    coin=coin
+                user_update = (
+                    update(FishingRecord)
+                    .where(FishingRecord.user_id == user_id)
+                    .values(fishes=dump_fishes, coin=coin)
                 )
                 await session.execute(user_update)
                 await session.commit()
@@ -225,20 +199,21 @@ async def switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
         return True
     session = get_session()
     async with session.begin():
-        switchs = await session.execute(select(FishingSwitch).where(FishingSwitch.group_id == event.group_id))
+        switchs = await session.execute(
+            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
+        )
         switch = switchs.scalars().first()
         if switch:
             result = switch.switch
-            user_update = update(FishingSwitch).where(FishingSwitch.group_id == event.group_id).values(
-                switch=not result
+            user_update = (
+                update(FishingSwitch)
+                .where(FishingSwitch.group_id == event.group_id)
+                .values(switch=not result)
             )
             await session.execute(user_update)
             await session.commit()
             return not result
-        new_switch = FishingSwitch(
-            group_id=event.group_id,
-            switch=False
-        )
+        new_switch = FishingSwitch(group_id=event.group_id, switch=False)
         session.add(new_switch)
         await session.commit()
         return False
@@ -250,6 +225,8 @@ async def get_switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> boo
         return True
     session = get_session()
     async with session.begin():
-        switchs = await session.execute(select(FishingSwitch).where(FishingSwitch.group_id == event.group_id))
+        switchs = await session.execute(
+            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
+        )
         switch = switchs.scalars().first()
         return switch.switch if switch else True

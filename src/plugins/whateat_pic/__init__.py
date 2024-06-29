@@ -1,71 +1,88 @@
 import base64
-import random
-import requests
-import nonebot
-import re
 import os
-from .check_pass import check_cd, check_max
+import random
+import re
 from pathlib import Path
+
+import nonebot
+import requests
 from nonebot import require
-from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, Bot, Message, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    GroupMessageEvent,
+    Message,
+    MessageEvent,
+    MessageSegment,
+)
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.exception import ActionFailed
+from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import Arg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata, on_regex
 from nonebot.typing import T_State
+
+from .check_pass import check_cd, check_max
+
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 __plugin_meta__ = PluginMetadata(
-    name='今天吃什么？',
-    description='What to Eat/Drink',
-    usage='看下面，注意不要带问号！！！',
+    name="今天吃什么？",
+    description="What to Eat/Drink",
+    usage="看下面，注意不要带问号！！！",
     extra={
-        'menu_data': [
+        "menu_data": [
             {
-                'func': '吃什么',
-                'trigger_method': '命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]吃[什么|啥|点啥]',
-                'trigger_condition': '私聊、群聊',
-                'brief_des': '查看吃什么，建议看详细说明',
-                'detail_des': '列如：\n' '今天晚上吃什么\n' '明天中午吃啥\n' '后天早上吃点啥',
+                "func": "吃什么",
+                "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]吃[什么|啥|点啥]",
+                "trigger_condition": "私聊、群聊",
+                "brief_des": "查看吃什么，建议看详细说明",
+                "detail_des": "列如：\n"
+                "今天晚上吃什么\n"
+                "明天中午吃啥\n"
+                "后天早上吃点啥",
             },
             {
-                'func': '喝什么',
-                'trigger_method': '命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]喝[什么|啥|点啥]',
-                'trigger_condition': '私聊、群聊',
-                'brief_des': '查看喝什么，建议看详细说明',
-                'detail_des': '列如：\n' '今天晚上喝什么\n' '明天中午喝啥\n' '后天早上喝点啥',
+                "func": "喝什么",
+                "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]喝[什么|啥|点啥]",
+                "trigger_condition": "私聊、群聊",
+                "brief_des": "查看喝什么，建议看详细说明",
+                "detail_des": "列如：\n"
+                "今天晚上喝什么\n"
+                "明天中午喝啥\n"
+                "后天早上喝点啥",
             },
             {
-                'func': '查看全部菜单',
-                'trigger_method': '命令：查[看|寻]全部(菜[单|品]|饮[料|品])',
-                'trigger_condition': '私聊、群聊',
-                'brief_des': '查看已存的全部菜单，建议看详细说明',
-                'detail_des': '例如：\n'
-                '查看全部菜单\n'
-                '查看全部饮料\n'
-                '查看全部菜品\n'
-                '查看全部菜单\n'
-                '查看全部饮料\n'
-                '查寻全部菜品\n'
-                '查寻全部饮料\n'
-                '查寻全部菜单\n'
-                '利用合并消息进行发送，不会刷屏哒！',
+                "func": "查看全部菜单",
+                "trigger_method": "命令：查[看|寻]全部(菜[单|品]|饮[料|品])",
+                "trigger_condition": "私聊、群聊",
+                "brief_des": "查看已存的全部菜单，建议看详细说明",
+                "detail_des": "例如：\n"
+                "查看全部菜单\n"
+                "查看全部饮料\n"
+                "查看全部菜品\n"
+                "查看全部菜单\n"
+                "查看全部饮料\n"
+                "查寻全部菜品\n"
+                "查寻全部饮料\n"
+                "查寻全部菜单\n"
+                "利用合并消息进行发送，不会刷屏哒！",
             },
         ],
-        'menu_template': 'default',
+        "menu_template": "default",
     },
 )
 
 
 what_eat = on_regex(
-    r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)吃(什么|啥|点啥)$", priority=5
+    r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)吃(什么|啥|点啥)$",
+    priority=5,
 )
 what_drink = on_regex(
-    r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)喝(什么|啥|点啥)$", priority=5
+    r"^(/)?[今|明|后]?[天|日]?(早|中|晚)?(上|午|餐|饭|夜宵|宵夜)喝(什么|啥|点啥)$",
+    priority=5,
 )
 view_all_dishes = on_regex(r"^(/)?查[看|寻]?全部(菜[单|品]|饮[料|品])$", priority=5)
 view_dish = on_regex(r"^(/)?查[看|寻]?(菜[单|品]|饮[料|品])[\s]?(.*)?", priority=5)
@@ -95,8 +112,8 @@ Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "脑积水"
 
 @del_dish.handle()
 async def _(matcher: Matcher, state: T_State):
-    args = list(state['_matched_groups'])
-    state['type'] = args[1]
+    args = list(state["_matched_groups"])
+    state["type"] = args[1]
     if args[2]:
         matcher.set_arg("name", args[2])
 
@@ -105,9 +122,9 @@ async def _(matcher: Matcher, state: T_State):
 async def _(state: T_State, name: Message = Arg()):
     if str(name) == "取消":
         await del_dish.finish("已取消")
-    if state['type'] in ['菜单', '菜品']:
+    if state["type"] in ["菜单", "菜品"]:
         img = img_eat_path / f"{str(name)}.jpg"
-    elif state['type'] in ['饮料', '饮品']:
+    elif state["type"] in ["饮料", "饮品"]:
         img = img_drink_path / f"{str(name)}.jpg"
 
     try:
@@ -119,15 +136,15 @@ async def _(state: T_State, name: Message = Arg()):
 
 @add_dish.handle()
 async def _(matcher: Matcher, state: T_State):
-    args = list(state['_matched_groups'])
-    state['type'] = args[1]
+    args = list(state["_matched_groups"])
+    state["type"] = args[1]
     if args[2]:
         matcher.set_arg("dish_name", args[2])
 
 
 @add_dish.got("dish_name", prompt="⭐请发送名字\n发送“取消”可取消添加")
 async def _(state: T_State, dish_name: Message = Arg()):
-    state['name'] = str(dish_name)
+    state["name"] = str(dish_name)
     if str(dish_name) == "取消":
         await add_dish.finish("已取消")
 
@@ -140,13 +157,13 @@ async def _(state: T_State, img: Message = Arg()):
     if not img_url:
         await add_dish.finish("没有找到图片 (╯▔皿▔)╯，请稍后重试", at_sender=True)
 
-    if state['type'] in ['菜品', '菜单']:
+    if state["type"] in ["菜品", "菜单"]:
         path = img_eat_path
-    elif state['type'] in ['饮料', '饮品']:
+    elif state["type"] in ["饮料", "饮品"]:
         path = img_drink_path
 
     dish_img = requests.get(url=img_url[0], timeout=5)
-    with open(os.path.join(path, str(state['name'] + ".jpg")), "wb") as f:
+    with open(os.path.join(path, str(state["name"] + ".jpg")), "wb") as f:
         f.write(dish_img.content)
     await add_dish.finish(
         f"成功添加{state['type']}:{state['name']}\n{MessageSegment.image(img_url[0])}"
@@ -156,12 +173,12 @@ async def _(state: T_State, img: Message = Arg()):
 @view_dish.handle()
 async def _(matcher: Matcher, state: T_State):
     # 正则匹配组
-    args = list(state['_matched_groups'])
+    args = list(state["_matched_groups"])
 
     if args[1] in ["菜单", "菜品"]:
-        state['type'] = "吃的"
+        state["type"] = "吃的"
     elif args[1] in ["饮料", "饮品"]:
-        state['type'] = "喝的"
+        state["type"] = "喝的"
 
     # 设置下一步 got 的 arg
     if args[2]:
@@ -170,9 +187,9 @@ async def _(matcher: Matcher, state: T_State):
 
 @view_dish.got("name", prompt=f"请告诉{Bot_NICKNAME}具体菜名或者饮品名吧")
 async def _(state: T_State, name: Message = Arg()):
-    if state['type'] == "吃的":
+    if state["type"] == "吃的":
         img = img_eat_path / f"{str(name)}.jpg"
-    elif state['type'] == "喝的":
+    elif state["type"] == "喝的":
         img = img_drink_path / f"{str(name)}.jpg"
 
     try:
@@ -185,7 +202,7 @@ async def _(state: T_State, name: Message = Arg()):
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     # 正则匹配组
     path = ""
-    args = list(state['_matched_groups'])
+    args = list(state["_matched_groups"])
     if args[1] in ["菜单", "菜品"]:
         path = img_eat_path
         all_name = all_file_eat_name
@@ -197,10 +214,10 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     msg_list = [f"{Bot_NICKNAME}查询到的{args[1]}如下"]
     for N, name in enumerate(all_name, start=1):
         img = os.path.join(path, name)
-        with open(img, 'rb') as im:
+        with open(img, "rb") as im:
             img_bytes = im.read()
         base64_str = f"base64://{base64.b64encode(img_bytes).decode()}"
-        name = re.sub(".jpg", '', name)
+        name = re.sub(".jpg", "", name)
         msg_list.append(f"{N}.{name}\n{MessageSegment.image(base64_str)}")
     await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, msg_list)
 
@@ -225,11 +242,13 @@ async def wtd(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         time = new_last_time
         img_name = random.choice(all_file_drink_name)
         img = img_drink_path / img_name
-        with open(img, 'rb') as im:
+        with open(img, "rb") as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        result_msg = f"{Bot_NICKNAME}建议你喝：\n⭐{img.stem}⭐\n" + \
-            MessageSegment.image(base64_str)
+        result_msg = (
+            f"{Bot_NICKNAME}建议你喝：\n⭐{img.stem}⭐\n"
+            + MessageSegment.image(base64_str)
+        )
         try:
             await what_drink.send(f"{Bot_NICKNAME}正在为你找好喝的……")
             await what_drink.send(result_msg, at_sender=True)
@@ -251,11 +270,13 @@ async def wte(msg: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         time = new_last_time
         img_name = random.choice(all_file_eat_name)
         img = img_eat_path / img_name
-        with open(img, 'rb') as im:
+        with open(img, "rb") as im:
             img_bytes = im.read()
         base64_str = "base64://" + base64.b64encode(img_bytes).decode()
-        result_msg = f"{Bot_NICKNAME}建议你吃：\n⭐{img.stem}⭐\n" + \
-            MessageSegment.image(base64_str)
+        result_msg = (
+            f"{Bot_NICKNAME}建议你吃：\n⭐{img.stem}⭐\n"
+            + MessageSegment.image(base64_str)
+        )
         try:
             await what_eat.send(f"{Bot_NICKNAME}正在为你找好吃的……")
             await what_eat.send(result_msg, at_sender=True)
@@ -279,7 +300,7 @@ def reset_user_count():
 
 
 try:
-    scheduler.add_job(reset_user_count, "cron", hour='0', id="delete_date")
+    scheduler.add_job(reset_user_count, "cron", hour="0", id="delete_date")
 except ActionFailed as e:
     logger.warning(f"定时任务添加失败，{repr(e)}")
 

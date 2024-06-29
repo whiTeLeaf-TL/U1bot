@@ -1,22 +1,22 @@
 import contextlib
 import random
-
-from nonebot import logger, get_driver, on_command, on_message, require
 from datetime import datetime
-from nonebot.permission import SUPERUSER
-from nonebot.typing import T_State
+
+from nonebot import get_driver, logger, on_command, on_message, require
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
     MessageSegment,
 )
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
+
+from .config import Config
 from .models import *
 from .utils import *
-from .config import Config
 
-__plugin_meta__ = PluginMetadata(
-    name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -99,8 +99,7 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     mo_reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0,
-                  minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -135,7 +134,10 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = f"这是你的 CP！{random.choice(happy_end)}"+MessageSegment.image(file=await user_img(waifu_id))
+                    msg = (
+                        f"这是你的 CP！{random.choice(happy_end)}"
+                        + MessageSegment.image(file=await user_img(waifu_id))
+                    )
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if str(user_id) in waifulist.waifu:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -147,7 +149,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp 已锁！"
                 else:
                     msg = (
-                        "你已经有 CP 了，不许花心哦~"+MessageSegment.image(file=await user_img(waifu_id))
+                        "你已经有 CP 了，不许花心哦~"
+                        + MessageSegment.image(file=await user_img(waifu_id))
                         + f"你的 CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -219,7 +222,9 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"+MessageSegment.image(file=await user_img(waifu_cp))+"ta 的 cp："
+            "人家已经名花有主了~"
+            + MessageSegment.image(file=await user_img(waifu_cp))
+            + "ta 的 cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
@@ -386,8 +391,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
         msg += f"♥ {niknameA} | {niknameB}\n"
     await cp_list.finish(
-        MessageSegment.image(text_to_png(
-            "本群 CP：\n——————————————\n" + msg[:-1]))
+        MessageSegment.image(text_to_png("本群 CP：\n——————————————\n" + msg[:-1]))
     )
 
 

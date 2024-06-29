@@ -1,13 +1,20 @@
+import base64
 import random
 import re
-import base64
+
 import requests
 from nonebot import get_driver, logger, on_command
-from nonebot.adapters.onebot.v11 import Message, Bot, GroupMessageEvent, PrivateMessageEvent, MessageEvent
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    GroupMessageEvent,
+    Message,
+    MessageEvent,
+    PrivateMessageEvent,
+)
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
-from nonebot.plugin import PluginMetadata
-from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
+
 from .models import cave_models
 
 SUPERUSER = list(get_driver().config.superusers)
@@ -19,7 +26,7 @@ __plugin_meta__ = PluginMetadata(
     description="看看别人的投稿，也可以自己投稿~",
     usage="""投稿\n
 查看回声洞记录\n
-删除[序号]\n
+删除 [序号]\n
 如：\n
 投稿""",
 )
@@ -45,7 +52,7 @@ def process_message(original_message):
     ):
         image_url = url_match[1]
 
-        # 将图片URL转换为Base64
+        # 将图片 URL 转换为 Base64
         base64_image = url_to_base64(image_url)
 
         return re.sub(
@@ -108,7 +115,7 @@ async def _(bot: Bot, event: MessageEvent):
     Message_text = str(event.message)
     deletion_reasons = extract_deletion_reason(Message_text)[0]
     key = deletion_reasons["序号"]
-    # 如果有原因获取，没有为none
+    # 如果有原因获取，没有为 none
     reason = deletion_reasons["原因"]
     try:
         key = int(key)
@@ -128,17 +135,23 @@ async def _(bot: Bot, event: MessageEvent):
                 ),
             )
         except Exception:
-            logger.error(f"回声洞删除投稿私聊通知失败，投稿人id：{data.user_id}")
+            logger.error(f"回声洞删除投稿私聊通知失败，投稿人 id：{data.user_id}")
     elif event.user_id == data.user_id:
         await data.delete()
         await data.save()
-        await cave_del.finish(Message(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}"))
+        await cave_del.finish(
+            Message(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{data.details}")
+        )
     else:
         await cave_del.finish("你不是投稿人，也不是作者的，你想干咩？")
     result = data.details
     await data.delete()
     await data.save()
-    await cave_del.finish(Message(f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}"))
+    await cave_del.finish(
+        Message(
+            f"删除成功！编号{key}的投稿已经被删除！\n内容为：\n{result}\n原因：{reason}"
+        )
+    )
 
 
 @cave_main.handle()
@@ -153,7 +166,7 @@ async def _():
     result += f"投稿人：{displayname}\n"
     result += f"投稿时间：{random_cave.time.strftime('%Y-%m-%d %H:%M:%S')}\n"
     result += "----------------------\n"
-    result += "可以私聊我投稿内容啊！\n投稿[内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
+    result += "可以私聊我投稿内容啊！\n投稿 [内容]（支持图片，文字）\n匿名投稿 [内容]（支持图片，文字）"
     await cave_main.finish(Message(result))
 
 
@@ -182,13 +195,14 @@ async def _(args: Message = CommandArg()):
 
 @cave_history.handle()
 async def _(bot: Bot, event: MessageEvent):
-    # 查询userid写所有数据
+    # 查询 userid 写所有数据
     all_caves = await cave_models.all()
     msg_list = [
         "回声洞记录如下：",
         *[
             Message(
-                f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------")
+                f"----------------------\n编号：{i.id}\n----------------------\n内容：\n{i.details}\n----------------------\n投稿时间：{i.time.strftime('%Y-%m-%d %H:%M:%S')}\n----------------------"
+            )
             for i in all_caves
             if i.user_id == event.user_id
         ],
@@ -206,14 +220,14 @@ async def send_forward_msg(
     """
     发送转发消息的异步函数。
 
-    参数:
+    参数：
         bot (Bot): 机器人实例
         event (MessageEvent): 消息事件
         name (str): 转发消息的名称
         uin (str): 转发消息的 UIN
         msgs (list): 转发的消息列表
 
-    返回:
+    返回：
         dict: API 调用结果
     """
 
@@ -241,11 +255,11 @@ def extract_deletion_reason(text):
         list: 包含删除原因的字典列表，每个字典包含序号和原因。
 
     Example:
-        >>> text = "删除1原因1\n删除2原因2\n删除3"
+        >>> text = "删除 1 原因 1\n删除 2 原因 2\n删除 3"
         >>> extract_deletion_reason(text)
-        [{'序号': 1, '原因': '原因1'}, {'序号': 2, '原因': '原因2'}, {'序号': 3, '原因': '作者删除'}]
+        [{'序号': 1, '原因': '原因 1'}, {'序号': 2, '原因': '原因 2'}, {'序号': 3, '原因': '作者删除'}]
     """
-    pattern = r"删除(\d+)(.*?)$"
+    pattern = r"删除 (\d+)(.*?)$"
     matches = re.findall(pattern, text, re.MULTILINE)
     results = []
     for match in matches:
