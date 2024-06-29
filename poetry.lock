@@ -1580,6 +1580,21 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "jieba-fast"
+version = "0.53"
+description = "Use C and Swig to Speed up jieba<Chinese Words Segementation Utilities>"
+optional = false
+python-versions = "*"
+files = [
+    {file = "jieba_fast-0.53.tar.gz", hash = "sha256:e92089d52faa91d51b6a7c1e6e4c4c85064a0e36f6a29257af2254b9e558ddd0"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "jinja2"
 version = "3.1.4"
 description = "A very fast and expressive template engine."
@@ -4546,4 +4561,4 @@ reference = "tsinghua"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e8d28c0de3fad6a2976ef18fc23a9b89e29d75b68c711e1b1bd63c5a1f2193c8"
+content-hash = "131eaf1211b7f7de19aa782020fe87c1f6b3350074c4696ad516656c15ea812e"
