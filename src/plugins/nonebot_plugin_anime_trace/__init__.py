@@ -1,4 +1,4 @@
-import json
+import ujson as json
 from io import BytesIO
 import os
 

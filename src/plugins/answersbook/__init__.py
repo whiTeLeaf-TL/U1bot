@@ -15,11 +15,7 @@ __plugin_meta__ = PluginMetadata(
         "数据来源于吉林美术出版社2018年9月第1版的《神奇的答案之书》，数据著作权为原作者张权所有。"
     ),
 )
-
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 answers_path = Path(__file__).parent / "answersbook.json"
 answers = json.loads(answers_path.read_text("utf-8"))

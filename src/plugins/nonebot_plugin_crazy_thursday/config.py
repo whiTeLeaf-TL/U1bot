@@ -6,10 +6,7 @@ from nonebot import get_driver
 from nonebot.log import logger
 from pydantic import BaseModel, Extra
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 
 class PluginConfig(BaseModel, extra=Extra.ignore):

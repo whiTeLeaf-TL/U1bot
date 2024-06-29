@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 from os.path import dirname, exists
 from nonebot import get_driver
-import json
+import ujson as json
 from nonebot.adapters.onebot.v11 import Bot
 from .utils import writeTime
 

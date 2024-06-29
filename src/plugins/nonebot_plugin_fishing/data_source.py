@@ -1,8 +1,8 @@
-import json
 import random
 import time
 from typing import List
 
+import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
 from sqlalchemy import select, update
