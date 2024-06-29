@@ -1,9 +1,7 @@
-from tortoise import fields
-from tortoise.models import Model
-
 # 导入插件方法
 from nonebot_plugin_tortoise_orm import add_model
-
+from tortoise import fields
+from tortoise.models import Model
 
 add_model("src.plugins.today_yunshi.models")
 

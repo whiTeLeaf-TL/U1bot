@@ -107,37 +107,40 @@ async def main(bot: Bot, event: Event, state: T_State):
             content = json.loads(res.content)
     except Exception as e:
         logger.exception(f"post({url})失败{repr(e)}")
-        await acg_trace.finish(f"识别失败，换张图片试试吧~\n{res}\n{repr(e)}", at_sender=True)
+        await acg_trace.finish(
+            f"识别失败，换张图片试试吧~\n{res}\n{repr(e)}", at_sender=True
+        )
     finally:
         files["image"].close()
         os.remove(img_path)
 
     # 检查识别结果
     if content["code"] != 0:
-        await acg_trace.finish(f"出错啦~可能是图里角色太多了~\ncontent:{content}", at_sender=True)
+        await acg_trace.finish(
+            f"出错啦~可能是图里角色太多了~\ncontent:{content}", at_sender=True
+        )
     char_nums = len(content["data"])
     if char_nums == 0:
         await acg_trace.finish(f"没有识别到任何角色\ncontent:{content}", at_sender=True)
 
     # 构造消息
-    res_start_msg = Message(
-        f"共识别到{char_nums}个角色")
+    res_start_msg = Message(f"共识别到{char_nums}个角色")
     message_list = [res_start_msg]
     mode = state["mode"]
     for item in content["data"]:
         width, height = base_img.size
         box = item["box"]
-        box = (box[0] * width, box[1] * height,
-               box[2] * width, box[3] * height)
+        box = (box[0] * width, box[1] * height, box[2] * width, box[3] * height)
         img_bytes = BytesIO()
         item_img = base_img.crop(box)
-        item_img.save(img_bytes, format="JPEG",
-                      quality=int(item["box"][4] * 100))
+        item_img.save(img_bytes, format="JPEG", quality=int(item["box"][4] * 100))
         char = item["char"]
         may_num = min(config.animetrace_max_num, len(char))
         msg_txt = f"该角色有{may_num}种可能\n"
         for i in range(may_num):
-            msg_txt += f"{i+1}\n角色:{char[i]['name']}\n来自{mode}:{char[i]['cartoonname']}\n"
+            msg_txt += (
+                f"{i+1}\n角色:{char[i]['name']}\n来自{mode}:{char[i]['cartoonname']}\n"
+            )
 
         message = msg_txt + MessageSegment.image(img_bytes.getvalue())
         message_list.append(message)
@@ -161,10 +164,8 @@ async def main(bot: Bot, event: Event, state: T_State):
         ]
         # 发送转发消息
         await bot.send_forward_msg(
-            user_id=event.user_id if isinstance(
-                event, PrivateMessageEvent) else 0,
-            group_id=event.group_id if isinstance(
-                event, GroupMessageEvent) else 0,
+            user_id=event.user_id if isinstance(event, PrivateMessageEvent) else 0,
+            group_id=event.group_id if isinstance(event, GroupMessageEvent) else 0,
             messages=msgs,
         )
         acg_trace.skip()  # 发送成功就跳过单条消息发送

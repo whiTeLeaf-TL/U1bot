@@ -23,10 +23,8 @@ headers = {
 }
 
 blacklist = [str(i) for i in getattr(config, "analysis_blacklist", [])]
-group_blacklist = [str(i) for i in getattr(
-    config, "analysis_group_blacklist", [])]
-desc_blacklist = [str(i) for i in getattr(
-    config, "analysis_desc_blacklist", [])]
+group_blacklist = [str(i) for i in getattr(config, "analysis_group_blacklist", [])]
+desc_blacklist = [str(i) for i in getattr(config, "analysis_desc_blacklist", [])]
 trust_env = getattr(config, "analysis_trust_env", False)
 enable_search = getattr(config, "analysis_enable_search", False)
 
@@ -117,7 +115,9 @@ async def send_msg(msg_list: List[Union[List[str], str, bool]]) -> None:
         logger.warning(f"{msg_list}\n此次解析的内容可能被风控！")
 
 
-async def get_msg(event: Event, text: str, search: bool = False) -> Union[List[str], bool]:
+async def get_msg(
+    event: Event, text: str, search: bool = False
+) -> Union[List[str], bool]:
     group_id = str(
         event.group_id
         if hasattr(event, "group_id")

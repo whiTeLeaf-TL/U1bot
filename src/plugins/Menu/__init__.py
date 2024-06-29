@@ -1,22 +1,22 @@
 import base64
-import traceback
+import json
 import re
-import jinja2
-import aiofiles
-from nonebot.log import logger
+import traceback
 from pathlib import Path
 from typing import Union
-from nonebot.matcher import Matcher
-from nonebot.params import CommandArg
+
+import aiofiles
+import jinja2
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
 from nonebot.adapters.onebot.v11 import Message as V11Msg
 from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
 from nonebot.adapters.onebot.v12 import Bot as V12Bot
 from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
+from nonebot.log import logger
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg
 from nonebot_plugin_htmlrender import html_to_pic
-
-import json
 
 dir_path = Path(__file__).parent
 template_path = dir_path / "template"
@@ -63,8 +63,8 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
 
     plugin_name: str = match_result["name"]
 
-    # 查询plugin_name是否为数字，是则数字查找，否则模糊名查找，获取json，在dir_path/plugin.json
-    # 加载json
+    # 查询 plugin_name 是否为数字，是则数字查找，否则模糊名查找，获取 json，在 dir_path/plugin.json
+    # 加载 json
     plugin_list = await async_read_json(dir_path / "plugin.json")
 
     if plugin_name.isdigit():
@@ -81,7 +81,9 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
             await matcher.finish("插件名过于模糊或不存在")
 
     try:
-        result = await get_reply(plugin_dict) if plugin_dict else "插件名过于模糊或不存在"
+        result = (
+            await get_reply(plugin_dict) if plugin_dict else "插件名过于模糊或不存在"
+        )
     except Exception:
         logger.warning(traceback.format_exc())
         await matcher.finish("出错了，请稍后再试")

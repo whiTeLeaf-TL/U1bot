@@ -1,4 +1,5 @@
 from typing import Optional
+
 import nonebot
 from pydantic import BaseModel, Extra
 

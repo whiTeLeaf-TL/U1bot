@@ -14,8 +14,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 import psutil
+from nonebot import get_driver, logger
 from nonebot.adapters import Bot
-from nonebot import logger, get_driver
 
 if TYPE_CHECKING:
     from psutil._common import sdiskusage

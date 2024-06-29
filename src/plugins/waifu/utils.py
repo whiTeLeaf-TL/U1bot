@@ -1,9 +1,10 @@
-import io
-import httpx
-import hashlib
 import asyncio
-from pil_utils import Text2Image
+import hashlib
+import io
+
+import httpx
 from nonebot.adapters.onebot.v11 import Message
+from pil_utils import Text2Image
 
 defualt_md5 = "acef72340ac0e914090bd35799f5594e"
 
@@ -41,18 +42,18 @@ async def user_img(user_id: int) -> str:
 def text_to_png(msg):
     """文字转png"""
     output = io.BytesIO()
-    Text2Image.from_text(msg, 50, spacing=10, fontname="Source Han Sans CN", font_fallback=False).to_image("white", (20, 20)).save(
-        output, format="png"
-    )
+    Text2Image.from_text(
+        msg, 50, spacing=10, fontname="Source Han Sans CN", font_fallback=False
+    ).to_image("white", (20, 20)).save(output, format="png")
     return output
 
 
 def bbcode_to_png(msg, spacing: int = 10):
     """bbcode文字转png"""
     output = io.BytesIO()
-    Text2Image.from_bbcode_text(msg, 50, spacing=spacing, fontname="Source Han Sans CN", font_fallback=False).to_image(
-        "white", (20, 20)
-    ).save(output, format="png")
+    Text2Image.from_bbcode_text(
+        msg, 50, spacing=spacing, fontname="Source Han Sans CN", font_fallback=False
+    ).to_image("white", (20, 20)).save(output, format="png")
     return output
 
 

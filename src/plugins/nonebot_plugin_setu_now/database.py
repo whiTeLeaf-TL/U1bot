@@ -1,7 +1,6 @@
 from tortoise import fields
 from tortoise.models import Model
 
-
 from .data_source import SETU_SIZE, Setu
 
 

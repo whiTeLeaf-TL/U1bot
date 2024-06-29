@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import List, Optional
 
-from pydantic import Extra, BaseModel
+from pydantic import BaseModel, Extra
 
 
 class Now(BaseModel, extra=Extra.allow):

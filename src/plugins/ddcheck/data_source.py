@@ -75,7 +75,7 @@ def load_vtb_list() -> List[dict]:
             try:
                 return json.load(f)
             except json.decoder.JSONDecodeError:
-                logger.warning("vtb列表解析错误，将重新获取")
+                logger.warning("vtb 列表解析错误，将重新获取")
                 vtb_list_path.unlink()
     return []
 
@@ -154,7 +154,7 @@ async def get_reply(name: str) -> Union[str, bytes]:
                 raise AssertionError
         except Exception:
             logger.warning(traceback.format_exc())
-            return "获取用户信息失败，请检查名称或使用uid查询"
+            return "获取用户信息失败，请检查名称或使用 uid 查询"
 
     try:
         user_info = await get_user_info(uid)
@@ -169,7 +169,7 @@ async def get_reply(name: str) -> Union[str, bytes]:
 
     vtb_list = await get_vtb_list()
     if not vtb_list:
-        return "获取vtb列表失败，请稍后再试"
+        return "获取 vtb 列表失败，请稍后再试"
 
     try:
         medals = await get_medals(uid)

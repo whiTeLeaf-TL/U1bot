@@ -1,45 +1,47 @@
+import asyncio
+from pathlib import Path
+from re import I, sub
 from typing import Annotated, Any, Dict, Union
-from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
-from nonebot.permission import SUPERUSER
+
 from nonebot import on_command, on_regex, require
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     PRIVATE_FRIEND,
     Bot,
+    Event,
+    GroupMessageEvent,
     Message,
     MessageEvent,
     MessageSegment,
-    GroupMessageEvent,
     PrivateMessageEvent,
-    Event,
 )
-from nonebot.exception import ActionFailed
-from nonebot.log import logger
-from nonebot.params import Depends, RegexGroup
-from nonebot.plugin import PluginMetadata
-from .r18_whitelist import get_group_white_list_record
-from .data_source import SetuHandler
-from .perf_timer import PerfTimer
-from .img_utils import EFFECT_FUNC_LIST, image_segment_convert
-from .database import (
-    SetuInfo,
-    MessageInfo,
-    bind_message_data,
-    auto_upgrade_setuinfo,
-    SetuSwitch,
-)
-from .config import MAX, CDTIME, EFFECT, SETU_PATH, WITHDRAW_TIME, Config
-from .utils import SpeedLimiter
 from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
     CooldownIsolateLevel,
 )
-from .models import SetuNotFindError, Setu
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
+from nonebot.exception import ActionFailed
+from nonebot.log import logger
+from nonebot.params import Depends, RegexGroup
+from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_tortoise_orm import add_model
 from PIL import UnidentifiedImageError
-from pathlib import Path
-from re import I, sub
-import asyncio
+
+from .config import CDTIME, EFFECT, MAX, SETU_PATH, WITHDRAW_TIME, Config
+from .data_source import SetuHandler
+from .database import (
+    MessageInfo,
+    SetuInfo,
+    SetuSwitch,
+    auto_upgrade_setuinfo,
+    bind_message_data,
+)
+from .img_utils import EFFECT_FUNC_LIST, image_segment_convert
+from .models import Setu, SetuNotFindError
+from .perf_timer import PerfTimer
+from .r18_whitelist import get_group_white_list_record
+from .utils import SpeedLimiter
 
 require("nonebot_plugin_localstore")
 require("nonebot_plugin_tortoise_orm")
@@ -70,7 +72,10 @@ setu_matcher = on_regex(
 )
 
 setuopenorclose_matcher = on_command(
-    "setu开关", aliases={'色图开关', "涩图开关"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+    "setu开关",
+    aliases={"色图开关", "涩图开关"},
+    permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
+)
 
 
 @setuopenorclose_matcher.handle()
@@ -106,7 +111,6 @@ async def _(
     white_list_record=Depends(get_group_white_list_record),
 ):
     if isinstance(event, GroupMessageEvent):
-
         record = await SetuSwitch.get_or_none(group_id=event.group_id)
         if record is not None and not record.switch:
             await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")
@@ -131,7 +135,9 @@ async def _(
             r18 = True
         elif isinstance(event, GroupMessageEvent):
             if white_list_record is None:
-                await setu_matcher.finish("不可以涩涩！\n本群未启用R18支持\n请移除R18标签或联系维护组")
+                await setu_matcher.finish(
+                    "不可以涩涩！\n本群未启用R18支持\n请移除R18标签或联系维护组"
+                )
             r18 = True
     if r18:
         num = 1
@@ -170,8 +176,7 @@ async def _(
                     await bind_message_data(message_id, setu.pid)
                     logger.debug(f"Message ID: {message_id}")
                 else:
-                    logger.debug(
-                        f"Using auto revoke API, interval: {WITHDRAW_TIME}")
+                    logger.debug(f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
                         bot=bot,
                         event=event,

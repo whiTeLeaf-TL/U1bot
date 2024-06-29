@@ -10,9 +10,9 @@ class Config(BaseModel):
     animetrace_priority: int = 10
     # 动漫模型
     animetrace_model_anime: str = "pre_stable"
-    # galgame模型
+    # galgame 模型
     animetrace_model_gal: str = "game_model_kirakira"
     # 一个角色最多返回几个识别结果
     animetrace_max_num: int = 3
-    # bot昵称
+    # bot 昵称
     nickname: list[str] = ["anime trace"]

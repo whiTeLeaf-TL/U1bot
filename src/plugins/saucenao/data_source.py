@@ -1,8 +1,10 @@
 from typing import List
 
 from U1.message import MessageBuilder
-from .models import SauceNAORequest, SauceNAOResponse, SauceNAOResult
 from U1.utils import request
+
+from .models import SauceNAORequest, SauceNAOResponse, SauceNAOResult
+
 SAUCENAO_URL: str = "https://saucenao.com/search.php"
 
 
@@ -58,7 +60,9 @@ class SauceNAO:
                 MessageBuilder("\n——————————")
                 .text(f"相似度：{i.similarity}")
                 .text(f"名称：{i.index_name}")
-                .text(f"URL: {i.url.replace('https://', str()).replace('http://', str())}")
+                .text(
+                    f"URL: {i.url.replace('https://', str()).replace('http://', str())}"
+                )
                 .done()
             )
         return result
