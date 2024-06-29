@@ -44,7 +44,8 @@ def analyse_message(msg: str) -> Dict[str, float]:
     """
     # 设置停用词表
     if plugin_config.wordcloud_stopwords_path:
-        jieba_fast.analyse.set_stop_words(plugin_config.wordcloud_stopwords_path)
+        jieba_fast.analyse.set_stop_words(
+            plugin_config.wordcloud_stopwords_path)
     # 加载用户词典
     if plugin_config.wordcloud_userdict_path:
         jieba_fast.load_userdict(str(plugin_config.wordcloud_userdict_path))
