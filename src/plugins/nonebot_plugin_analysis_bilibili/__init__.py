@@ -94,8 +94,7 @@ def format_msg(msg_list: List[Union[List[str], str]], is_plain_text: bool = Fals
             continue
         if is_image(i):
             msg.append(Image(i))
-        else:
-            msg.append(Text(i))
+        msg.append(Text(i))
     return msg
 
 
