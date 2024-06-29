@@ -1,5 +1,3 @@
-
-
 # 导入插件方法
 from nonebot_plugin_tortoise_orm import add_model
 from tortoise import fields
