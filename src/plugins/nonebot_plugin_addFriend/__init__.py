@@ -226,7 +226,8 @@ async def handle_auto_approve_command(bot, argsText, autoType):
     elif autoType == "all":
         setList = argsText.split()
         i = 0
-        setKeyList = list(configUtil.config[bot.self_id]["agreeAutoApprove"].keys())
+        setKeyList = list(
+            configUtil.config[bot.self_id]["agreeAutoApprove"].keys())
         for setarg in setList[:2]:
             if setarg.isdigit():
                 if int(setarg) > 0:
@@ -270,9 +271,11 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         status = "拒绝成功"
     else:
         num = (
-            int(args_text) if args_text.isdigit() else config[bot.self_id]["maxViewNum"]
+            int(args_text) if args_text.isdigit(
+            ) else config[bot.self_id]["maxViewNum"]
         )
-        requestor_infos = str(list(requestorDict[bot.self_id][auto_type].items())[:num])
+        requestor_infos = str(
+            list(requestorDict[bot.self_id][auto_type].items())[:num])
         res_msg = await parseMsg(requestor_infos)
         await addFriend.finish(res_msg)
 
