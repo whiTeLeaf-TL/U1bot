@@ -229,14 +229,14 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
-        if waifu_id in record_lock.lock.keys():
+        if str(waifu_id) in record_lock.lock.keys():
             await waifu.finish(msg + "\n本对 cp 已锁！", at_sender=True)
         X = random.randint(1, 100)
         if X > NTR:
             record_CP, _ = await WaifuCP.get_or_create(group_id=group_id)
             record_CP.affect[str(user_id)] = user_id
         else:
-            rec.pop(waifu_cp)
+            rec.pop(str(waifu_cp))
             with contextlib.suppress(Exception):
                 record_waifu.waifu.remove(waifu_cp)
             await waifu.send(msg + "\n但是...", at_sender=True)

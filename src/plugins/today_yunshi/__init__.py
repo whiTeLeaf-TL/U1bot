@@ -77,7 +77,7 @@ def randomluck(arg, memberdata):
     Returns:
         tuple: 运势信息和选择的运势编号。
     """
-    # 判断是否有在json文件中和是否有time键值
+    # 判断是否有在 json 文件中和是否有 time 键值
     if arg in memberdata and "time" in memberdata[arg]:
         if memberdata[arg]["time"] != time.strftime(
             "%Y-%m-%d", time.localtime(time.time())
