@@ -138,7 +138,8 @@ async def search_bili_by_title(title: str, session: ClientSession) -> str:
     # set headers
     mainsite_url = "https://www.bilibili.com"
     async with session.get(mainsite_url) as resp:
-        assert resp.status == 200
+        if resp.status != 200:
+            raise AssertionError()
 
     query = await get_query({"keyword": title})
     search_url = f"https://api.bilibili.com/x/web-interface/wbi/search/all/v2?{query}"

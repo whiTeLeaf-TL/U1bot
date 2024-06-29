@@ -1,6 +1,6 @@
 # U1bot
 
-U1bot 是一个基于 Nonebot2 框架下的QQ机器人项目，致力于在QQ中丰富化。欢迎大家贡献代码、提出问题或建议。本项目是基于开源精神构建的，感谢所有贡献者！
+U1bot 是一个基于 Nonebot2 框架下的 QQ 机器人项目，致力于在 QQ 中丰富化。欢迎大家贡献代码、提出问题或建议。本项目是基于开源精神构建的，感谢所有贡献者！
 
 
 ## 如何开始
@@ -30,12 +30,12 @@ U1bot 是一个基于 Nonebot2 框架下的QQ机器人项目，致力于在QQ中
 ## 必填环境变量
 
 1. `QWEATHER_APIKEY`：和风天气的 API Key，[注册地址](https://dev.qweather.com/)
-2. `bilibili_cookie`：B站用户 Cookie，用于获取用户信息，[获取方式](#cookie-获取方式)
+2. `bilibili_cookie`：B 站用户 Cookie，用于获取用户信息，[获取方式](#cookie-获取方式)
 
 
 ### Cookie 获取方式
 
-1. 在 `.env.xxx` 文件中添加 B站用户 Cookie：
+1. 在 `.env.xxx` 文件中添加 B 站用户 Cookie：
 
 2. 获取 Cookie 的方式：
 

@@ -31,7 +31,6 @@ def check_dict_key_bot_id(
                 numDictbot[bot.self_id][t]["time"], "%Y-%m-%d %H:%M:%S.%f"
             )
         writeTime(numDictPath, numDictbot)
-    # return True
 
 
 def readData(path, content=None) -> dict:
@@ -51,7 +50,6 @@ def writeData(path, content):
 
 
 recipientList = list(get_driver().config.superusers)
-# recipients=str(recipients)[1:-1].replace(' ','').replace("'",'')
 # 可以在这里修改默认模板哦
 configModel = {
     "agreeAutoApprove": {"friend": 1, "group": 1},
