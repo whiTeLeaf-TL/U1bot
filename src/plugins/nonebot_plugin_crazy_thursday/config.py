@@ -39,8 +39,7 @@ async def download_url() -> Union[Dict[str, Any], None]:
                 return response.json()
 
             except Exception:
-                logger.warning(
-                    f"Error occured when downloading {url}, {i+1}/3")
+                logger.warning(f"Error occured when downloading {url}, {i+1}/3")
 
     logger.warning("Abort downloading")
     return None
@@ -80,5 +79,4 @@ async def kfc_post_check() -> None:
             with json_path.open("w", encoding="utf-8") as f:
                 json.dump(response, f, ensure_ascii=False, indent=4)
 
-            logger.info(
-                f"Updated post.json, version: {cur_version} -> {version}")
+            logger.info(f"Updated post.json, version: {cur_version} -> {version}")

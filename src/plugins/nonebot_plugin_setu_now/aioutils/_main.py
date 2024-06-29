@@ -59,7 +59,6 @@ class SoonValue(Generic[T]):
 
 
 class TaskGroup(_TaskGroup):
-
     def soonify(
         self, async_function: Callable[T_ParamSpec, Awaitable[T]], name: object = None
     ) -> Callable[T_ParamSpec, SoonValue[T]]:
@@ -114,8 +113,7 @@ def syncify(
 ) -> Callable[T_ParamSpec, T_Retval]:
     @functools.wraps(async_function)
     def wrapper(*args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs) -> T_Retval:
-        current_async_module = getattr(
-            threadlocals, "current_async_module", None)
+        current_async_module = getattr(threadlocals, "current_async_module", None)
         partial_f = functools.partial(async_function, *args, **kwargs)
         if current_async_module is None and not raise_sync_error:
             return anyio.run(partial_f)
@@ -128,7 +126,7 @@ def asyncify(
     function: Callable[T_ParamSpec, T_Retval],
     *,
     cancellable: bool = False,
-    limiter: Optional[anyio.CapacityLimiter] = None
+    limiter: Optional[anyio.CapacityLimiter] = None,
 ) -> Callable[T_ParamSpec, Awaitable[T_Retval]]:
     async def wrapper(
         *args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs
