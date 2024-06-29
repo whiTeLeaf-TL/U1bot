@@ -1,8 +1,8 @@
-import json
 from datetime import date
 
 import httpx
 import nonebot
+import ujson as json
 from nonebot import get_driver, on_fullmatch, require
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.plugin import PluginMetadata

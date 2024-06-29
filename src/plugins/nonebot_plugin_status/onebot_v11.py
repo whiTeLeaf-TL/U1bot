@@ -8,8 +8,8 @@
 """
 
 __author__ = "yanyongyu"
-import json
 
+import ujson as json
 from nonebot import logger, on_command, on_message, on_type
 from nonebot.adapters.onebot.v11 import (
     Bot,

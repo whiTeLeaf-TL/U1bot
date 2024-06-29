@@ -8,8 +8,7 @@
 """
 
 __author__ = "yanyongyu"
-import json
-
+import ujson as json
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 

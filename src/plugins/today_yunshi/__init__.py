@@ -6,17 +6,13 @@ from datetime import datetime
 from os import path
 from pathlib import Path
 
+import ujson as json
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 
 from .models import MemberData
-
-try:
-    import ujson as json
-except ImportError:
-    import json
 
 __plugin_meta__ = PluginMetadata(
     name="今日运势",
