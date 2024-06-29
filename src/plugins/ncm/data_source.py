@@ -107,7 +107,8 @@ class Ncm:
             )
             if verified.get("code", 0) == 200:
                 break
-        result = self.api.login.LoginViaCellphone(phone, captcha=captcha, ctcode=ctcode)
+        result = self.api.login.LoginViaCellphone(
+            phone, captcha=captcha, ctcode=ctcode)
         self.get_user_info()
 
     def get_qrcode(self):
@@ -140,7 +141,8 @@ class Ncm:
     def detail_names(self, ids: List[int]) -> List[str]:
         songs: list = self.api.track.GetTrackDetail(song_ids=ids)["songs"]
         detail = [
-            (data["name"] + "-" + ",".join([names["name"] for names in data["ar"]]))
+            (data["name"] + "-" + ",".join([names["name"]
+             for names in data["ar"]]))
             for data in songs
         ]
         return detail
@@ -170,7 +172,8 @@ class Ncm:
                     try:
                         tasks.append(
                             asyncio.create_task(
-                                self.upload_data_file(event=event, data=info[0])
+                                self.upload_data_file(
+                                    event=event, data=info[0])
                             )
                         )
                         del_nid.append(i)
@@ -212,7 +215,8 @@ class Ncm:
             return data[0]["id"]
 
     async def search_user(self, keyword: str, limit: int = 1):  # 搜索用户
-        self.api.cloudsearch.GetSearchResult(keyword=keyword, stype=USER, limit=limit)
+        self.api.cloudsearch.GetSearchResult(
+            keyword=keyword, stype=USER, limit=limit)
 
     async def search_playlist(self, keyword: str, limit: int = 1):  # 搜索歌单
         self.api.cloudsearch.GetSearchResult(

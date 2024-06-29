@@ -140,4 +140,5 @@ def image_segment_convert(img: Union[Path, Image.Image, bytes]) -> MessageSegmen
     return MessageSegment.image(image_bytesio)  # type: ignore
 
 
-EFFECT_FUNC_LIST = [do_nothing, draw_frame, random_flip, random_lines, random_rotate]
+EFFECT_FUNC_LIST = [do_nothing, draw_frame,
+                    random_flip, random_lines, random_rotate]

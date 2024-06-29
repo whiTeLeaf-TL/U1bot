@@ -176,7 +176,8 @@ async def _(
                     await bind_message_data(message_id, setu.pid)
                     logger.debug(f"Message ID: {message_id}")
                 else:
-                    logger.debug(f"Using auto revoke API, interval: {WITHDRAW_TIME}")
+                    logger.debug(
+                        f"Using auto revoke API, interval: {WITHDRAW_TIME}")
                     await autorevoke_send(
                         bot=bot,
                         event=event,

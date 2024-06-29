@@ -122,7 +122,7 @@ def print_backpack(backpack: dict[str, List[int]]) -> list:
             "\n".join(
                 [
                     f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
-                    for fish_name, fish_info in backpack_list[i : i + 20]
+                    for fish_name, fish_info in backpack_list[i: i + 20]
                 ]
             )
         )
@@ -200,7 +200,8 @@ async def switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
     session = get_session()
     async with session.begin():
         switchs = await session.execute(
-            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
+            select(FishingSwitch).where(
+                FishingSwitch.group_id == event.group_id)
         )
         switch = switchs.scalars().first()
         if switch:
@@ -226,7 +227,8 @@ async def get_switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> boo
     session = get_session()
     async with session.begin():
         switchs = await session.execute(
-            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
+            select(FishingSwitch).where(
+                FishingSwitch.group_id == event.group_id)
         )
         switch = switchs.scalars().first()
         return switch.switch if switch else True

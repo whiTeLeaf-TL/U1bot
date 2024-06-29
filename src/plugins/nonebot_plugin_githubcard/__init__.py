@@ -23,7 +23,8 @@ __plugin_meta__ = PluginMetadata(
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
-github = on_regex(r"https?://github\.com/([^/]+/[^/]+)", priority=10, block=False)
+github = on_regex(
+    r"https?://github\.com/([^/]+/[^/]+)", priority=10, block=False)
 
 
 def match_link_parts(link):

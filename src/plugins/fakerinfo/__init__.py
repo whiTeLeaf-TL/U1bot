@@ -37,7 +37,8 @@ def generate_family():
         ]
     )
     # 随机逆天字符
-    character = random.choice(["※", "★", "♪", "的", "╰", "♣", "♡", "の", "之", ""])
+    character = random.choice(
+        ["※", "★", "♪", "的", "╰", "♣", "♡", "の", "之", ""])
     # 随机生成家族后缀
     suffix = random.choice(
         [

@@ -65,7 +65,7 @@ def text_handle(text: str) -> dict:
         address_end = text.find(">", address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head : address_end + 1]
+        text_middle = text[address_head: address_end + 1]
         text = text.replace(text_middle, "")
 
     # 去除api返回内容中不符合json格式的部分
@@ -76,7 +76,7 @@ def text_handle(text: str) -> dict:
         address_end = text.find('"cover":', address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head + 8 : address_end - 2]
+        text_middle = text[address_head + 8: address_end - 2]
         address_head = address_end
         text = text.replace(text_middle, "")
 
@@ -87,10 +87,11 @@ def text_handle(text: str) -> dict:
         address_end = text.find('"festival"', address_head)
         if address_head == -1 or address_end == -1:
             break
-        text_middle = text[address_head + 9 : address_end - 2]
+        text_middle = text[address_head + 9: address_end - 2]
         if '"' in text_middle:
             text_middle = text_middle.replace('"', " ")
-            text = text[: address_head + 9] + text_middle + text[address_end - 2 :]
+            text = text[: address_head + 9] + \
+                text_middle + text[address_end - 2:]
         address_head = address_end
 
     return json.loads(text)

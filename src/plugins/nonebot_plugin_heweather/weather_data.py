@@ -7,13 +7,16 @@ from nonebot.log import logger
 from .model import AirApi, DailyApi, HourlyApi, NowApi, WarningApi
 
 
-class APIError(Exception): ...
+class APIError(Exception):
+    ...
 
 
-class ConfigError(Exception): ...
+class ConfigError(Exception):
+    ...
 
 
-class CityNotFoundError(Exception): ...
+class CityNotFoundError(Exception):
+    ...
 
 
 class Weather:

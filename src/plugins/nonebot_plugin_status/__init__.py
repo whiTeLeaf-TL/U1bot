@@ -51,7 +51,8 @@ __plugin_meta__ = PluginMetadata(
 
 global_config = get_driver().config
 status_config = Config.parse_obj(global_config)
-status_permission = (status_config.server_status_only_superusers or None) and SUPERUSER
+status_permission = (
+    status_config.server_status_only_superusers or None) and SUPERUSER
 
 _ev = Environment(
     trim_blocks=True, lstrip_blocks=True, autoescape=True, enable_async=True

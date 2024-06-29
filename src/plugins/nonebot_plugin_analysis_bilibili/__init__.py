@@ -23,8 +23,10 @@ headers = {
 }
 
 blacklist = [str(i) for i in getattr(config, "analysis_blacklist", [])]
-group_blacklist = [str(i) for i in getattr(config, "analysis_group_blacklist", [])]
-desc_blacklist = [str(i) for i in getattr(config, "analysis_desc_blacklist", [])]
+group_blacklist = [str(i) for i in getattr(
+    config, "analysis_group_blacklist", [])]
+desc_blacklist = [str(i) for i in getattr(
+    config, "analysis_desc_blacklist", [])]
 trust_env = getattr(config, "analysis_trust_env", False)
 enable_search = getattr(config, "analysis_enable_search", False)
 

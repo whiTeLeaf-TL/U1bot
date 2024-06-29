@@ -182,7 +182,8 @@ async def handle_first_receive(
         ) - timedelta(days=dt.weekday())
         state["start"] = state["stop"] - timedelta(days=7)
     elif type == "本月":
-        state["start"] = dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        state["start"] = dt.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0)
         state["stop"] = dt
     elif type == "上月":
         state["stop"] = dt.replace(
@@ -203,9 +204,11 @@ async def handle_first_receive(
                 start = match[1]
                 stop = match[2]
                 try:
-                    state["start"] = get_datetime_fromisoformat_with_timezone(start)
+                    state["start"] = get_datetime_fromisoformat_with_timezone(
+                        start)
                     if stop:
-                        state["stop"] = get_datetime_fromisoformat_with_timezone(stop)
+                        state["stop"] = get_datetime_fromisoformat_with_timezone(
+                            stop)
                     else:
                         # 如果没有指定结束日期，则认为是所给日期的当天的词云
                         state["start"] = state["start"].replace(

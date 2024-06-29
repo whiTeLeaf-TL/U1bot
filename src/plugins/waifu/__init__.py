@@ -16,7 +16,8 @@ from .config import Config
 from .models import *
 from .utils import *
 
-__plugin_meta__ = PluginMetadata(name="waifu", description="", usage="", config=Config)
+__plugin_meta__ = PluginMetadata(
+    name="waifu", description="", usage="", config=Config)
 
 
 global_config = get_driver().config
@@ -99,7 +100,8 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
     mo_reset_record
 )
 # 第一个触发时间：每天凌晨 0:00
-scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
+scheduler.add_job(reset_record, "cron", hour=0,
+                  minute=0, misfire_grace_time=120)
 
 
 async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
@@ -391,7 +393,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
         msg += f"♥ {niknameA} | {niknameB}\n"
     await cp_list.finish(
-        MessageSegment.image(text_to_png("本群 CP：\n——————————————\n" + msg[:-1]))
+        MessageSegment.image(text_to_png(
+            "本群 CP：\n——————————————\n" + msg[:-1]))
     )
 
 
@@ -529,8 +532,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     record.sort(key=lambda x: x[1], reverse=True)
     if msg := "\n".join(
         [
-            f"[align= left]{
-                nickname}[/align][align= right]今日透群友 {times} 次[/align]"
+            f"[align = left]{
+                nickname}[/align][align = right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
@@ -559,8 +562,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "涩涩记录②：\n——————————————\n"
     if msg := "\n".join(
         [
-            f"[align= left]{
-                nickname}[/align][align= right]今日被透 {times} 次[/align]"
+            f"[align = left]{
+                nickname}[/align][align = right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
     ):

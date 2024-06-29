@@ -48,7 +48,8 @@ __plugin_meta__ = PluginMetadata(
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
+fishing = on_command("fishing", aliases={
+                     "钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
