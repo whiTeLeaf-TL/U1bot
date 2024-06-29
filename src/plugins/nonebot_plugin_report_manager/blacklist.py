@@ -7,7 +7,7 @@ from nonebot import get_driver
 from nonebot.adapters.onebot.v11 import MessageEvent
 
 superusers = get_driver().config.superusers
-file_path = Path()/'data'/'blacklist'/'blacklist.json'
+file_path = Path() / "data" / "blacklist" / "blacklist.json"
 
 blacklist = (
     json.loads(file_path.read_text("utf-8"))
@@ -26,6 +26,7 @@ def is_number(s: str) -> bool:
         return True
     with contextlib.suppress(TypeError, ValueError):
         import unicodedata
+
         unicodedata.numeric(s)
         return True
     return False
@@ -35,7 +36,7 @@ def handle_blacklist(
     event: MessageEvent,
     mode: Literal["add", "del"],
 ) -> str:
-    msg = str(event.get_message()).strip().split(' ')
+    msg = str(event.get_message()).strip().split(" ")
     uids = [i for i in msg if is_number(i)]
     if mode == "add":
         for i in uids:
@@ -50,7 +51,8 @@ def handle_blacklist(
             if i not in blacklist["blacklist"]:
                 uids.remove(i)
         blacklist["blacklist"] = [
-            uid for uid in blacklist["blacklist"] if uid not in uids]
+            uid for uid in blacklist["blacklist"] if uid not in uids
+        ]
         _mode = "删除"
     save_blacklist()
     if not uids:
