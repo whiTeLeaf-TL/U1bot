@@ -120,7 +120,7 @@ wordcloud_cmd = on_alconna(
 def wrapper(slot: Union[int, str], content: Optional[str]) -> str:
     if slot == "my" and content:
         return "--my"
-    elif slot == "type" and content:
+    if slot == "type" and content:
         return content
     return ""  # pragma: no cover
 
