@@ -66,7 +66,6 @@ class Config(BaseModel):
     fish_hidden_fire: list = [
         "河",
         "Mr.ling",
-        "haitang",
         "闪耀珍珠",
         "隐火水母",
         "隐火龙虾",
