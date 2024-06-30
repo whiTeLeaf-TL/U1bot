@@ -39,6 +39,8 @@ class Config(BaseModel):
         "鱿鱼",
         "海星",
         "鳗鱼",
+        "海参",
+        "鲷鱼",
     ]
 
     fish_golden: list = [
@@ -61,7 +63,15 @@ class Config(BaseModel):
         "金空心鱼",
     ]
 
-    fish_void: list = ["心海", "虚空鳗鱼", "烤激光鱼", "鲑鱼大帝", "虚空珍珠", "虚空鱼"]
+    fish_void: list = [
+        "心海",
+        "虚空鳗鱼",
+        "烤激光鱼",
+        "鲑鱼大帝",
+        "虚空珍珠",
+        "虚空鱼",
+        "虚空海星",
+    ]
 
     fish_hidden_fire: list = [
         "河",
