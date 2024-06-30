@@ -81,6 +81,10 @@ async def _fishing(event: Event):
     result = ""
     if fish == "河":
         result = "* 河累了，休息..等等...你钓到了一条河？！"
+    elif fish == "尚方宝剑":
+        result = "* 你钓到了一把 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
+    elif fish == "Mr.ling":
+        result = "* 你钓到了一条...等等...我没看错吧？！你竟然钓到了一条 Mr.ling？！"
     else:
         result = f"* 你钓到了一条 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
     await save_fish(user_id, fish_name, fish_long)
