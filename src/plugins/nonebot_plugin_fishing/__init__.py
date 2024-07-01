@@ -133,9 +133,9 @@ async def _balance(event: Event):
 async def _switch(event: GroupMessageEvent | PrivateMessageEvent):
     """钓鱼开关"""
     if await switch_fish(event):
-        await switch.finish("钓鱼开关已打开")
+        await switch.finish("钓鱼 已打开")
     else:
-        await switch.finish("钓鱼开关已关闭")
+        await switch.finish("钓鱼 已关闭")
 
 
 async def send_forward_msg(
