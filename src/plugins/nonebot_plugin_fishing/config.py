@@ -12,6 +12,7 @@ class Config(BaseModel):
         "腐烂的海星",
         "腐烂的空心鱼",
         "腐烂的触手",
+        "腐烂的海参",
     ]
 
     fish_moldy: list = [
@@ -20,6 +21,7 @@ class Config(BaseModel):
         "社恐鱼",
         "Code 鱼",
         "404 鱼",
+        "贴图错误鱼"
         "发霉的鲤鱼",
         "发霉的鳗鱼",
         "发霉的鲭鱼",
@@ -41,6 +43,10 @@ class Config(BaseModel):
         "鳗鱼",
         "海参",
         "鲷鱼",
+        "鲢鱼",
+        "多宝鱼"
+        "龙利鱼"
+        "墨鱼"
     ]
 
     fish_golden: list = [
@@ -65,6 +71,8 @@ class Config(BaseModel):
 
     fish_void: list = [
         "心海",
+        "派蒙",
+        "纯水精灵",
         "虚空鳗鱼",
         "烤激光鱼",
         "鲑鱼大帝",
