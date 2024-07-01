@@ -181,7 +181,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         member_list = [
             member
             for member in await bot.get_group_member_list(group_id=group_id)
-            if member["user_id"] not in [int(bot.self_id), 2854196310]
+            if member["user_id"] not in [int(bot.self_id), 2854196310, 2854196306, 2854196912]
         ]
         lastmonth = event.time - last_sent_time_filter
         rule_out = protect_list.user_id if protect_list else [] or rec.keys()
