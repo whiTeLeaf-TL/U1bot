@@ -9,7 +9,7 @@ class FishingRecord(Model):
     time: Mapped[int]
     frequency: Mapped[int]
     fishes: Mapped[str] = mapped_column(TEXT)
-    coin: Mapped[int] = mapped_column(default=0)
+    coin: Mapped[float] = mapped_column(default=0)
 
 
 class FishingSwitch(Model):

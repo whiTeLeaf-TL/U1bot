@@ -163,7 +163,7 @@ async def sell_fish(user_id: str, fish_name: str) -> str:
                 if fish_name not in load_fishes:
                     return "你的背包里没有这种鱼"
                 fish_long = load_fishes[fish_name]
-                price = get_price(fish_name, sum(fish_long))
+                price = round(get_price(fish_name, sum(fish_long)), 2)
                 coin = fishes_record.coin + price
                 del load_fishes[fish_name]
                 dump_fishes = json.dumps(load_fishes)

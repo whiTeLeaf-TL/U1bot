@@ -16,7 +16,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-_search_flmt_notice = choice(["太快了啊！", "冷静1下", "歇会歇会~~"])
+_search_flmt_notice = choice(["太快了啊！", "冷静 1 下", "歇会歇会~~"])
 
 
 search = on_command("以图搜图", aliases={"搜图", "以图搜图"})
@@ -25,7 +25,7 @@ search = on_command("以图搜图", aliases={"搜图", "以图搜图"})
 @search.got("image", "图呢？", [Cooldown(5, prompt=_search_flmt_notice)])
 async def _(event: MessageEvent):
     if not conf.saucenao_apikey:
-        log.warning("你没配置Key啊Bro~")
+        log.warning("你没配置 Key 啊 Bro~")
 
     user_id = event.get_user_id()
     img = extract_image_urls(event.get_message())
