@@ -5,6 +5,7 @@
 创建时间: 2023-10-12 15:32:47.496268
 
 """
+
 from __future__ import annotations
 
 import math
@@ -58,7 +59,9 @@ def _migrate_old_data(ds_conn: Connection):
         )
         raise RuntimeError("chatrecorder: 请先安装 0.4.2 版本完成迁移之后再升级")
 
-    logger.warning("chatrecorder: 发现来自 datastore 的数据，正在迁移，请不要关闭程序...")
+    logger.warning(
+        "chatrecorder: 发现来自 datastore 的数据，正在迁移，请不要关闭程序..."
+    )
     logger.info(f"chatrecorder: 聊天记录数据总数：{count}")
 
     # 每次迁移的数据量为 10000 条
@@ -97,7 +100,9 @@ def _migrate_old_data(ds_conn: Connection):
                 }
             )
         session.execute(insert(MessageRecord), bulk_insert_records)
-        logger.info(f"chatrecorder: 已迁移 {i * migration_limit + len(records)}/{count}")
+        logger.info(
+            f"chatrecorder: 已迁移 {i * migration_limit + len(records)}/{count}"
+        )
 
     session.commit()
     logger.warning("chatrecorder: 聊天记录数据迁移完成！")
