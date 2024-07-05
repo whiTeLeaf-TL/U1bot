@@ -41,7 +41,7 @@ async def _(matcher: Matcher, event: MessageEvent):
         if isinstance(event, PrivateMessageEvent):
             await matcher.finish(result_text)
         else:
-            await matcher.finish("\n" + result_text, at_sender=True)
+            await matcher.finish(result_text, reply_message=True)
     else:
         # 如果有数据则判断是否是今天的数据
         if member_model.time.strftime("%Y-%m-%d") != time.strftime(
@@ -63,7 +63,7 @@ async def _(matcher: Matcher, event: MessageEvent):
         if isinstance(event, PrivateMessageEvent):
             await matcher.finish(result)
         else:
-            await matcher.finish("\n" + result, at_sender=True)
+            await matcher.finish(result, reply_message=True)
 
 
 def randomluck(arg, memberdata):

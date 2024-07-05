@@ -498,47 +498,6 @@
     }
   },
   "17": {
-    "name": "Github card",
-    "description": "展示github仓库卡片",
-    "usage": "github仓库卡片\n发出 github.com/用户名/仓库名 的格式即可自动检测",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "Github card",
-          "trigger_method": "github仓库卡片",
-          "trigger_condition": "群聊/私聊",
-          "brief_des": "展示github仓库卡片",
-          "detail_des": "github仓库卡片\n发出 github.com/用户名/仓库名 的格式即可自动检测"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "18": {
-    "name": "搜图片",
-    "description": "查询图片中的人物",
-    "usage": "搜图片",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "识别动漫",
-          "trigger_method": "#识别动漫\n回复图片即可",
-          "trigger_condition": "群聊/私聊",
-          "brief_des": "返回识别结果",
-          "detail_des": "回复图片即可"
-        },
-        {
-          "func": "搜图",
-          "trigger_method": "搜图",
-          "trigger_condition": "群聊/私聊",
-          "brief_des": "返回识别结果",
-          "detail_des": "回复图片即可"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "19": {
     "name": "状态信息",
     "description": "查询姚奕的状态",
     "usage": "请看下面",
@@ -555,14 +514,14 @@
           "func": "状态查询",
           "trigger_method": "拍一拍",
           "trigger_condition": "群聊/私聊",
-          "brief_des": "返回系统信息，内存占用，CPU占用，运行时间以及交换内存占用",
+          "brief_des": "返回系统信息，内存占用，CPU 占用，运行时间以及交换内存占用",
           "detail_des": "默认关闭！需要使用状态开关开启"
         }
       ],
       "menu_template": "default"
     }
   },
-  "20": {
+  "18": {
     "name": "钓鱼",
     "description": "赛博钓鱼，值得你拥有！",
     "usage": "请看下面",
