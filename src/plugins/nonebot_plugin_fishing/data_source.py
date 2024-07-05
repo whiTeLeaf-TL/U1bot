@@ -113,20 +113,17 @@ async def get_stats(user_id: str) -> str:
 
 def print_backpack(backpack: dict[str, List[int]]) -> list:
     """输出背包内容"""
-    msg_list = []
     backpack_list = list(backpack.items())
 
-    # 将背包分每 10 条为一个列表
-    for i in range(0, len(backpack_list), 20):
-        msg_list.append(
-            "\n".join(
-                [
-                    f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
-                    for fish_name, fish_info in backpack_list[i : i + 20]
-                ]
-            )
+    return [
+        "\n".join(
+            [
+                f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
+                for fish_name, fish_info in backpack_list[i : i + 20]
+            ]
         )
-    return msg_list
+        for i in range(0, len(backpack_list), 20)
+    ]
 
 
 async def get_backpack(user_id: str) -> str | list:
