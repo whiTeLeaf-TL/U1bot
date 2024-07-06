@@ -31,8 +31,14 @@ from .data_source import (
     get_switch_fish,
     save_fish,
     sell_fish,
+    sell_quality_fish,
     switch_fish,
+    sell_all_fish,
+    err_update,
 )
+
+from .data_source import fish as fish_quality
+
 
 require("nonebot_plugin_orm")  # noqa
 
@@ -47,7 +53,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 Bot_NICKNAME = list(get_driver().config.nickname)
-Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
+Bot_NICKNAME: str = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
 fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
@@ -74,6 +80,7 @@ async def _fishing(event: Event):
     """钓鱼"""
     user_id = event.get_user_id()
     await fishing.send("正在钓鱼…")
+    await err_update(user_id)
     fish = choice()
     fish_name = fish[0]
     fish_long = fish[1]
@@ -104,6 +111,7 @@ async def _stats(event: Event):
 async def _backpack(bot: Bot, event: MessageEvent):
     """背包"""
     user_id = event.get_user_id()
+    await err_update(user_id)
     fmt = await get_backpack(user_id)
     return (
         fmt
@@ -115,11 +123,16 @@ async def _backpack(bot: Bot, event: MessageEvent):
 @sell.handle()
 async def _sell(event: Event, arg: Message = CommandArg()):
     """卖鱼"""
-    fish_name = arg.extract_plain_text()
-    if fish_name == "":
-        await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
+    msg = arg.extract_plain_text()
     user_id = event.get_user_id()
-    await sell.finish(await sell_fish(user_id, fish_name), reply_message=True)
+    await err_update(user_id)
+    if msg == "":
+        await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
+    if msg == "全部":
+        await sell.finish(await sell_all_fish(user_id), reply_message=True)
+    if msg in fish_quality.keys():  # 判断是否是为品质
+        await sell.finish(await sell_quality_fish(user_id, msg), reply_message=True)
+    await sell.finish(await sell_fish(user_id, msg), reply_message=True)
 
 
 @balance.handle()

@@ -55,6 +55,7 @@ class Config(BaseModel):
 
     fish_golden: list = [
         "林北卖的鱼",
+        "甲鱼",
         "med肥鱼",
         "林北的四文鱼",
         "小杂鱼~♡",

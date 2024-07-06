@@ -1,3 +1,4 @@
+from ast import Dict
 import random
 import time
 from typing import List
@@ -26,6 +27,29 @@ fish = {
     "虚空": {"weight": 3, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
     "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
 }
+
+
+async def err_update(user_id: str) -> None:
+    """更新错误鱼的数量"""
+    delete_fish = ["贴图错误鱼发霉的鲤鱼", "多宝鱼龙利鱼墨鱼"]
+    session = get_session()
+    async with session.begin():
+        fishes_records = await session.execute(select(FishingRecord))
+        for fishes_record in fishes_records.scalars():
+            if fishes_record.user_id == user_id:
+                load_fishes = json.loads(fishes_record.fishes)
+                for fish_name in delete_fish:
+                    if fish_name in load_fishes:
+                        del load_fishes[fish_name]
+                dump_fishes = json.dumps(load_fishes)
+                user_update = (
+                    update(FishingRecord)
+                    .where(FishingRecord.user_id == user_id)
+                    .values(fishes=dump_fishes)
+                )
+                await session.execute(user_update)
+                await session.commit()
+                return
 
 
 def choice() -> tuple[str, int]:
@@ -137,6 +161,67 @@ async def get_backpack(user_id: str) -> str | list:
                 return (
                     print_backpack(load_fishes) if load_fishes else "你的背包里空无一物"
                 )
+        return "你的背包里空无一物"
+
+
+async def sell_quality_fish(user_id: str, quality: str) -> str:
+    """卖出指定品质的鱼"""
+    session = get_session()
+    async with session.begin():
+        fishes_records = await session.execute(select(FishingRecord))
+        for fishes_record in fishes_records.scalars():
+            if fishes_record.user_id == user_id:  # 对应的用户
+                load_fishes = json.loads(fishes_record.fishes)
+                if not load_fishes:
+                    break
+                if quality not in [get_quality(fish_name) for fish_name in load_fishes]:
+                    return f"你的背包里没有 {quality} 鱼了"
+                price = sum(
+                    round(get_price(fish_name, sum(fish_long)), 2)
+                    for fish_name, fish_long in load_fishes.items()
+                    if get_quality(fish_name) == quality
+                )
+                coin = fishes_record.coin + price
+                load_fishes: dict = {
+                    fish_name: fish_long
+                    for fish_name, fish_long in load_fishes.items()
+                    if get_quality(fish_name) != quality
+                }
+                dump_fishes = json.dumps(load_fishes)
+                user_update = (
+                    update(FishingRecord)
+                    .where(FishingRecord.user_id == user_id)
+                    .values(fishes=dump_fishes, coin=coin)
+                )
+                await session.execute(user_update)
+                await session.commit()
+                return f"你卖出了所有 {quality} 鱼，获得了 {price} {fishing_coin_name}"
+        return "你的背包里空无一物"
+
+
+async def sell_all_fish(user_id: str) -> str:
+    """卖出所有鱼"""
+    session = get_session()
+    async with session.begin():
+        fishes_records = await session.execute(select(FishingRecord))
+        for fishes_record in fishes_records.scalars():
+            if fishes_record.user_id == user_id:
+                load_fishes = json.loads(fishes_record.fishes)
+                if not load_fishes:
+                    break
+                price = sum(
+                    round(get_price(fish_name, sum(fish_long)), 2)
+                    for fish_name, fish_long in load_fishes.items()
+                )
+                coin = fishes_record.coin + price
+                user_update = (
+                    update(FishingRecord)
+                    .where(FishingRecord.user_id == user_id)
+                    .values(fishes="{}", coin=coin)
+                )
+                await session.execute(user_update)
+                await session.commit()
+                return f"你卖出了所有鱼，获得了 {price} {fishing_coin_name}"
         return "你的背包里空无一物"
 
 
