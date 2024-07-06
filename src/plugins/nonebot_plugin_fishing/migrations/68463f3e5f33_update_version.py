@@ -39,4 +39,3 @@ def downgrade(name: str = "") -> None:
     if name:
         return
     op.drop_table("nonebot_plugin_fishing_fishingswitch")
-    # ### end Alembic commands ###
