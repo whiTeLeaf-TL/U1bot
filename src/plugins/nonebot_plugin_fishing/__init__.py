@@ -34,7 +34,7 @@ from .data_source import (
     sell_quality_fish,
     switch_fish,
     sell_all_fish,
-    err_update,
+    update_sql
 )
 
 from .data_source import fish as fish_quality
@@ -54,7 +54,8 @@ __plugin_meta__ = PluginMetadata(
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME: str = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
+fishing = on_command("fishing", aliases={
+                     "钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
@@ -65,6 +66,13 @@ switch = on_command(
     priority=5,
     permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
 )
+update_def = on_command("update", aliases={"更新"}, priority=5, permission=SUPERUSER)
+
+@update_def.handle()
+async def _update(event: Event):
+    """更新"""
+    await update_sql()
+    await update_def.finish("更新成功！")
 
 
 @fishing.handle(
@@ -80,7 +88,6 @@ async def _fishing(event: Event):
     """钓鱼"""
     user_id = event.get_user_id()
     await fishing.send("正在钓鱼…")
-    await err_update(user_id)
     fish = choice()
     fish_name = fish[0]
     fish_long = fish[1]
@@ -93,7 +100,8 @@ async def _fishing(event: Event):
     elif fish == "Mr.ling":
         result = "* 你钓到了一条...等等...我没看错吧？！你竟然钓到了一条 Mr.ling？！"
     else:
-        result = f"* 你钓到了一条 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
+        result = f"* 你钓到了一条 {get_quality(fish_name)
+                             } {fish_name}，长度为 {fish_long}cm！"
     await save_fish(user_id, fish_name, fish_long)
     await asyncio.sleep(sleep_time)
     # result = "* 你钓了一整天，什么也没钓到，但是你的技术有所提升了！"
@@ -111,7 +119,6 @@ async def _stats(event: Event):
 async def _backpack(bot: Bot, event: MessageEvent):
     """背包"""
     user_id = event.get_user_id()
-    await err_update(user_id)
     fmt = await get_backpack(user_id)
     return (
         fmt
@@ -125,7 +132,6 @@ async def _sell(event: Event, arg: Message = CommandArg()):
     """卖鱼"""
     msg = arg.extract_plain_text()
     user_id = event.get_user_id()
-    await err_update(user_id)
     if msg == "":
         await sell.finish("请输入要卖出的鱼的名字，如：卖鱼 小鱼")
     if msg == "全部":
