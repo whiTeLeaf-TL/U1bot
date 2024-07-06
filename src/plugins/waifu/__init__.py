@@ -122,7 +122,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if protect_list is not None and at in protect_list.user_id:
         return False
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
-    tips = "伱的群友結婚对象是、"
+    tips = "伱的群友結婚对象是："
     rec = rec.affect
     if (waifu_id := rec.get(str(user_id))) and waifu_id != user_id:
         try:
