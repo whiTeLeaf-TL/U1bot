@@ -538,7 +538,7 @@
           "func": "统计信息",
           "trigger_method": "统计信息",
           "trigger_condition": "群聊/私聊",
-          "brief_des": "查看钓了多少次鱼吧~",
+          "brief_des": "来看看你在钓鱼的丰功伟绩罢~",
           "detail_des": "无"
         },
         {
@@ -550,7 +550,7 @@
         },
         {
           "func": "卖鱼",
-          "trigger_method": "卖鱼 <鱼的名称>",
+          "trigger_method": "卖鱼 <鱼的名称>/<品质>/全部",
           "trigger_condition": "群聊/私聊",
           "brief_des": "学林北卖鱼，走十年弯路~",
           "detail_des": "卖鱼可以获得通用货币！"

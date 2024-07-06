@@ -74,6 +74,7 @@ class Config(BaseModel):
         "金乌贼",
         "金海星",
         "金空心鱼",
+        "蓝鳍金枪鱼",
     ]
 
     fish_void: list = [
