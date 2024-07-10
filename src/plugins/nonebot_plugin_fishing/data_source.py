@@ -1,5 +1,3 @@
-from ast import Dict
-from itertools import count
 import random
 import time
 from typing import List
@@ -7,7 +5,7 @@ from typing import List
 import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
-from sqlalchemy import select, update
+from sqlalchemy import select, update, bindparam
 
 from .config import config
 from .model import FishingRecord, FishingSwitch
@@ -31,24 +29,44 @@ fish = {
 
 
 async def update_sql():
-    # 将 coin 更新到 count_coin
-    delete_fish = ["贴图错误鱼发霉的鲤鱼", "多宝鱼龙利鱼墨鱼", "腐烂的孙笑川鱼"]
+    delete_fish = [
+        "贴图错误鱼发霉的鲤鱼",
+        "多宝鱼龙利鱼墨鱼",
+        "腐烂的孙笑川鱼",
+        "虚空乌贼虚空鳗鱼",
+        "黄花鱼墨鱼",
+    ]
     session = get_session()
     async with session.begin():
         fishes_records = await session.execute(select(FishingRecord))
+        update_data = []
+
         for fishes_record in fishes_records.scalars():
-            # 删除错误的鱼
             load_fishes = json.loads(fishes_record.fishes)
+            fish_removed = False
+
             for fish_name in delete_fish:
                 if fish_name in load_fishes:
                     del load_fishes[fish_name]
-            dump_fishes = json.dumps(load_fishes)
-            user_update = (
+                    fish_removed = True
+
+            if fish_removed or fishes_record.coin != fishes_record.count_coin:
+                dump_fishes = json.dumps(load_fishes)
+                update_data.append(
+                    {
+                        "user_id": fishes_record.user_id,
+                        "fishes": dump_fishes,
+                        "count_coin": fishes_record.coin,
+                    }
+                )
+
+        if update_data:
+            await session.execute(
                 update(FishingRecord)
-                .where(FishingRecord.user_id == fishes_record.user_id)
-                .values(fishes=dump_fishes, count_coin=fishes_record.coin)
+                .where(FishingRecord.user_id == bindparam("user_id"))
+                .values(fishes=bindparam("fishes"), count_coin=bindparam("count_coin")),
+                update_data,
             )
-            await session.execute(user_update)
     await session.commit()
 
 
@@ -145,7 +163,7 @@ def print_backpack(backpack: dict[str, List[int]]) -> list:
         "\n".join(
             [
                 f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
-                for fish_name, fish_info in backpack_list[i: i + 20]
+                for fish_name, fish_info in backpack_list[i : i + 20]
             ]
         )
         for i in range(0, len(backpack_list), 20)
@@ -287,8 +305,7 @@ async def switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> bool:
     session = get_session()
     async with session.begin():
         switchs = await session.execute(
-            select(FishingSwitch).where(
-                FishingSwitch.group_id == event.group_id)
+            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
         )
         switch = switchs.scalars().first()
         if switch:
@@ -314,8 +331,7 @@ async def get_switch_fish(event: GroupMessageEvent | PrivateMessageEvent) -> boo
     session = get_session()
     async with session.begin():
         switchs = await session.execute(
-            select(FishingSwitch).where(
-                FishingSwitch.group_id == event.group_id)
+            select(FishingSwitch).where(FishingSwitch.group_id == event.group_id)
         )
         switch = switchs.scalars().first()
         return switch.switch if switch else True

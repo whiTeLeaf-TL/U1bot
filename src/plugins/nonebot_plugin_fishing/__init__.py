@@ -66,7 +66,7 @@ switch = on_command(
     priority=5,
     permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
 )
-update_def = on_command("update", aliases={"更新"}, priority=5, permission=SUPERUSER)
+update_def = on_command("update", priority=5, permission=SUPERUSER)
 
 @update_def.handle()
 async def _update(event: Event):
