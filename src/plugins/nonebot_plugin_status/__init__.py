@@ -49,8 +49,8 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters=None,
 )
 
-global_config = get_driver().config
-status_config = Config.parse_obj(global_config)
+global_config = get_driver().config.model_dump()
+status_config = Config.model_validate(global_config)
 status_permission = (status_config.server_status_only_superusers or None) and SUPERUSER
 
 _ev = Environment(

@@ -1,9 +1,9 @@
 from typing import Union
 
-from pydantic import BaseSettings
+from pydantic import BaseModel
 
 
-class Config(BaseSettings):
+class Config(BaseModel):
     history_qq_friends: list[int] = []  # 格式[123,456]
     history_qq_groups: list[int] = []  # 格式[123,456]
     # 兼容v0.0.8及以下

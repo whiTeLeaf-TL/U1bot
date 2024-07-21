@@ -9,7 +9,7 @@ class Config(BaseModel, extra=Extra.ignore):
     ncm_admin_level: int = 1
     """设置命令权限 (1:仅限 superusers 和群主，2:在 1 的基础上管理员，3:所有用户)"""
 
-    ncm_phone: str = ""
+    ncm_phone: int = 0
     """手机号"""
 
     ncm_ctcode: str = "86"
