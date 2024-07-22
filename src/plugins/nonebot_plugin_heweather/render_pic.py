@@ -1,23 +1,22 @@
+import platform
 from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from nonebot import require
 from nonebot_plugin_htmlrender import template_to_pic
 
 from .config import QWEATHER_HOURLYTYPE
 from .model import Air, Daily, Hourly, HourlyType
 from .weather_data import Weather
 
-require("nonebot_plugin_htmlrender")
-
 
 async def render(weather: Weather) -> bytes:
     template_path = str(Path(__file__).parent / "templates")
 
     air = None
-    if weather.air and weather.air.now:
-        air = add_tag_color(weather.air.now)
+    if weather.air:
+        if weather.air.now:
+            air = add_tag_color(weather.air.now)
 
     return await template_to_pic(
         template_path=template_path,
@@ -38,13 +37,19 @@ async def render(weather: Weather) -> bytes:
 
 
 def add_hour_data(hourly: List[Hourly]):
-    min_temp = min(int(hour.temp) for hour in hourly)
-    high = max(int(hour.temp) for hour in hourly)
+    min_temp = min([int(hour.temp) for hour in hourly])
+    high = max([int(hour.temp) for hour in hourly])
     low = int(min_temp - (high - min_temp))
     for hour in hourly:
         date_time = datetime.fromisoformat(hour.fxTime)
-        hour.hour = date_time.strftime("%-I%p")
-        hour.temp_percent = f"{int((int(hour.temp) - low) / (high - low) * 100)}px"
+        if platform.system() == "Windows":
+            hour.hour = date_time.strftime("%#I%p")
+        else:
+            hour.hour = date_time.strftime("%-I%p")
+        if high == low:
+            hour.temp_percent = "100px"
+        else:
+            hour.temp_percent = f"{int((int(hour.temp) - low) / (high - low) * 100)}px"
     if QWEATHER_HOURLYTYPE == HourlyType.current_12h:
         hourly = hourly[:12]
     if QWEATHER_HOURLYTYPE == HourlyType.current_24h:
