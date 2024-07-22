@@ -409,44 +409,6 @@
     }
   },
   "13": {
-    "name": "网易云点歌",
-    "description": "网易云无损音乐下载/点歌",
-    "usage": "如下：",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "点歌",
-          "trigger_method": "指令：点歌 歌名",
-          "trigger_condition": "开头匹配[点歌]",
-          "brief_des": "点歌",
-          "detail_des": "权限：所有人\n例如：\n点歌 世界第一等"
-        },
-        {
-          "func": "开启下载",
-          "trigger_method": "指令：ncm t",
-          "trigger_condition": "完全匹配",
-          "brief_des": "开启下载",
-          "detail_des": "权限:管理员/超管/群主"
-        },
-        {
-          "func": "关闭下载",
-          "trigger_method": "指令：ncm f",
-          "trigger_condition": "完全匹配",
-          "brief_des": "关闭下载",
-          "detail_des": "权限:管理员/超管/群主"
-        },
-        {
-          "func": "下载",
-          "trigger_method": "回复分享消息 + 文字`下载`",
-          "trigger_condition": "完全匹配",
-          "brief_des": "下载music",
-          "detail_des": "权限:所有人\n前提许开启下载"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "14": {
     "name": "伪造信息",
     "description": "伪造身份信息",
     "usage": "指令：伪造信息",
@@ -463,7 +425,7 @@
       "menu_template": "default"
     }
   },
-  "15": {
+  "14": {
     "name": "字符画",
     "description": "画一幅好看的字符画吧！",
     "usage": "字符画 <图片>（可GIF）",
@@ -480,24 +442,7 @@
       "menu_template": "default"
     }
   },
-  "16": {
-    "name": "表情包制作",
-    "description": "制作各种沙雕表情包",
-    "usage": "发送“表情包制作”查看表情包列表",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "表情包制作",
-          "trigger_method": "命令：表情包制作",
-          "trigger_condition": "完全匹配",
-          "brief_des": "制作各种沙雕表情包",
-          "detail_des": "发送“表情包制作”查看表情包列表"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "17": {
+  "15": {
     "name": "状态信息",
     "description": "查询姚奕的状态",
     "usage": "请看下面",
@@ -521,7 +466,7 @@
       "menu_template": "default"
     }
   },
-  "18": {
+  "16": {
     "name": "钓鱼",
     "description": "赛博钓鱼，值得你拥有！",
     "usage": "请看下面",
