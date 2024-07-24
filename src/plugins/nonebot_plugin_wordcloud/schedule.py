@@ -1,5 +1,5 @@
 from datetime import time
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 import nonebot_plugin_saa as saa
 from apscheduler.job import Job
@@ -29,7 +29,7 @@ class Scheduler:
     def __init__(self):
         # 默认定时任务的 key 为 default
         # 其他则为 ISO 8601 格式的时间字符串
-        self.schedules: Dict[str, Job] = {}
+        self.schedules: dict[str, Job] = {}
 
         # 转换到 APScheduler 的时区
         scheduler_time = get_time_with_scheduler_timezone(
@@ -101,11 +101,16 @@ class Scheduler:
                     exclude_id1s=plugin_config.wordcloud_exclude_user_ids,
                 )
                 mask_key = get_mask_key(target)
-                if not (image := await get_wordcloud(messages, mask_key)):
-                    await saa.Text("今天没有足够的数据生成词云").send_to(target)
-                    continue
 
-                await saa.Image(image).send_to(target)
+                if image := await get_wordcloud(messages, mask_key):
+                    msg = saa.Image(image)
+                else:
+                    msg = saa.Text("今天没有足够的数据生成词云")
+
+                try:
+                    await msg.send_to(target)
+                except Exception:
+                    logger.exception(f"{target} 发送词云失败")
 
     async def get_schedule(self, target: saa.PlatformTarget) -> Optional[time]:
         """获取定时任务时间"""
@@ -118,7 +123,8 @@ class Scheduler:
                     return time_astimezone(
                         schedule.time.replace(tzinfo=ZoneInfo("UTC"))
                     )
-                return plugin_config.wordcloud_default_schedule_time
+                else:
+                    return plugin_config.wordcloud_default_schedule_time
 
     async def add_schedule(
         self, target: saa.PlatformTarget, *, time: Optional[time] = None
@@ -154,7 +160,7 @@ class Scheduler:
     @staticmethod
     def select_target_statement(
         target: saa.PlatformTarget, session: AsyncSession
-    ) -> Select[Tuple[Schedule]]:
+    ) -> Select[tuple[Schedule]]:
         """获取查询目标的语句
 
         MySQL 需要手动将 JSON 类型的字段转换为 JSON 类型
