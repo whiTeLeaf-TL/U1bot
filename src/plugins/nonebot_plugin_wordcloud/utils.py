@@ -1,6 +1,7 @@
 import contextlib
 from datetime import datetime, time, tzinfo
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 from nonebot.compat import model_dump
 from nonebot.matcher import Matcher
@@ -9,7 +10,6 @@ from nonebot.permission import SUPERUSER
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_saa import PlatformTarget, get_target
 from nonebot_plugin_session import Session, SessionLevel, extract_session
-from zoneinfo import ZoneInfo
 
 from .config import plugin_config
 
@@ -18,7 +18,8 @@ def get_datetime_now_with_timezone() -> datetime:
     """获取当前时间，并包含时区信息"""
     if plugin_config.wordcloud_timezone:
         return datetime.now(ZoneInfo(plugin_config.wordcloud_timezone))
-    return datetime.now().astimezone()
+    else:
+        return datetime.now().astimezone()
 
 
 def get_datetime_fromisoformat_with_timezone(date_string: str) -> datetime:

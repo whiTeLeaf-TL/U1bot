@@ -1,15 +1,21 @@
 """词云"""
 
+from nonebot import require
+
+require("nonebot_plugin_apscheduler")
+require("nonebot_plugin_alconna")
+require("nonebot_plugin_cesaa")
+
 import re
 from datetime import datetime, timedelta
 from io import BytesIO
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 import nonebot_plugin_alconna as alc
 import nonebot_plugin_saa as saa
 from arclet.alconna import ArparmaBehavior
 from arclet.alconna.arparma import Arparma
-from nonebot import get_driver, require
+from nonebot import get_driver
 from nonebot.adapters import Bot, Event, Message
 from nonebot.params import Arg, Depends
 from nonebot.permission import SUPERUSER
@@ -44,11 +50,6 @@ from .utils import (
     get_mask_key,
     get_time_fromisoformat_with_timezone,
 )
-
-require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_alconna")
-require("nonebot_plugin_cesaa")
-
 
 get_driver().on_startup(schedule_service.update)
 
@@ -117,10 +118,12 @@ wordcloud_cmd = on_alconna(
 )
 
 
-def wrapper(slot: Union[int, str], content: Optional[str]) -> str:
+def wrapper(
+    slot: Union[int, str], content: Optional[str], context: dict[str, Any]
+) -> str:
     if slot == "my" and content:
         return "--my"
-    if slot == "type" and content:
+    elif slot == "type" and content:
         return content
     return ""  # pragma: no cover
 

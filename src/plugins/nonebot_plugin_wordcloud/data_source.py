@@ -5,10 +5,10 @@ import re
 from functools import partial
 from io import BytesIO
 from random import choice
-from typing import Dict, List, Optional
+from typing import Optional
 
-import jieba_fast
-import jieba_fast.analyse
+import jieba
+import jieba.analyse
 import numpy as np
 from emoji import replace_emoji
 from PIL import Image
@@ -37,20 +37,20 @@ def pre_precess(msg: str) -> str:
     return msg
 
 
-def analyse_message(msg: str) -> Dict[str, float]:
+def analyse_message(msg: str) -> dict[str, float]:
     """分析消息
 
     分词，并统计词频
     """
     # 设置停用词表
     if plugin_config.wordcloud_stopwords_path:
-        jieba_fast.analyse.set_stop_words(plugin_config.wordcloud_stopwords_path)
+        jieba.analyse.set_stop_words(plugin_config.wordcloud_stopwords_path)
     # 加载用户词典
     if plugin_config.wordcloud_userdict_path:
-        jieba_fast.load_userdict(str(plugin_config.wordcloud_userdict_path))
+        jieba.load_userdict(str(plugin_config.wordcloud_userdict_path))
     # 基于 TF-IDF 算法的关键词抽取
     # 返回所有关键词，因为设置了数量其实也只是 tags[:topK]，不如交给词云库处理
-    words = jieba_fast.analyse.extract_tags(msg, topK=0, withWeight=True)
+    words = jieba.analyse.extract_tags(msg, topK=0, withWeight=True)
     return dict(words)
 
 
@@ -65,7 +65,7 @@ def get_mask(key: str):
         return np.array(Image.open(default_mask_path))
 
 
-def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
+def _get_wordcloud(messages: list[str], mask_key: str) -> Optional[bytes]:
     # 过滤掉命令
     command_start = tuple(i for i in global_config.command_start if i)
     message = " ".join(m for m in messages if not m.startswith(command_start))
@@ -98,7 +98,7 @@ def _get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
         return image_bytes.getvalue()
 
 
-async def get_wordcloud(messages: List[str], mask_key: str) -> Optional[bytes]:
+async def get_wordcloud(messages: list[str], mask_key: str) -> Optional[bytes]:
     loop = asyncio.get_running_loop()
     pfunc = partial(_get_wordcloud, messages, mask_key)
     # 虽然不知道具体是哪里泄漏了，但是通过每次关闭线程池可以避免这个问题
