@@ -517,5 +517,22 @@
       ],
       "menu_template": "default"
     }
+  },
+  "17": {
+    "name": "表情包制作",
+    "description": "制作各种沙雕表情包",
+    "usage": "发送“表情包制作”查看表情包列表",
+    "extra": {
+      "menu_data": [
+        {
+          "func": "表情包制作",
+          "trigger_method": "命令：表情包制作",
+          "trigger_condition": "完全匹配",
+          "brief_des": "制作各种沙雕表情包",
+          "detail_des": "发送“表情包制作”查看表情包列表"
+        }
+      ],
+      "menu_template": "default"
+    }
   }
 }
