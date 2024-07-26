@@ -122,8 +122,8 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if protect_list is not None and at in protect_list.user_id:
         return False
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
-    tips = "伱的群友結婚对象是："
     rec = rec.affect
+    tips = "伱的群友結婚对象是："
     if (waifu_id := rec.get(str(user_id))) and waifu_id != user_id:
         try:
             member = await bot.get_group_member_info(
@@ -135,10 +135,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if member:
             if at and at != user_id:
                 if waifu_id == at:
-                    msg = (
-                        f"这是你的 CP！{random.choice(happy_end)}"
-                        + MessageSegment.image(file=await user_img(waifu_id))
-                    )
+                    msg = f"这是你的 CP！{random.choice(happy_end)}{MessageSegment.image(file=await user_img(waifu_id))}"
                     waifulist, _ = await PWaifu.get_or_create(group_id=group_id)
                     if str(user_id) in waifulist.waifu:
                         waifulock, _ = await WaifuLock.get_or_create(
@@ -150,8 +147,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                         msg += "\ncp 已锁！"
                 else:
                     msg = (
-                        "你已经有 CP 了，不许花心哦~"
-                        + MessageSegment.image(file=await user_img(waifu_id))
+                        f"你已经有 CP 了，不许花心哦~{MessageSegment.image(file=await user_img(waifu_id))}"
                         + f"你的 CP：{member['card'] or member['nickname']}"
                     )
             else:
@@ -183,7 +179,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             for member in await bot.get_group_member_list(group_id=group_id)
             if member["user_id"] not in [int(bot.self_id), 2854196310]
         ]
-        lastmonth = event.time - last_sent_time_filter
+        # lastmonth = event.time - last_sent_time_filter
         rule_out = protect_list.user_id if protect_list else [] or rec.keys()
         waifu_ids = [
             user_id
@@ -209,8 +205,8 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     waifu_id: int
     tips: str
     waifu_id, tips = state["waifu"]
-    group_id = event.group_id
     user_id = event.user_id
+    group_id = event.group_id
     if waifu_id == user_id:
         record_cp, _ = await WaifuCP.get_or_create(group_id=group_id)
         record_cp.affect[str(user_id)] = user_id
@@ -219,13 +215,11 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
     record_waifu, _ = await PWaifu.get_or_create(group_id=group_id)
-    if waifu_id in rec:
+    if str(waifu_id) in rec:
         waifu_cp = rec[str(waifu_id)]
         member = await bot.get_group_member_info(group_id=group_id, user_id=waifu_cp)
         msg = (
-            "人家已经名花有主了~"
-            + MessageSegment.image(file=await user_img(waifu_cp))
-            + "ta 的 cp："
+            f"人家已经名花有主了~{MessageSegment.image(file=await user_img(waifu_cp))}ta 的 cp："
             + (member["card"] or member["nickname"])
         )
         record_lock, _ = await WaifuLock.get_or_create(group_id=group_id)
@@ -406,8 +400,8 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     if event.to_me:
         await bot.send(event, "不行！", at_sender=True)
         return False
-    group_id = event.group_id
     user_id = event.user_id
+    group_id = event.group_id
     protect_list, _ = await WaifuProtect.get_or_create(group_id=group_id)
     protect_set = protect_list.user_id
     if user_id in protect_set:
@@ -423,9 +417,8 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
         if at == user_id:
             member = await bot.get_group_member_info(group_id=group_id, user_id=user_id)
             msg = (
-                "恭喜你涩到了你自己！"
-                + MessageSegment.image(file=await user_img(user_id))
-                + f"『{(member['card'] or member['nickname'])}』!"
+                f"恭喜你涩到了你自己！{MessageSegment.image(file=await user_img(user_id))}"
+                + f"『{member['card'] or member['nickname']}』!"
             )
             await bot.send(event, msg, at_sender=True)
             return False
