@@ -96,11 +96,11 @@ async def _fishing(event: Event):
     fish_long = fish[1]
     sleep_time = random.randint(1, 6)
     result = ""
-    if fish == "河":
+    if fish_name == "河":
         result = "* 河累了，休息..等等...你钓到了一条河？！"
-    elif fish == "尚方宝剑":
+    elif fish_name == "尚方宝剑":
         result = f"* 你钓到了一把 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
-    elif fish == "Mr.ling":
+    elif fish_name == "Mr.ling":
         result = "* 你钓到了一条...等等...我没看错吧？！你竟然钓到了一条 Mr.ling？！"
     else:
         result = f"* 你钓到了一条 {get_quality(fish_name)

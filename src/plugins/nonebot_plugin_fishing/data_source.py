@@ -1,9 +1,10 @@
 import aiofiles
 import random
 import time
+import math
 from os import path
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
@@ -24,13 +25,13 @@ fish_golden = config.fish_golden
 fish_void = config.fish_void
 fish_fire = config.fish_hidden_fire
 
-fish = {
-    "普通": {"weight": 100, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
-    "腐烂": {"weight": 20, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
-    "发霉": {"weight": 15, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
-    "金": {"weight": 5, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
-    "虚空": {"weight": 3, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
-    "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
+fish = fish = {
+    "普通": {"weight": 20, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
+    "腐烂": {"weight": 10, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
+    "发霉": {"weight": 7, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
+    "金": {"weight": 10, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
+    "虚空": {"weight": 6, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
+    "隐火": {"weight": 3, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
 }
 
 
@@ -76,21 +77,60 @@ async def update_sql():
     await session.commit()
 
 
+def calculate_weight_increase(luck_star_num: int) -> float:
+    """
+    计算根据星级增加的权重（对数函数）。
+    """
+    base_increase = 0.05
+    return min(
+        base_increase * math.log1p(luck_star_num), 0.25
+    )  # 使用对数函数计算增加值
+
+
+MAX_WEIGHT_INCREASE = 20  # 设置权重增加上限
+
+
 async def get_weight(
-    user_id: str, fish_quality: list[str]
-) -> tuple[list[int], bool, int | None]:
+    user_id: str, fish_quality: List[str]
+) -> tuple[List[int], bool, Optional[int]]:
+    """
+    根据用户运势调整鱼的权重，并返回相应的权重值。
+
+    - 参数
+      - user_id: 用户的唯一标识符
+      - fish_quality: 包含鱼种质量的列表
+    - 返回
+      - 一个包含鱼权重的列表
+      - 一个布尔值，指示是否进行了调整
+      - 运势星级数（如果有的话），否则为 None
+    """
+    # 获取用户运势数据
     luck = await MemberData.get_or_none(user_id=user_id)
-    # open_file
-    if not isinstance(luck, type(None)) and luck.time.strftime(
-        "%Y-%m-%d"
-    ) == time.strftime("%Y-%m-%d", time.localtime(time.time())):
-        async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
-            luckdata: dict[str, dict[str, str]] = json.loads(await f.read())
-            luck_star_num = luckdata[str(luck.luckid)]["星级"].count("★")
+
+    # 检查数据的有效性
+    if luck and luck.time.strftime("%Y-%m-%d") == time.strftime("%Y-%m-%d"):
+        try:
+            # 打开并读取运势数据文件
+            async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
+                luckdata: dict[str, dict[str, str]] = json.loads(await f.read())
+                luck_star_num = (
+                    luckdata.get(str(luck.luckid), {}).get("星级", "").count("★")
+                )
+        except (IOError, json.JSONDecodeError) as e:
+            # 文件读取或解析异常处理
+            print(f"Error reading or parsing luck data: {e}")
+            return [fish[key]["weight"] for key in fish_quality], False, None
+
+        # 调整权重
         for key in fish_quality:
             if key in ["隐火", "虚空", "金"]:
-                fish[key]["weight"] += luck_star_num
+                weight_increase = calculate_weight_increase(luck_star_num)
+                fish[key]["weight"] = min(
+                    fish[key]["weight"] + weight_increase, MAX_WEIGHT_INCREASE
+                )  # 设置权重上限
+
         return [fish[key]["weight"] for key in fish_quality], True, luck_star_num
+
     return [fish[key]["weight"] for key in fish_quality], False, None
 
 
