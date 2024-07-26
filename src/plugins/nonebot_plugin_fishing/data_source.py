@@ -1,14 +1,20 @@
+import aiofiles
 import random
 import time
+from os import path
+from pathlib import Path
 from typing import List
 
 import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
-from sqlalchemy import select, update, bindparam
+from sqlalchemy import bindparam, select, update
+from ..today_yunshi.models import MemberData
 
 from .config import config
 from .model import FishingRecord, FishingSwitch
+
+luckpath = Path(path.join("./src/plugins/today_yunshi", "Fortune.json"))
 
 fishing_coin_name = config.fishing_coin_name
 fish_rotten = config.fish_rotten
@@ -70,15 +76,36 @@ async def update_sql():
     await session.commit()
 
 
-def choice() -> tuple[str, int]:
+async def get_weight(
+    user_id: str, fish_quality: list[str]
+) -> tuple[list[int], bool, int | None]:
+    luck = await MemberData.get_or_none(user_id=user_id)
+    # open_file
+    if not isinstance(luck, type(None)) and luck.time.strftime(
+        "%Y-%m-%d"
+    ) == time.strftime("%Y-%m-%d", time.localtime(time.time())):
+        async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
+            luckdata: dict[str, dict[str, str]] = json.loads(await f.read())
+            luck_star_num = luckdata[str(luck.luckid)]["星级"].count("★")
+        for key in fish_quality:
+            if key in ["隐火", "虚空", "金"]:
+                fish[key]["weight"] += luck_star_num
+        return [fish[key]["weight"] for key in fish_quality], True, luck_star_num
+    return [fish[key]["weight"] for key in fish_quality], False, None
+
+
+async def choice(user_id: str) -> tuple[str, int, bool, int | None]:
     # 挑品质
     # 将字典所有键转换为列表
     fish_quality = list(fish.keys())
-    fish_quality_weight = [fish[key]["weight"] for key in fish_quality]
-    quality = random.choices(fish_quality, weights=fish_quality_weight)[0]
+    fish_quality_weight = await get_weight(user_id=user_id, fish_quality=fish_quality)
+    quality = random.choices(fish_quality, weights=fish_quality_weight[0])[0]
     # 挑鱼
-    return random.choice(fish[quality]["fish"]), random.randint(
-        fish[quality]["long"][0], fish[quality]["long"][1]
+    return (
+        random.choice(fish[quality]["fish"]),
+        random.randint(fish[quality]["long"][0], fish[quality]["long"][1]),
+        fish_quality_weight[1],
+        fish_quality_weight[2],
     )
 
 

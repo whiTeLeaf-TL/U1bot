@@ -34,7 +34,7 @@ from .data_source import (
     sell_quality_fish,
     switch_fish,
     sell_all_fish,
-    update_sql
+    update_sql,
 )
 
 from .data_source import fish as fish_quality
@@ -54,8 +54,7 @@ __plugin_meta__ = PluginMetadata(
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME: str = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={
-                     "钓鱼"}, priority=5, rule=get_switch_fish)
+fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
@@ -67,6 +66,7 @@ switch = on_command(
     permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
 )
 update_def = on_command("update", priority=5, permission=SUPERUSER)
+
 
 @update_def.handle()
 async def _update(event: Event):
@@ -87,8 +87,11 @@ async def _update(event: Event):
 async def _fishing(event: Event):
     """钓鱼"""
     user_id = event.get_user_id()
-    await fishing.send("正在钓鱼…")
-    fish = choice()
+    fish = await choice(user_id=user_id)
+    if fish[2] and fish[3] != 0:
+        await fishing.send(f"正在钓鱼…\n使用运气[{fish[3]}]加成")
+    else:
+        await fishing.send("正在钓鱼…")
     fish_name = fish[0]
     fish_long = fish[1]
     sleep_time = random.randint(1, 6)
@@ -96,7 +99,7 @@ async def _fishing(event: Event):
     if fish == "河":
         result = "* 河累了，休息..等等...你钓到了一条河？！"
     elif fish == "尚方宝剑":
-        result = "* 你钓到了一把 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
+        result = f"* 你钓到了一把 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
     elif fish == "Mr.ling":
         result = "* 你钓到了一条...等等...我没看错吧？！你竟然钓到了一条 Mr.ling？！"
     else:
