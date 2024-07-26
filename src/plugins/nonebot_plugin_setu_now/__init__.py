@@ -20,10 +20,10 @@ from nonebot.adapters.onebot.v11.helpers import (
     CooldownIsolateLevel,
 )
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.params import Depends, RegexGroup
-from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot_plugin_tortoise_orm import add_model
 from PIL import UnidentifiedImageError

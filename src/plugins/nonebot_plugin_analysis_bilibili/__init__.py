@@ -1,11 +1,15 @@
 import re
 from typing import List, Union
 from aiohttp import ClientSession
-from nonebot import on_regex, logger, require
+from nonebot import on_command, on_regex, logger, require
 from nonebot.adapters import Event
 from nonebot.rule import Rule
 from nonebot.plugin import PluginMetadata
 from .analysis_bilibili import config, b23_extract, bili_keyword, search_bili_by_title
+from .models import Bili_Analysis_Switch
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 require("nonebot_plugin_saa")
 from nonebot_plugin_saa import MessageFactory, MessageSegmentFactory, Text, Image  # noqa: E402
@@ -27,6 +31,36 @@ group_blacklist = [str(i) for i in getattr(config, "analysis_group_blacklist", [
 desc_blacklist = [str(i) for i in getattr(config, "analysis_desc_blacklist", [])]
 trust_env = getattr(config, "analysis_trust_env", False)
 enable_search = getattr(config, "analysis_enable_search", False)
+Switch = on_command(
+    "B站分析开关",
+    aliases={"B开关"},
+    permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
+)
+
+
+@Switch.handle()
+async def _(event: GroupMessageEvent):
+    # 查询数据库中是否有该群的记录，如果有则修改，没有则创建
+    if record := await Bili_Analysis_Switch.get_or_none(group_id=event.group_id):
+        logger.debug(f"修改 B 站分析开关 {event.group_id}")
+        record.switch = not record.switch
+        await record.save()
+    else:
+        logger.debug(f"添加 B 站分析开关 {event.group_id}")
+        await Bili_Analysis_Switch.create(group_id=event.group_id, switch=False)
+        record = await Bili_Analysis_Switch.get_or_none(group_id=event.group_id)
+    if not isinstance(record, type(None)):
+        if record.switch:
+            await Switch.finish("已开启本群 B 站分析")
+        else:
+            await Switch.finish("已关闭本群 B 站分析")
+    await Switch.finish("开关命令发生错误")
+
+
+async def is_open(event: GroupMessageEvent) -> bool:
+    group_id = event.group_id
+    record = await Bili_Analysis_Switch.get_or_none(group_id=group_id)
+    return True if isinstance(record, type(None)) else record.switch
 
 
 async def is_enable_search() -> bool:
@@ -55,7 +89,7 @@ analysis_bili = on_regex(
     r"(b23.tv)|(bili(22|23|33|2233).cn)|(.bilibili.com)|(^(av|cv)(\d+))|(^BV([a-zA-Z0-9]{10})+)|"
     r"(\[\[QQ小程序\]哔哩哔哩\])|(QQ小程序&amp;#93;哔哩哔哩)|(QQ小程序&#93;哔哩哔哩)",
     flags=re.I,
-    rule=is_normal,
+    rule=Rule(is_open, is_normal),
 )
 
 rule = Rule(is_enable_search, is_normal)
@@ -128,10 +162,9 @@ async def get_msg(
     async with ClientSession(trust_env=trust_env, headers=headers) as session:
         if search:
             text = await search_bili_by_title(text, session=session)
-        else:
-            if re.search(r"(b23.tv)|(bili(22|23|33|2233).cn)", text, re.I):
-                # 提前处理短链接，避免解析到其他的
-                text = await b23_extract(text, session=session)
+        elif re.search(r"(b23.tv)|(bili(22|23|33|2233).cn)", text, re.I):
+            # 提前处理短链接，避免解析到其他的
+            text = await b23_extract(text, session=session)
 
         msg = await bili_keyword(group_id, text, session=session)
 
@@ -140,9 +173,8 @@ async def get_msg(
             # 说明是错误信息
             await analysis_bili.finish(msg)
 
-        if group_id in desc_blacklist:
-            if msg[-1].startswith("简介"):
-                msg[-1] = ""
+        if group_id in desc_blacklist and msg[-1].startswith("简介"):
+            msg[-1] = ""
 
     return msg
 
