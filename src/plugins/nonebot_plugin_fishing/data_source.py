@@ -29,9 +29,9 @@ fish = fish = {
     "普通": {"weight": 20, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
     "腐烂": {"weight": 10, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
     "发霉": {"weight": 7, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
-    "金": {"weight": 10, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
-    "虚空": {"weight": 6, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
-    "隐火": {"weight": 3, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
+    "金": {"weight": 4, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
+    "虚空": {"weight": 2, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
+    "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
 }
 
 
