@@ -25,15 +25,6 @@ fish_golden = config.fish_golden
 fish_void = config.fish_void
 fish_fire = config.fish_hidden_fire
 
-fish = fish = {
-    "普通": {"weight": 20, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
-    "腐烂": {"weight": 10, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
-    "发霉": {"weight": 7, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
-    "金": {"weight": 4, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
-    "虚空": {"weight": 2, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
-    "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
-}
-
 
 async def update_sql():
     delete_fish = [
@@ -77,14 +68,28 @@ async def update_sql():
     await session.commit()
 
 
+# 定义鱼的不同质量及其属性
+fish = {
+    "普通": {"weight": 100, "price_mpr": 0.1, "long": (1, 30), "fish": fish_common},
+    "腐烂": {"weight": 20, "price_mpr": 0.05, "long": (15, 45), "fish": fish_rotten},
+    "发霉": {"weight": 15, "price_mpr": 0.08, "long": (20, 150), "fish": fish_moldy},
+    "金": {"weight": 5, "price_mpr": 0.15, "long": (125, 800), "fish": fish_golden},
+    "虚空": {"weight": 3, "price_mpr": 0.2, "long": (800, 4000), "fish": fish_void},
+    "隐火": {"weight": 1, "price_mpr": 0.2, "long": (1000, 4000), "fish": fish_fire},
+}
+
+
 def calculate_weight_increase(luck_star_num: int) -> float:
     """
-    计算根据星级增加的权重（对数函数）。
+    计算根据星级增加的权重（指数函数）。
+
+    - 参数
+      - luck_star_num: 用户的运势星级（0~7）
+    - 返回
+      - 增加的权重值
     """
-    base_increase = 0.05
-    return min(
-        base_increase * math.log1p(luck_star_num), 0.25
-    )  # 使用对数函数计算增加值
+    base_increase: float = 0.5
+    return base_increase * (1.1**luck_star_num - 1)
 
 
 MAX_WEIGHT_INCREASE = 20  # 设置权重增加上限
@@ -104,43 +109,46 @@ async def get_weight(
       - 一个布尔值，指示是否进行了调整
       - 运势星级数（如果有的话），否则为 None
     """
-    # 获取用户运势数据
-    luck = await MemberData.get_or_none(user_id=user_id)
-
-    # 检查数据的有效性
-    if luck and luck.time.strftime("%Y-%m-%d") == time.strftime("%Y-%m-%d"):
-        try:
-            # 打开并读取运势数据文件
+    luck_star_num = None
+    try:
+        luck = await MemberData.get_or_none(user_id=user_id)
+        if luck and luck.time.strftime("%Y-%m-%d") == time.strftime("%Y-%m-%d"):
             async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
-                luckdata: dict[str, dict[str, str]] = json.loads(await f.read())
+                luckdata = json.loads(await f.read())
                 luck_star_num = (
                     luckdata.get(str(luck.luckid), {}).get("星级", "").count("★")
                 )
-        except (IOError, json.JSONDecodeError) as e:
-            # 文件读取或解析异常处理
-            print(f"Error reading or parsing luck data: {e}")
-            return [fish[key]["weight"] for key in fish_quality], False, None
+    except (IOError, json.JSONDecodeError) as e:
+        print(f"Error reading or parsing luck data: {e}")
 
-        # 调整权重
-        for key in fish_quality:
-            if key in ["隐火", "虚空", "金"]:
-                weight_increase = calculate_weight_increase(luck_star_num)
-                fish[key]["weight"] = min(
-                    fish[key]["weight"] + weight_increase, MAX_WEIGHT_INCREASE
-                )  # 设置权重上限
+    adjustment_made = False
+    for key in fish_quality:
+        if key in ["隐火", "虚空", "金"] and luck_star_num is not None:
+            weight_increase = calculate_weight_increase(luck_star_num)
+            new_weight = min(fish[key]["weight"] + weight_increase, MAX_WEIGHT_INCREASE)
+            if new_weight != fish[key]["weight"]:
+                fish[key]["weight"] = new_weight
+                adjustment_made = True
 
-        return [fish[key]["weight"] for key in fish_quality], True, luck_star_num
-
-    return [fish[key]["weight"] for key in fish_quality], False, None
+    return [fish[key]["weight"] for key in fish_quality], adjustment_made, luck_star_num
 
 
-async def choice(user_id: str) -> tuple[str, int, bool, int | None]:
-    # 挑品质
-    # 将字典所有键转换为列表
+async def choice(user_id: str) -> tuple[str, int, bool, Optional[int]]:
+    """
+    根据用户的运势选择鱼的品质并生成相应的钓鱼结果。
+
+    - 参数
+      - user_id: 用户的唯一标识符
+    - 返回
+      - 选择的鱼的名称
+      - 鱼的长度
+      - 是否进行了权重调整
+      - 运势星级数（如果有的话），否则为 None
+    """
     fish_quality = list(fish.keys())
     fish_quality_weight = await get_weight(user_id=user_id, fish_quality=fish_quality)
     quality = random.choices(fish_quality, weights=fish_quality_weight[0])[0]
-    # 挑鱼
+
     return (
         random.choice(fish[quality]["fish"]),
         random.randint(fish[quality]["long"][0], fish[quality]["long"][1]),
