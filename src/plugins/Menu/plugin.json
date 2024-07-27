@@ -217,11 +217,11 @@
         "extra": {
             "menu_data": [
                 {
-                    "func": "疯狂星期X/狂乱X曜日",
-                    "trigger_method": "指令：疯狂星期X",
+                    "func": "疯狂星期四",
+                    "trigger_method": "指令：疯狂星期四",
                     "trigger_condition": "开头匹配[疯狂星期X/狂乱X曜日]",
-                    "brief_des": "疯狂星期X",
-                    "detail_des": "列如:\n疯狂星期四\n疯狂星期六"
+                    "brief_des": "疯狂星期四",
+                    "detail_des": "列如:\n疯狂星期四"
                 }
             ]
         }
@@ -286,7 +286,7 @@
             "menu_data": [
                 {
                     "func": "今日运势",
-                    "trigger_method": "命令：今日运势",
+                    "trigger_method": "命令：运势",
                     "trigger_condition": "完全匹配",
                     "brief_des": "看看你今天的运势会怎么样吧！",
                     "detail_des": "发送\"今日运势\"或\"运势\"\n看看你今天的运势会怎么样吧！"
@@ -296,31 +296,24 @@
         }
     },
     "8": {
-        "name": "今天吃什么？",
+        "name": "今天吃什么",
         "description": "What to Eat/Drink",
-        "usage": "看下面，注意不要带问号！！！",
+        "usage": "好饿，找点东西吃吧！",
         "extra": {
             "menu_data": [
                 {
                     "func": "吃什么",
-                    "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]吃[什么|啥|点啥]",
+                    "trigger_method": "命令: 今天吃什么",
                     "trigger_condition": "私聊、群聊",
                     "brief_des": "查看吃什么，建议看详细说明",
                     "detail_des": "列如：\n今天晚上吃什么\n明天中午吃啥\n后天早上吃点啥"
                 },
                 {
                     "func": "喝什么",
-                    "trigger_method": "命令: [今|明|后][天|日][早|中|晚][上|午|餐|饭|夜宵|宵夜]喝[什么|啥|点啥]",
+                    "trigger_method": "命令: 今天喝什么",
                     "trigger_condition": "私聊、群聊",
                     "brief_des": "查看喝什么，建议看详细说明",
                     "detail_des": "列如：\n今天晚上喝什么\n明天中午喝啥\n后天早上喝点啥"
-                },
-                {
-                    "func": "查看全部菜单",
-                    "trigger_method": "命令：查[看|寻]全部(菜[单|品]|饮[料|品])",
-                    "trigger_condition": "私聊、群聊",
-                    "brief_des": "查看已存的全部菜单，建议看详细说明",
-                    "detail_des": "例如：\n查看全部菜单\n查看全部饮料\n查看全部菜品\n查看全部菜单\n查看全部饮料\n查寻全部菜品\n查寻全部饮料\n查寻全部菜单\n利用合并消息进行发送，不会刷屏哒！"
                 }
             ],
             "menu_template": "default"
@@ -399,7 +392,7 @@
             "menu_data": [
                 {
                     "func": "网抑云",
-                    "trigger_method": "指令：网抑云|网易云热评",
+                    "trigger_method": "指令：网抑云 | 网易云热评",
                     "trigger_condition": "完全匹配",
                     "brief_des": "随机一条网易云热评",
                     "detail_des": "无"
@@ -547,13 +540,6 @@
                     "trigger_condition": "规则匹配",
                     "brief_des": "自动分析B站视频",
                     "detail_des": "无"
-                },
-                {
-                    "func": "分析开关",
-                    "trigger_method": "B开关 | B站分析开关",
-                    "trigger_condition": "群聊",
-                    "brief_des": "返回开关结果",
-                    "detail_des": "默认开启！"
                 }
             ],
             "menu_template": "default"

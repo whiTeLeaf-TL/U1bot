@@ -54,18 +54,17 @@ __plugin_meta__ = PluginMetadata(
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME: str = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={"钓鱼"}, priority=5, rule=get_switch_fish)
-stats = on_command("stats", aliases={"统计信息"}, priority=5)
-backpack = on_command("backpack", aliases={"背包"}, priority=5)
-sell = on_command("sell", aliases={"卖鱼"}, priority=5)
-balance = on_command("balance", aliases={"余额"}, priority=5)
+fishing = on_command("fishing", aliases={"钓鱼"})
+stats = on_command("stats", aliases={"统计信息"})
+backpack = on_command("backpack", aliases={"背包"})
+sell = on_command("sell", aliases={"卖鱼"})
+balance = on_command("balance", aliases={"余额"})
 switch = on_command(
     "fish_switch",
     aliases={"开关钓鱼"},
-    priority=5,
     permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
 )
-update_def = on_command("update", priority=5, permission=SUPERUSER)
+update_def = on_command("update", permission=SUPERUSER)
 
 
 @update_def.handle()
@@ -86,6 +85,8 @@ async def _update(event: Event):
 )
 async def _fishing(event: Event):
     """钓鱼"""
+    if isinstance(event, GroupMessageEvent) and not await get_switch_fish(event):
+        await fishing.finish("钓鱼在本群处于关闭状态，请看菜单重新打开")
     user_id = event.get_user_id()
     fish = await choice(user_id=user_id)
     if fish[2] and fish[3] != 0:
