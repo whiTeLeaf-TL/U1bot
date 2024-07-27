@@ -3,7 +3,7 @@ import contextlib
 import random
 from datetime import datetime
 
-from nonebot import get_driver, logger, on_command, on_message, require
+from nonebot import get_driver, logger, on_command, require
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
@@ -197,7 +197,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     return True
 
 
-waifu = on_message(rule=waifu_rule, priority=90, block=True)
+waifu = on_command("娶群友", rule=waifu_rule, priority=90, block=True)
 
 
 @waifu.handle()
@@ -251,7 +251,9 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
 
 
 async def check_divorce_rule(event):
-    if isinstance(event, GroupMessageEvent):
+    if isinstance(
+        event, GroupMessageEvent
+    ) and event.message.extract_plain_text().startswith("娶群友"):
         waifu_cp_instance = await WaifuCP.get_or_none(group_id=event.group_id)
         if waifu_cp_instance is not None:
             user_affect = waifu_cp_instance.affect.get(
@@ -455,7 +457,7 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
     return True
 
 
-yinpa = on_message(rule=yinpa_rule, priority=90, block=True)
+yinpa = on_command("透群友", rule=yinpa_rule, priority=90, block=True)
 
 
 @yinpa.handle()

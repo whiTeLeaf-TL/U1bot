@@ -31,7 +31,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-ddcheck = on_command("查成分", block=True, priority=12)
+ddcheck = on_command("查成分", block=True)
 
 
 @ddcheck.handle()

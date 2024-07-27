@@ -67,7 +67,7 @@ global_speedlimiter = SpeedLimiter()
 
 setu_matcher = on_regex(
     r"^(色图|涩图|来点色色|色色|来点色图)\s?([x|✖️|×|X|*]?\d+[张|个|份]?)?\s?(r18)?\s?\s?(tag)?\s?(.*)?",
-    flags=I,
+    flags=I,priority=99,
     permission=PRIVATE_FRIEND | GROUP,
 )
 
@@ -89,10 +89,15 @@ async def _(event: GroupMessageEvent):
         logger.debug(f"添加涩图开关 {event.group_id}")
         await SetuSwitch.create(group_id=event.group_id, switch=False)
         record = await SetuSwitch.get_or_none(group_id=event.group_id)
-    if record.switch:
+    if record and record.switch:
         await setuopenorclose_matcher.finish("已开启本群涩图")
     else:
         await setuopenorclose_matcher.finish("已关闭本群涩图")
+
+
+async def is_open(event: GroupMessageEvent):
+    record = await SetuSwitch.get_or_none(group_id=event.group_id)
+    return bool(record is None or record.switch)
 
 
 @setu_matcher.handle(
@@ -110,10 +115,8 @@ async def _(
     regex_group: Annotated[tuple[Any, ...], RegexGroup()],
     white_list_record=Depends(get_group_white_list_record),
 ):
-    if isinstance(event, GroupMessageEvent):
-        record = await SetuSwitch.get_or_none(group_id=event.group_id)
-        if record is not None and not record.switch:
-            await setu_matcher.finish("不可以涩涩！本群未启用涩图功能")
+    if isinstance(event, GroupMessageEvent) and not await is_open(event):
+        await setuopenorclose_matcher.finish("不给涩涩，请查看菜单打开本群使用")
     setu_total_timer = PerfTimer("Image request total")
     args = list(regex_group)
     logger.debug(f"args={args}")
@@ -272,8 +275,10 @@ async def autorevoke_send(
         event, message, at_sender=at_sender, **kwargs
     )
     message_id: int = message_data["message_id"]
-    await bind_message_data(message_id, setu.pid)
-
+    if setu:
+        await bind_message_data(message_id, setu.pid)
+    else:
+        raise ValueError("setu is None")
     loop = asyncio.get_running_loop()
     return loop.call_later(
         revoke_interval,
