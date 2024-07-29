@@ -9,6 +9,10 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     MessageSegment,
 )
+from nonebot.adapters.onebot.v11.helpers import (
+    Cooldown,
+    CooldownIsolateLevel,
+)
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -103,24 +107,25 @@ on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append
 scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
-async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
+waifu = on_command("娶群友", priority=90, block=True)
+
+
+@waifu.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
     """规则：娶群友"""
     msg = event.message.extract_plain_text()
-    if not msg.startswith("娶群友"):
-        return False
     # 不能娶机器人
     if event.to_me:
-        await bot.send(event, "不可以啦~", at_sender=True)
-        return False
+        await waifu.finish("不可以啦~", at_sender=True)
     user_id = event.user_id
     group_id = event.group_id
     protect_list = await WaifuProtect.get_or_none(group_id=group_id)
     if protect_list is not None and user_id in protect_list.user_id:
-        return False
+        return
     at = get_message_at(event.message)
     at = at[0] if at else None
     if protect_list is not None and at in protect_list.user_id:
-        return False
+        return
     rec, _ = await WaifuCP.get_or_create(group_id=group_id)
     rec = rec.affect
     tips = "伱的群友結婚对象是："
@@ -157,7 +162,7 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
                     + f"『{member['card'] or member['nickname']}』!"
                 )
             await bot.send(event, msg, at_sender=True)
-        return False
+        return
     chooselist = rec.keys() or protect_list.user_id if protect_list else []
     if at and str(at) not in list(chooselist):
         if at == rec.get(str(at)):
@@ -193,18 +198,6 @@ async def waifu_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             msg = "群友已经被娶光了、\n" + random.choice(no_waifu)
             await bot.send(event, msg, at_sender=True)
             return False
-    state["waifu"] = waifu_id, tips
-    return True
-
-
-waifu = on_command("娶群友", rule=waifu_rule, priority=90, block=True)
-
-
-@waifu.handle()
-async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
-    waifu_id: int
-    tips: str
-    waifu_id, tips = state["waifu"]
     user_id = event.user_id
     group_id = event.group_id
     if waifu_id == user_id:
@@ -250,32 +243,25 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     await waifu.finish(msg, at_sender=True)
 
 
-async def check_divorce_rule(event):
-    if isinstance(
-        event, GroupMessageEvent
-    ) and event.message.extract_plain_text().startswith("娶群友"):
-        waifu_cp_instance = await WaifuCP.get_or_none(group_id=event.group_id)
-        if waifu_cp_instance is not None:
-            user_affect = waifu_cp_instance.affect.get(
-                str(event.user_id), event.user_id
-            )
-            return user_affect != event.user_id
-    return False
-
-
 # 分手
 if waifu_cd_bye > -1:
     cd_bye = {}
     bye = on_command(
         "离婚",
         aliases={"分手"},
-        rule=check_divorce_rule,
         priority=90,
         block=True,
     )
 
     @bye.handle()
     async def _(event: GroupMessageEvent):
+        waifu_cp_instance = await WaifuCP.get_or_none(group_id=event.group_id)
+        if waifu_cp_instance is not None:
+            user_affect = waifu_cp_instance.affect.get(
+                str(event.user_id), event.user_id
+            )
+            if user_affect == event.user_id:
+                return
         group_id = str(event.group_id)
         user_id = event.user_id
         cd_bye.setdefault(group_id, {})
@@ -392,12 +378,19 @@ async def _(bot: Bot, event: GroupMessageEvent):
     )
 
 
-# 透群友
-async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool:
-    """规则：透群友"""
-    msg = event.message.extract_plain_text()
-    if not msg.startswith("透群友"):
-        return False
+yinpa = on_command("透群友", priority=90, block=True)
+
+
+@yinpa.handle(
+    parameterless=[
+        Cooldown(
+            cooldown=5,
+            prompt="太快啦，慢点慢点",
+            isolate_level=CooldownIsolateLevel.USER,
+        )
+    ]
+)
+async def _(bot: Bot, event: GroupMessageEvent):
     # 不能透机器人
     if event.to_me:
         await bot.send(event, "不行！", at_sender=True)
@@ -453,18 +446,8 @@ async def yinpa_rule(bot: Bot, event: GroupMessageEvent, state: T_State) -> bool
             yinpa_id = random.choice(yinpa_ids)
         else:
             return False
-    state["yinpa"] = yinpa_id, tips
-    return True
-
-
-yinpa = on_command("透群友", rule=yinpa_rule, priority=90, block=True)
-
-
-@yinpa.handle()
-async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     group_id = event.group_id
     user_id = event.user_id
-    yinpa_id, tips = state["yinpa"]
     if yinpa_id == user_id:
         await yinpa.finish("不可以涩涩！", at_sender=True)
     else:
