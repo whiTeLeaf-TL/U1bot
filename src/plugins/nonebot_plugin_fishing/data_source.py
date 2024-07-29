@@ -1,11 +1,10 @@
 import aiofiles
 import random
 import time
-import math
 from os import path
 from pathlib import Path
 from typing import List, Optional
-
+from nonebot import logger
 import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
@@ -88,11 +87,11 @@ def calculate_weight_increase(luck_star_num: int) -> float:
     - 返回
       - 增加的权重值
     """
-    base_increase: float = 0.5
+    base_increase: float = 1.9
     return base_increase * (1.1**luck_star_num - 1)
 
 
-MAX_WEIGHT_INCREASE = 20  # 设置权重增加上限
+MAX_WEIGHT_INCREASE = 30  # 设置权重增加上限
 
 
 async def get_weight(
@@ -112,7 +111,9 @@ async def get_weight(
     luck_star_num = None
     try:
         luck = await MemberData.get_or_none(user_id=user_id)
-        if luck and luck.time.strftime("%Y-%m-%d") == time.strftime("%Y-%m-%d"):
+        if luck is not None and luck.time.strftime("%Y-%m-%d") == time.strftime(
+            "%Y-%m-%d"
+        ):
             async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
                 luckdata = json.loads(await f.read())
                 luck_star_num = (
@@ -129,7 +130,6 @@ async def get_weight(
             if new_weight != fish[key]["weight"]:
                 fish[key]["weight"] = new_weight
                 adjustment_made = True
-
     return [fish[key]["weight"] for key in fish_quality], adjustment_made, luck_star_num
 
 
