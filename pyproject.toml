@@ -65,6 +65,7 @@ nonebot-plugin-send-anything-anywhere = "^0.6.1"
 nonebot-plugin-cesaa = "^0.4.0"
 nonebot-plugin-session = "^0.3.1"
 nonebot-plugin-session-orm = "^0.2.0"
+aiocache = "^0.12.2"
 
 cookit = "^0.6.7"
 [tool.poetry.group.test.dependencies]
@@ -74,19 +75,18 @@ pytest-asyncio = "^0.23.3"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
 [[tool.poetry.source]]
-name = "ali"
-url = "https://mirrors.aliyun.com/pypi/simple/"
+name = "tsinghua"
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
 priority = "primary"
-
 
 [[tool.poetry.source]]
 name = "tencent"
 url = "https://mirrors.cloud.tencent.com/pypi/simple/"
 priority = "primary"
 
+
 [[tool.poetry.source]]
-name = "tsinghua"
-url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
-priority = "default"
+name = "ali"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
