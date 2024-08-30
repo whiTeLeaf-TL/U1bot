@@ -209,37 +209,6 @@
     }
   },
   "9": {
-    "name": "涩图",
-    "description": "给群友涩涩",
-    "usage": "指令: 色图|涩图|来点色色|色色|来点色图",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "涩图",
-          "trigger_method": "指令: 色图|涩图|来点色色|色色|来点色图",
-          "trigger_condition": "完全匹配",
-          "brief_des": "给群友涩涩",
-          "detail_des": "无"
-        },
-        {
-          "func": "setu开关",
-          "trigger_method": "指令：setu开关",
-          "trigger_condition": "完全匹配",
-          "brief_des": "开关本群的涩图功能",
-          "detail_des": "权限:管理员/超管/群主"
-        },
-        {
-          "func": "信息",
-          "trigger_method": "回复消息 + 文字‘信息’",
-          "trigger_condition": "完全匹配",
-          "brief_des": "获取插图信息如作者作品id",
-          "detail_des": "权限:所有人\n前提许开启涩图功能"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "10": {
     "name": "天气",
     "description": "来看看今天的天气吧！",
     "usage": "天气+地名 / 地名+天气",
@@ -256,7 +225,7 @@
       "menu_template": "default"
     }
   },
-  "11": {
+  "10": {
     "name": "网易云点歌",
     "description": "网易云无损音乐下载/点歌",
     "usage": "如下：",
@@ -294,7 +263,7 @@
       "menu_template": "default"
     }
   },
-  "12": {
+  "11": {
     "name": "网抑云",
     "description": "12点啦，该网抑云啦！[哭]",
     "usage": "指令：网抑云|网易云热评  随机一条网易云热评",
@@ -311,7 +280,7 @@
       "menu_template": "default"
     }
   },
-  "13": {
+  "12": {
     "name": "伪造信息",
     "description": "伪造身份信息",
     "usage": "指令：伪造信息",
@@ -328,31 +297,7 @@
       "menu_template": "default"
     }
   },
-  "15": {
-    "name": "状态信息",
-    "description": "查询姚奕的状态",
-    "usage": "请看下面",
-    "extra": {
-      "menu_data": [
-        {
-          "func": "状态开关",
-          "trigger_method": "状态开关",
-          "trigger_condition": "群聊",
-          "brief_des": "返回开关结果",
-          "detail_des": "默认关闭！"
-        },
-        {
-          "func": "状态查询",
-          "trigger_method": "拍一拍",
-          "trigger_condition": "群聊/私聊",
-          "brief_des": "返回系统信息，内存占用，CPU 占用，运行时间以及交换内存占用",
-          "detail_des": "默认关闭！需要使用状态开关开启"
-        }
-      ],
-      "menu_template": "default"
-    }
-  },
-  "14": {
+  "13": {
     "name": "钓鱼",
     "description": "赛博钓鱼，值得你拥有！",
     "usage": "请看下面",
@@ -404,7 +349,7 @@
       "menu_template": "default"
     }
   },
-  "15": {
+  "14": {
     "name": "表情包制作",
     "description": "制作各种沙雕表情包",
     "usage": "发送“表情包制作”查看表情包列表",
@@ -421,7 +366,7 @@
       "menu_template": "default"
     }
   },
-  "16": {
+  "15": {
     "name": "B 站视频分析",
     "description": "自动分析B站视频",
     "usage": "自动分析B站视频",
