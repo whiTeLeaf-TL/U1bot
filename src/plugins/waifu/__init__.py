@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 
 from nonebot import get_driver, logger, on_command, require
+from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
@@ -15,7 +16,6 @@ from nonebot.adapters.onebot.v11.helpers import (
 )
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 
 from .config import Config
 from .models import PWaifu, WaifuCP, WaifuLock, WaifuProtect, Waifuyinppa1, Waifuyinppa2
@@ -37,7 +37,8 @@ yinpa_HE = waifu_config.yinpa_he
 yinpa_BE = yinpa_HE + waifu_config.yinpa_be
 yinpa_CP = waifu_config.yinpa_cp
 yinpa_CP = yinpa_HE if yinpa_CP == 0 else yinpa_CP
-
+Bot_NICKNAME = list(get_driver().config.nickname)
+Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
 no_waifu = [
     "你没有娶到群友，强者注定孤独，加油！",
     "找不到对象.jpg",
@@ -488,16 +489,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "卡池：\n——————————————\n" + "\n".join(
         [(member["card"] or member["nickname"]) for member in member_list[:80]]
     )
-    msg_list = [
-        {
-            "type": "node",
-            "data": {
-                "name": "卡池",
-                "uin": event.self_id,
-                "content": MessageSegment.image(text_to_png(msg)),
-            },
-        }
-    ]
+    msg_list = [MessageSegment.image(text_to_png(msg))]
     # 输出透群友记录
 
     record = [
@@ -505,25 +497,17 @@ async def _(bot: Bot, event: GroupMessageEvent):
         for member in member_list
         if (times := await Waifuyinppa1.get_or_none(user_id=member["user_id"]))
     ]
+    for nickname, times in record:
+        logger.info(f"{nickname} {times}")
     record.sort(key=lambda x: x[1], reverse=True)
     if msg := "\n".join(
         [
-            f"[align= left]{
-                nickname}[/align][align= right]今日透群友 {times} 次[/align]"
+            f"[align=left]{nickname}[/align][align=right]今日透群友 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
         msg_list.append(
-            {
-                "type": "node",
-                "data": {
-                    "name": "记录①",
-                    "uin": event.self_id,
-                    "content": MessageSegment.image(
-                        bbcode_to_png("涩涩记录①：\n——————————————\n" + msg)
-                    ),
-                },
-            }
+            MessageSegment.image(bbcode_to_png("涩涩记录①：\n——————————————\n" + msg))
         )
 
     # 输出被透记录
@@ -538,23 +522,19 @@ async def _(bot: Bot, event: GroupMessageEvent):
     msg = "涩涩记录②：\n——————————————\n"
     if msg := "\n".join(
         [
-            f"[align= left]{
-                nickname}[/align][align= right]今日被透 {times} 次[/align]"
+            f"[align=left]{nickname}[/align][align=right]今日被透 {times} 次[/align]"
             for nickname, times in record
         ]
     ):
         msg_list.append(
-            {
-                "type": "node",
-                "data": {
-                    "name": "记录②",
-                    "uin": event.self_id,
-                    "content": MessageSegment.image(
-                        bbcode_to_png("涩涩记录②：\n——————————————\n" + msg)
-                    ),
-                },
-            }
+            MessageSegment.image(bbcode_to_png("涩涩记录②：\n——————————————\n" + msg)),
         )
 
-    await bot.send_group_forward_msg(group_id=event.group_id, messages=msg_list)
-    await yinpa_list.finish()
+    def to_json(msg: MessageSegment):
+        return {
+            "type": "node",
+            "data": {"name": Bot_NICKNAME, "uin": bot.self_id, "content": msg},
+        }
+
+    messages = [to_json(msg_temp) for msg_temp in msg_list]
+    await bot.send_group_forward_msg(group_id=event.group_id, messages=messages)
