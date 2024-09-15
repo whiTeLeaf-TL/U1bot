@@ -2,17 +2,13 @@ import base64
 import re
 import traceback
 from pathlib import Path
-from typing import Union
 
-import aiofiles
 import jinja2
 import ujson as json
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
 from nonebot.adapters.onebot.v11 import Message as V11Msg
 from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
-from nonebot.adapters.onebot.v12 import Bot as V12Bot
-from nonebot.adapters.onebot.v12 import MessageSegment as V12MsgSeg
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -43,13 +39,15 @@ base64_str = f"base64://{base64.b64encode(img_bytes).decode()}"
 # 将 json 所有功能缓存 base64
 cache_plugin_img: dict = {}
 
-with open(dir_path / "plugin.json", mode="r", encoding="utf-8") as file:
+with open(dir_path / "plugin.json", encoding="utf-8") as file:
     content = file.read()
-    plugin_list: dict = json.loads(content)
+    plugin_list: dict[str, dict[str, str | dict[str, str | list[dict[str, str]]]]] = (
+        json.loads(content)
+    )
 
 
 @menu.handle()
-async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandArg()):
+async def _(bot: V11Bot, matcher: Matcher, arg: V11Msg = CommandArg()):
     msg = arg.extract_plain_text().strip()
 
     if not msg:  # 参数为空，主菜单
@@ -71,8 +69,10 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
                 plugin_dict = value
         if not plugin_dict:
             await matcher.finish("插件名过于模糊或不存在")
-
-    plugin_name = plugin_dict["name"]
+    if isinstance(plugin_dict["name"], str):
+        plugin_name: str = plugin_dict["name"]
+    else:
+        plugin_name: str = "未知插件 (格式错误)"
 
     if plugin_name not in cache_plugin_img:
         try:
@@ -91,7 +91,5 @@ async def _(bot: Union[V11Bot, V12Bot], matcher: Matcher, arg: V11Msg = CommandA
 
     if isinstance(bot, V11Bot):
         await matcher.finish(V11MsgSeg.image(result))
-    elif isinstance(bot, V12Bot):
-        resp = await bot.upload_file(type="data", name="ddcheck", data=result)
-        file_id = resp["file_id"]
-        await matcher.finish(V12MsgSeg.image(file_id))
+    else:
+        raise NotImplementedError

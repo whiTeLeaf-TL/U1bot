@@ -29,15 +29,9 @@ def __register_resolve_matchers():
     matcher = on_command("解析", aliases={"resolve", "parse", "get"})
     matcher.handle()(resolve_handler)
     if config.ncm_auto_resolve:
-        reg_matcher = on_regex(
-            URL_REGEX,
-            priority=99,
-        )
+        reg_matcher = on_regex(URL_REGEX)
         reg_matcher.handle()(resolve_handler)
-        reg_short_matcher = on_regex(
-            SHORT_URL_REGEX,
-            priority=99,
-        )
+        reg_short_matcher = on_regex(SHORT_URL_REGEX)
         reg_short_matcher.handle()(resolve_handler)
 
 
