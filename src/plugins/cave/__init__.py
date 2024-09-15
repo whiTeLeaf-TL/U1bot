@@ -13,11 +13,10 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from .models import cave_models
-
-SUPERUSER = list(get_driver().config.superusers)
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
@@ -38,6 +37,29 @@ cave_am_add = on_command("匿名投稿", aliases={"回声洞匿名投稿"})
 cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"})
 cave_view = on_command("查看")
 cave_del = on_command("删除")
+
+cave_update = on_command("更新回声洞", permission=SUPERUSER)
+SUPERUSER_list = list(get_driver().config.superusers)
+
+
+@cave_update.handle()
+async def _():
+    "操作数据库，将id重新排列，并且自动id更新到最新"
+    all_caves = await cave_models.all()
+
+    # 遍历所有对象，逐个删除并重新创建
+    for index, cave in enumerate(all_caves, start=1):
+        details = cave.details
+        user_id = cave.user_id
+        time = cave.time
+        anonymous = cave.anonymous
+        await cave.delete()  # 删除原对象
+        await cave.save()
+        await cave_models.create(
+            id=index, details=details, user_id=user_id, time=time, anonymous=anonymous
+        )
+
+    await cave_update.finish("更新成功！")
 
 
 def url_to_base64(image_url):
@@ -113,7 +135,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
 @cave_del.handle()
 async def _(bot: Bot, event: MessageEvent):
     Message_text = str(event.message)
-    deletion_reasons = extract_deletion_reason(Message_text)[0]
+    deletion_reasons = extract_deletion_reason(Message_text)
     key = deletion_reasons["序号"]
     # 如果有原因获取，没有为 none
     reason = deletion_reasons["原因"]
@@ -126,7 +148,7 @@ async def _(bot: Bot, event: MessageEvent):
     except Exception:
         await cave_del.finish("没有这个序号的投稿")
     # 判断是否是超级用户或者是投稿人
-    if str(event.user_id) in SUPERUSER:
+    if str(event.user_id) in SUPERUSER_list:
         try:
             await bot.send_private_msg(
                 user_id=data.user_id,
@@ -246,26 +268,37 @@ async def send_forward_msg(
 
 def extract_deletion_reason(text):
     """
-    从文本中提取删除原因。
+    从文本中提取删除原因，处理“删除1”或“删除 1 原因1”等格式。
 
     Args:
         text (str): 包含删除原因的文本。
 
     Returns:
-        list: 包含删除原因的字典列表，每个字典包含序号和原因。
+        dict: 包含删除原因的字典，包含序号和原因。
 
     Example:
-        >>> text = "删除 1 原因 1\n删除 2 原因 2\n删除 3"
+        >>> text = "删除1 原因1"
         >>> extract_deletion_reason(text)
-        [{'序号': 1, '原因': '原因 1'}, {'序号': 2, '原因': '原因 2'}, {'序号': 3, '原因': '作者删除'}]
+        {'序号': 1, '原因': '原因1'}
     """
-    pattern = r"删除 (\d+)(.*?)$"
-    matches = re.findall(pattern, text, re.MULTILINE)
-    results = []
-    for match in matches:
-        if match[1].strip():
-            results.append({"序号": int(match[0]), "原因": match[1].strip()})
-        else:
-            results.append({"序号": int(match[0]), "原因": "作者删除"})
+    # 移除 "删除" 关键字以及多余的空格
+    cleaned_text = text.replace("删除", "", 1).strip()
 
-    return results
+    # 分离序号和原因
+    num = ""
+    reason = ""
+
+    # 通过第一个非数字字符来划分序号和原因
+    for idx, char in enumerate(cleaned_text):
+        if char.isdigit():
+            num += char
+        else:
+            # 当遇到第一个非数字字符时，余下部分全是原因
+            reason = cleaned_text[idx:].strip()
+            break
+
+    # 若没有原因，则设为默认值 "作者删除"
+    if not reason:
+        reason = "作者删除"
+
+    return {"序号": int(num), "原因": reason}
