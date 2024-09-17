@@ -15,7 +15,6 @@ from nonebot.adapters.onebot.v11.helpers import extract_image_urls
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-
 from .models import cave_models
 
 Bot_NICKNAME = list(get_driver().config.nickname)
