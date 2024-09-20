@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 
 from nonebot import get_driver, logger, on_command, require
-from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
@@ -101,14 +100,12 @@ async def mo_reset_record():
 
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-on_command("重置记录", priority=80, block=True, permission=SUPERUSER).append_handler(
-    mo_reset_record
-)
+on_command("重置记录", permission=SUPERUSER).append_handler(mo_reset_record)
 # 第一个触发时间：每天凌晨 0:00
 scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
-waifu = on_command("娶群友", priority=90, block=True)
+waifu = on_command("娶群友")
 
 
 @waifu.handle()
@@ -249,9 +246,7 @@ if waifu_cd_bye > -1:
     cd_bye = {}
     bye = on_command(
         "离婚",
-        aliases={"分手"},
-        priority=90,
-        block=True,
+        aliases={"分手"}
     )
 
     @bye.handle()
@@ -312,7 +307,7 @@ if waifu_cd_bye > -1:
 
 # 查看娶群友卡池
 
-waifu_list = on_command("查看群友卡池", aliases={"群友卡池"}, priority=90, block=True)
+waifu_list = on_command("查看群友卡池", aliases={"群友卡池"})
 
 
 @waifu_list.handle()
@@ -341,7 +336,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 # 查看本群 CP
 
-cp_list = on_command("本群CP", aliases={"本群cp"}, priority=90, block=True)
+cp_list = on_command("本群CP", aliases={"本群cp"})
 
 
 @cp_list.handle()
@@ -379,7 +374,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     )
 
 
-yinpa = on_command("透群友", priority=90, block=True)
+yinpa = on_command("透群友")
 
 
 @yinpa.handle(
@@ -469,7 +464,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 # 查看涩涩记录
 
-yinpa_list = on_command("涩涩记录", aliases={"色色记录"}, priority=90, block=True)
+yinpa_list = on_command("涩涩记录", aliases={"色色记录"})
 
 
 @yinpa_list.handle()
