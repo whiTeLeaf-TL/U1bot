@@ -104,8 +104,7 @@ async def _fishing(event: Event):
     elif fish_name == "Mr.ling":
         result = "* 你钓到了一条...等等...我没看错吧？！你竟然钓到了一条 Mr.ling？！"
     else:
-        result = f"* 你钓到了一条 {get_quality(fish_name)
-                             } {fish_name}，长度为 {fish_long}cm！"
+        result = f"* 你钓到了一条 {get_quality(fish_name)} {fish_name}，长度为 {fish_long}cm！"
     await save_fish(user_id, fish_name, fish_long)
     await asyncio.sleep(sleep_time)
     # result = "* 你钓了一整天，什么也没钓到，但是你的技术有所提升了！"
