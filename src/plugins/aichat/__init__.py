@@ -8,18 +8,28 @@ import time
 import aiofiles
 import nonebot
 import ujson
+from cnocr import CnOcr
 from nonebot import logger, on_command, on_message
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent, MessageEvent, Reply
 from nonebot.adapters.onebot.v11.helpers import (
     Cooldown,
     CooldownIsolateLevel,
 )
+from nonebot.adapters.onebot.v11.utils import unescape
 from nonebot.permission import SUPERUSER
-from nonebot.rule import Rule, to_me
+from nonebot.rule import to_me
+from nonebot_plugin_apscheduler import scheduler
 
 from .config import ai_config
 from .ofa_image_process import ImageCaptioningPipeline
-from .utils import chat_with_gpt, is_image_message, is_reply_image_message
+from .utils import (
+    chat_with_gpt,
+    extract_mface_summary,
+    is_image_message,
+    replace_at_message,
+    replace_cq_with_caption,
+)
 
 config = nonebot.get_driver().config
 
@@ -27,7 +37,9 @@ datadir = ai_config.data_dir
 os.makedirs(datadir, exist_ok=True)
 truncate_probs = [0.1, 0.1]
 MAX_LEN = 12
-bracket_probs = [0.45, 0.4]
+bracket_probs = [0.25, 0.3]
+unreplied_msg: dict[str, int] = {}
+image_captioning_pipeline = ImageCaptioningPipeline()
 
 
 def is_record(event: GroupMessageEvent) -> bool:
@@ -38,7 +50,7 @@ def is_record(event: GroupMessageEvent) -> bool:
         event.group_id in ai_config.record_group
         and "[CQ:video" not in message
         and not event.to_me
-        and not message.startswith("clean.session")
+        and "clean.session" not in message
     )
 
 
@@ -47,40 +59,61 @@ def is_use(event: GroupMessageEvent) -> bool:
     return event.group_id in ai_config.record_group and "[CQ:video" not in message
 
 
+clean_command = on_command("clean.session", permission=SUPERUSER)
+record_msg = on_message(rule=is_record)
+handle_command = on_message(rule=is_use & to_me())
+
+
 async def load_or_init_data(group_id: str) -> dict:
     file_path = os.path.join(datadir, f"{group_id}.json")
     if not os.path.exists(file_path):
-        async with aiofiles.open(file_path, "w") as f:
-            await f.write(
-                ujson.dumps(
-                    {
-                        "keep_prompt": [],
-                        "record": [],
-                    },
-                    ensure_ascii=False,
-                )
-            )
+        # 获取锁，如果文件锁不存在，为它创建一个
+        if group_id not in file_locks:
+            file_locks[group_id] = asyncio.Lock()
 
-    async with aiofiles.open(file_path) as f:
-        data = ujson.loads(await f.read())
+        async with file_locks[group_id]:
+            async with aiofiles.open(file_path, "w") as f:
+                await f.write(
+                    ujson.dumps(
+                        {
+                            "keep_prompt": [],
+                            "record": [],
+                        },
+                        ensure_ascii=False,
+                    )
+                )
+    # 获取锁，如果文件锁不存在，为它创建一个
+    if group_id not in file_locks:
+        file_locks[group_id] = asyncio.Lock()
+
+    async with file_locks[group_id]:
+        async with aiofiles.open(file_path) as f:
+            data = ujson.loads(await f.read())
     if group_id in {"475214083", "966016220"}:
         data["keep_prompt"] = [
-            {"role": "system", "content": ai_config.prompt2},
-            {"role": "assistant", "content": "好的！我会记住的~"},
+            {"role": "system", "content": ai_config.prompt},
             *ai_config.msglist_baiye,
         ]
     else:
         data["keep_prompt"] = [
             {"role": "system", "content": ai_config.prompt},
-            {"role": "assistant", "content": "好的！我会记住的~"},
         ]
     return data
 
 
+file_locks = {}
+
+
 async def save_data(group_id: str, data: dict) -> None:
     file_path = os.path.join(datadir, f"{group_id}.json")
-    async with aiofiles.open(file_path, "w") as f:
-        await f.write(ujson.dumps(data, indent=4, ensure_ascii=False))
+
+    # 获取锁，如果文件锁不存在，为它创建一个
+    if group_id not in file_locks:
+        file_locks[group_id] = asyncio.Lock()
+    async with file_locks[group_id]:
+        async with aiofiles.open(file_path, "w", encoding="utf-8") as f:
+            json_data = ujson.dumps(data, indent=4, ensure_ascii=False)
+            await f.write(json_data)
 
 
 def format_time(event_time: int) -> str:
@@ -94,33 +127,48 @@ async def create_process_text(
 ) -> str:
     nickname = event.sender.nickname
     user_id = event.get_user_id()
-    is_image, image_url = is_image_message(True, event)
-    if is_image and ai_config.enable_ofa_image:
-        caption: str = await image_captioning_pipeline.generate_caption(image_url)
-        # 去除cq码，一个个解析文字[开始]结束的内容全部去掉替换为图片：[图片{caption}]
-        for cq in re.findall(r"\[CQ:.*?\]", text):
-            text = text.replace(cq, f"[图片,描述:{caption}]")
+    text = unescape(text)  # 反转义
+
+    # 处理文本中的 CQ 码
+    text = await process_cq_code(text, event)
+
+    if event.to_me and not event.reply:
+        text = replace_at_message(text=f"@姚奕 {text}")
+
     if event.reply:
-        is_image_reply, image_url_reply = is_reply_image_message(True, event.reply)
-        reply_user_id = event.reply.sender.user_id
-        reply_nickname = event.reply.sender.nickname
-        reply_text = str(event.reply.message).strip()
-        if is_image_reply:
-            if ai_config.enable_ofa_image:
-                caption = await image_captioning_pipeline.generate_caption(
-                    image_url_reply
-                )
-            else:
-                caption = "无描述"
-            for cq in re.findall(r"\[CQ:.*?\]", reply_text):
-                reply_text = reply_text.replace(cq, f"[图片,描述:{caption}]")
-        return f"{time_now}，{nickname}({user_id}) 引用并回复了 {reply_nickname}({reply_user_id}) 的消息：\n引用内容：“{reply_text}”\n回复内容：“{text}”"
+        return await process_reply(event.reply, text, time_now, nickname, user_id)
+
     return f"{time_now} {nickname}({user_id}): {text}"
 
 
-record_msg = on_message(rule=is_record)
-handle_command = on_message(rule=is_use & to_me())
-clean_command = on_command("clean.session", permission=SUPERUSER)
+async def process_cq_code(text: str, event: MessageEvent | Reply) -> str:
+    """处理文本中的 CQ 码，包括 mface 和 image 类型。"""
+    if "[CQ:mface" in text:
+        text = extract_mface_summary(text)
+    elif "[CQ:image" in text:
+        is_image, image_url = is_image_message(event, True)
+        if is_image and ai_config.enable_ofa_image:
+            caption: str = await image_captioning_pipeline.generate_caption(image_url)
+            text = replace_cq_with_caption(text, caption)
+    return text
+
+
+async def process_reply(
+    event: Reply, text: str, time_now: str, nickname: str | None, user_id: str
+) -> str:
+    """处理回复消息的格式化。"""
+    reply_user_id = event.sender.user_id
+    reply_nickname = event.sender.nickname
+    reply_text = str(event.message).strip()
+
+    reply_text = await process_cq_code(reply_text, event)
+
+    return (
+        f"{time_now} {nickname}({user_id}) 引用并回复了 "
+        f"{reply_nickname}({reply_user_id}) 的消息：\n"
+        f"引用内容：“{reply_text}”\n"
+        f"回复内容：“{text}”"
+    )
 
 
 @clean_command.handle()
@@ -129,6 +177,7 @@ async def _(event: GroupMessageEvent) -> None:
     file_path = os.path.join(datadir, f"{group_id}.json")
     if os.path.exists(file_path):
         os.remove(file_path)
+        unreplied_msg.pop(group_id, None)
         await clean_command.finish("脑袋空空！")
     await clean_command.finish("欸，我不记得有和你们聊过天啊?")
 
@@ -139,12 +188,12 @@ def add_element(my_list: list, keep_num=50) -> list:
 
 def split_sentences(reply: str) -> list[str]:
     # 去掉头尾的标点符号并分割句子
-    reply = reply.strip("”“’‘\"'!！。.?？~")
+    reply = reply.strip(r"""”“’‘"'!！。.~""")
     sentences = re.split("[，。]", reply)
 
     # 根据概率删减句子，优化后移除循环中多余的异常处理
     for prob in truncate_probs:
-        if len(sentences) > 1 and random.random() < prob:
+        if len(sentences) > 2 and random.random() < prob:
             sentences.pop()
 
     # 根据概率添加括号
@@ -152,7 +201,7 @@ def split_sentences(reply: str) -> list[str]:
         rand = random.random()
         if rand < bracket_probs[0]:
             sentences[-1] += "（）"
-        elif rand < bracket_probs[0] + bracket_probs[1]:
+        elif rand < bracket_probs[1]:
             sentences[-1] += "（"
 
     # 限制输出的句子数量
@@ -161,17 +210,20 @@ def split_sentences(reply: str) -> list[str]:
 
 def get_type_time(string) -> float:
     """
-    打字时间模拟
+    打字时间模拟，中英文区别计算
     """
-    tpc = 0.55  # 每个字符打字时间
-    return tpc * len(string)
+    tpc_english = 0.2  # 英文字符打字时间
+    tpc_chinese = 0.65  # 中文字符打字时间
+    return sum(
+        tpc_chinese if "\u4e00" <= char <= "\u9fff" else tpc_english for char in string
+    )
 
 
-async def send_with_dynamic_wait(sentence: str, reply_message=True):
+async def send_with_dynamic_wait(sentence: str, event, bot):
     # 动态计算等待时间，假设每个字符等待 0.05 秒
     tying_time = get_type_time(sentence)
     await asyncio.sleep(tying_time)
-    await handle_command.send(sentence, reply_message=reply_message)
+    await bot.send(event, sentence)
 
 
 @handle_command.handle(
@@ -183,58 +235,93 @@ async def send_with_dynamic_wait(sentence: str, reply_message=True):
         )
     ]
 )
-async def _(event: GroupMessageEvent):
+async def send_ai_msg(event: GroupMessageEvent, bot: Bot):
     time_question = time.time()
     group_id = str(event.group_id)
+    unreplied_msg[group_id] = 0
 
     text = str(event.get_message()).strip()
     if not text:
-        await handle_command.finish("讲话啊喂！")
+        await bot.send(event, "讲话啊喂！")
+        return
 
     data = await load_or_init_data(group_id)
     keep_prompt: list = data.get("keep_prompt", [])
 
-    # 通过api获取50条记录
+    # 获取50条记录
     record: list = data.get("record", [])
-
-    # 检查最近十条对话中是否含有和本次对话 role 和 content 一样的情况
-    last_ten = record[-10:]
-    if any(i["role"] == "user" and text in i["content"] for i in last_ten):
-        await handle_command.finish("这个刚刚说过了吧......", reply_message=True)
 
     time_now = format_time(event.time)
     process_text = await create_process_text(event, text, time_now)
-    record.append({"role": "user", "content": process_text})
+    process_text = "聊天记录：\n" + process_text
+    record.extend(
+        (
+            {"role": "user", "content": process_text},
+            {
+                "role": "user",
+                "content": """请用自己的人设，响应最近的消息，消息选取时间不要太大""",
+            },
+        )
+    )
     response = await chat_with_gpt(keep_prompt + record, ai_config)
     record.append({"role": "assistant", "content": response})
 
     # 保持记录在50条以内
-    record = add_element(record, 50)
+    record = add_element(record, ai_config.record_num)
 
     # 保存记录
     data["record"] = record
     await save_data(group_id, data)
     if ai_config.sentences_divide:
         response = split_sentences(response)
-        print(response)
+        logger.info(response)
         time_get_answer: float = time.time()
         if time_get_answer - time_question <= get_type_time(response[0]) + 1:
             # 否则按照打字时间延迟发送
             await asyncio.sleep(
                 get_type_time(response[0]) + 1 - (time_get_answer - time_question)
             )
-        await handle_command.send(response[0], reply_message=True)
+        await bot.send(event, response[0])
         for sentence in response[1:]:
-            await send_with_dynamic_wait(sentence)
+            await send_with_dynamic_wait(sentence, event, bot)
     else:
-        await send_with_dynamic_wait(response)
+        await send_with_dynamic_wait(response, event, bot)
 
 
-image_captioning_pipeline = ImageCaptioningPipeline()
+QUESTION_KEYWORDS = [
+    "什么",
+    "如何",
+    "谁",
+    "哪",
+    "为什么",
+    "怎么办",
+    "呢",
+    "那么",
+    "可以",
+    "问",
+    "吗",
+]
+
+
+def is_question(message: str) -> bool:
+    """
+    判断消息是否为询问。
+    Args:
+    - message (str): 消息文本。
+
+    Returns:
+    - bool: 如果是询问则返回 True，否则返回 False。
+    """
+    # 检查是否以问号结尾
+    if message.endswith("?") or message.endswith("？"):
+        return True
+
+    # 检查是否包含关键词
+    return any(keyword in message for keyword in QUESTION_KEYWORDS)
 
 
 @record_msg.handle()
-async def _(event: GroupMessageEvent):
+async def _(event: GroupMessageEvent, bot: Bot):
     group_id = str(event.group_id)
 
     data = await load_or_init_data(group_id)
@@ -243,13 +330,60 @@ async def _(event: GroupMessageEvent):
     text = str(event.get_message()).strip()
     time_now = format_time(event.time)
     process_text = await create_process_text(event, text, time_now)
+
     record.append({"role": "user", "content": "聊天记录: \n" + process_text})
-
     # 保持记录在50条以内
-    record = add_element(record, 50)
-
+    record = add_element(record, ai_config.record_num)
     data["record"] = record
     await save_data(group_id, data)
+    # 判断是否为图片，不是则记录计数器
+    if (
+        "[CQ:file" not in text
+        and "[CQ:video" not in text
+        and "[CQ:mface" not in text
+        and "[CQ:image" not in text
+        and group_id != "872031181"
+    ):
+        unreplied_msg[group_id] = unreplied_msg.get(group_id, 0) + 1
+        logger.info(f"unreplied_msg: {unreplied_msg}")
+
+        # 动态调整回复概率
+        reply_prob = dynamic_reply_probability(group_id)
+        logger.info(f"reply_prob: {reply_prob}")
+        # 未回复消息超过随机设定的阈值时，决定是否回复
+        if unreplied_msg[group_id] >= 5 and random.random() < reply_prob:
+            unreplied_msg[group_id] = 0
+            await send_ai_msg(event, bot)  # 调用 AI 回复函数
+            return
+        elif unreplied_msg[group_id] <= 3 and is_question(text):
+            unreplied_msg[group_id] = 0
+            await send_ai_msg(event, bot)  # 调用 AI 回复函数
+            return
+
+
+def dynamic_reply_probability(group_id: str) -> float:
+    """
+    根据时间段和未回复消息数量动态计算回复概率。
+    低活跃时段（深夜）回复概率较低，白天或活跃时段回复概率较高。
+    """
+    current_hour: int = datetime.datetime.now().hour
+
+    # 根据时间段设置基础概率
+    if 0 <= current_hour < 6:
+        base_prob = 0.1  # 深夜时段，回复概率较低
+    elif 6 <= current_hour < 18:
+        base_prob = 0.3  # 白天时段，回复概率较高
+    else:
+        base_prob = 0.2  # 晚上时段，中等回复概率
+
+    # 根据该群未回复消息数量动态增加概率
+    unreplied_count: int = unreplied_msg[group_id]  # 获取该群的未回复消息数
+    if unreplied_count > 10:
+        return min(0.4, base_prob + 0.1)
+    elif unreplied_count >= 5:
+        return base_prob + 0.5
+    else:
+        return base_prob
 
 
 async def get_history(
@@ -259,3 +393,37 @@ async def get_history(
         "get_group_msg_history", group_id=group_id, count=cout
     )
     return data
+
+
+async def send_time_topic(temp_topic: str):
+    bot = nonebot.get_bot()
+    # 构建系统消息，发送到群里
+    group_id_list: list = ["713478803", "475214083"]
+    for group_id in group_id_list:
+        data = await load_or_init_data(group_id=group_id)
+        keep_prompt: list = data.get("keep_prompt", [])
+        record: list = data.get("record", [])
+        time_now: str = format_time(int(time.time()))
+        record.append(
+            {
+                "role": "user",
+                "content": f"现在时间：{time_now} 请你做该事件：{temp_topic}",
+            }
+        )
+        response = await chat_with_gpt(keep_prompt + record, ai_config)
+        record.append({"role": "assistant", "content": response})
+        data["record"] = record
+        await bot.send_group_msg(group_id=group_id, message=response)
+        await save_data(group_id, data)
+
+
+for k, v in ai_config.time_topic.items():
+    scheduler.add_job(
+        send_time_topic,
+        "cron",
+        hour=k,
+        minute=0,
+        second=0,
+        args=[v],
+        misfire_grace_time=120,
+    )

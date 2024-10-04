@@ -3,7 +3,7 @@ import contextlib
 import random
 from datetime import datetime
 
-from nonebot import get_driver, logger, on_command, require
+from nonebot import get_driver, logger, on_command
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
@@ -15,6 +15,7 @@ from nonebot.adapters.onebot.v11.helpers import (
 )
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot_plugin_apscheduler import scheduler
 
 from .config import Config
 from .models import PWaifu, WaifuCP, WaifuLock, WaifuProtect, Waifuyinppa1, Waifuyinppa2
@@ -98,9 +99,8 @@ async def mo_reset_record():
     await Waifuyinppa1.all().delete()
     await Waifuyinppa2.all().delete()
 
-
-scheduler = require("nonebot_plugin_apscheduler").scheduler
 on_command("重置记录", permission=SUPERUSER).append_handler(mo_reset_record)
+
 # 第一个触发时间：每天凌晨 0:00
 scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
@@ -244,10 +244,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 # 分手
 if waifu_cd_bye > -1:
     cd_bye = {}
-    bye = on_command(
-        "离婚",
-        aliases={"分手"}
-    )
+    bye = on_command("离婚", aliases={"分手"})
 
     @bye.handle()
     async def _(event: GroupMessageEvent):

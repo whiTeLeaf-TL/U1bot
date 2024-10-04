@@ -88,6 +88,7 @@ zhconv = "^1.4.3"
 rapidfuzz = "^3.9.7"
 decord = "^0.6.0"
 tensorboardx = "^2.6.2.2"
+cnocr = "^2.3.0.3"
 [tool.poetry.group.test.dependencies]
 pytest-asyncio = "^0.23.3"
 
