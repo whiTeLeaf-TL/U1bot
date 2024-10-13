@@ -13,8 +13,8 @@ async def chat_with_gpt(data: list, config: Config) -> str:
         "temperature": config.temperature,
         "max_tokens": config.max_tokens,
         "top_p": 0.3,
-        "frequency_penalty": 1.4,
-        "presence_penalty": 1,
+        "frequency_penalty": 1.5,
+        "presence_penalty": 1.4,
         "stream": False,
     }
 
