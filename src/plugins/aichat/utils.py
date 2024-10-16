@@ -1,35 +1,96 @@
 import re
 
-import aiohttp
+import ujson as json
 from nonebot.adapters.onebot.v11.event import MessageEvent, Reply
+from openai import OpenAI
 
-from .config import Config
+from ..today_yunshi import luck_result
+from .config import Config, ai_config
 
-
-async def chat_with_gpt(data: list, config: Config) -> str:
-    payload = {
-        "messages": data,
-        "model": config.appoint_model,
-        "temperature": config.temperature,
-        "max_tokens": config.max_tokens,
-        "top_p": 0.3,
-        "frequency_penalty": 1.5,
-        "presence_penalty": 1.4,
-        "stream": False,
-    }
-
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{config.base_url}/chat/completions",
-            json=payload,
-            headers={
-                "Authorization": f"Bearer {config.api_key}",
-                "Content-Type": "application/json",
-                "Accept": "application/json",
+tools: list = [
+    {
+        "type": "function",
+        "function": {
+            "name": "random_fortune",
+            "description": "重新生成对应QQ号的用户的运势",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "num": {
+                        "type": "string",
+                        "description": "用户的 QQ 号码，例如 123456789。",
+                    }
+                },
+                "required": ["num"],
             },
-        ) as resp:
-            result = await resp.json()
-            return result["choices"][0]["message"]["content"]
+        },
+    },
+]
+
+
+client = OpenAI(
+    api_key=ai_config.api_key,
+    base_url=ai_config.base_url,
+)
+
+
+async def chat_with_gpt(
+    data: list, config: Config = ai_config
+) -> tuple[str | None, dict | None]:
+    # payload = {
+    #     "messages": data,
+    #     "model": config.appoint_model,
+    #     "tools": tools,
+    #     "tool_choice": "auto",
+    #     "max_tokens": config.max_tokens,
+    #     "top_p": 0.3,
+    #     "frequency_penalty": 1,
+    #     "presence_penalty": 0,
+    #     "stream": False,
+    # }
+
+    result = client.chat.completions.create(
+        model=config.appoint_model,
+        temperature=config.temperature,
+        messages=data,
+        top_p=0.3,
+        frequency_penalty=1,
+        presence_penalty=0,
+        # tools=tools,
+    )
+    if tools_call := result.choices[0].message.tool_calls:
+        return result.choices[0].message.content, tools_call[0].to_dict()
+    # logger.info(f"工具调用：{result!s}")
+    return result.choices[0].message.content, None
+
+
+async def call_tools(tool_calls: dict) -> dict | None:
+    if tool_calls and tool_calls[0]["type"] == "function":
+        function_call = tool_calls[0]["function"]
+
+        # 验证调用的函数名是否正确
+        if function_call["name"] == "random_fortune":
+            try:
+                # 解析调用的参数
+                arguments = json.loads(function_call["arguments"])
+
+                # 验证参数是否包含QQ号
+                if "num" in arguments:
+                    qq_number = int(arguments["num"])
+                    result = await luck_result(qq_number, True)
+                else:
+                    print("错误：QQ号是必需的。")
+            except json.JSONDecodeError:
+                print("错误：参数的JSON格式无效。")
+            return {
+                "role": "tool",
+                "tool_call_id": tool_calls[0]["id"],
+                "content": result,
+            }
+        else:
+            print("错误：函数名不匹配。")
+    else:
+        print("错误：未找到有效的函数调用。")
 
 
 def extract_image_url(message: str) -> tuple[bool, str]:
@@ -105,7 +166,6 @@ def replace_at_message(text: str) -> str:
     检测并替换指定的 CQ:at 消息。
     Args:
     - text (str): 原始消息文本。
-    - target_qq (str): 目标 QQ 号。
 
     Returns:
     - str: 替换后的文本。
@@ -116,9 +176,9 @@ def replace_at_message(text: str) -> str:
     def replace_at(match):
         name = match.group(2)
         # 检查是否是指定的 qq 号
-        return f"@{name}"
+        return f"{name} "
 
-    # 使用正则表达式进行替换
+    # 使用正则表达式进行替换，处理所有匹配项
     return re.sub(cq_at_pattern, replace_at, text)
 
 
