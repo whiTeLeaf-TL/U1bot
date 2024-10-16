@@ -1,4 +1,4 @@
-from nonebot import get_plugin_config, on_message
+from nonebot import get_plugin_config, on_fullmatch, on_message
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 
@@ -65,9 +65,44 @@ async def _(event: GroupMessageEvent):
     # 如果在时间段内，发送消息提醒，并移除时间段
     for remind_time in today_remind_time[user_id]:
         if today_time_map[user_id] >= remind_time * 60:
-            await coutmsg.send(f"你今天已经水群{remind_time}分钟了！",at_sender=True)
+            await coutmsg.send(f"你今天已经水群{remind_time}分钟了！", at_sender=True)
             today_remind_time[user_id].remove(remind_time)
 
     # 保存数据库
     await chat_time.save()
     await chat_time_total.save()
+
+
+search_cout = on_fullmatch("查询水群")
+
+
+@search_cout.handle()
+async def _(event: GroupMessageEvent):
+    # %s今天水了%d分%d秒，发了%d条消息；总计水了%d分%d秒，发了%d条消息
+    group_id = event.group_id
+    user_id = str(event.user_id)
+    # 获取数据库
+    chat_time = await ChatTimeDB.get_or_none(group_id=group_id)
+    chat_time_total = await ChatTime.get_or_none(group_id=group_id)
+
+    if (
+        chat_time is None
+        or chat_time_total is None
+        or user_id not in chat_time_total.user_message_map
+    ):
+        await search_cout.finish("找不到今天的数据？看起来你喜欢沉淀？", at_sender=True)
+
+    today_time_map = chat_time.today_time_map
+    today_message_map = chat_time.today_message_map
+    user_time_map = chat_time_total.user_time_map
+    user_message_map = chat_time_total.user_message_map
+
+    today_time = today_time_map[user_id]
+    today_message = today_message_map[user_id]
+    user_time = user_time_map[user_id]
+    user_message = user_message_map[user_id]
+
+    await search_cout.finish(
+        f"你今天水了{today_time//60}分{today_time%60}秒，发了{today_message}条消息；总计水了{user_time//60}分{user_time%60}秒，发了{user_message}条消息呢",
+        at_sender=True,
+    )
