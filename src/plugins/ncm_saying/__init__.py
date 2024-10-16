@@ -14,7 +14,7 @@ __plugin_meta__ = PluginMetadata(
     description="12 点啦，该网抑云啦！[哭]",
     usage=__usage__,
 )
-hitokoto_matcher = on_command("网抑云", aliases={"网易云热评"})
+hitokoto_matcher = on_command("网抑云", aliases={"网易云热评"}, block=True)
 
 
 @hitokoto_matcher.handle()

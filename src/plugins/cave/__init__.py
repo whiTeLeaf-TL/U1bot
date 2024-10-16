@@ -30,14 +30,14 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-cave_main = on_command("回声洞")
-cave_add = on_command("投稿", aliases={"回声洞投稿"})
-cave_am_add = on_command("匿名投稿", aliases={"回声洞匿名投稿"})
-cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"})
-cave_view = on_command("查看")
-cave_del = on_command("删除")
+cave_main = on_command("回声洞",block=True)
+cave_add = on_command("投稿", aliases={"回声洞投稿"}, block=True)
+cave_am_add = on_command("匿名投稿", aliases={"回声洞匿名投稿"}, block=True)
+cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"}, block=True)
+cave_view = on_command("查看", block=True)
+cave_del = on_command("删除", block=True)
 
-cave_update = on_command("更新回声洞", permission=SUPERUSER)
+cave_update = on_command("更新回声洞", permission=SUPERUSER, block=True)
 SUPERUSER_list = list(get_driver().config.superusers)
 
 

@@ -1,10 +1,7 @@
+import asyncio
 import random
 
-from nonebot import on_command, require
-
-import asyncio
-
-from nonebot import get_driver
+from nonebot import get_driver, on_command, require
 from nonebot.adapters import Event, Message
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -30,17 +27,15 @@ from .data_source import (
     get_stats,
     get_switch_fish,
     save_fish,
+    sell_all_fish,
     sell_fish,
     sell_quality_fish,
     switch_fish,
-    sell_all_fish,
     update_sql,
 )
-
 from .data_source import fish as fish_quality
 
-
-require("nonebot_plugin_orm")  # noqa
+require("nonebot_plugin_orm")
 
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
@@ -54,17 +49,18 @@ __plugin_meta__ = PluginMetadata(
 
 Bot_NICKNAME = list(get_driver().config.nickname)
 Bot_NICKNAME: str = Bot_NICKNAME[0] if Bot_NICKNAME else "bot"
-fishing = on_command("fishing", aliases={"钓鱼"})
-stats = on_command("stats", aliases={"统计信息"})
-backpack = on_command("backpack", aliases={"背包"})
-sell = on_command("sell", aliases={"卖鱼"})
-balance = on_command("balance", aliases={"余额"})
+fishing = on_command("fishing", aliases={"钓鱼"}, block=True)
+stats = on_command("stats", aliases={"统计信息"}, block=True)
+backpack = on_command("backpack", aliases={"背包"}, block=True)
+sell = on_command("sell", aliases={"卖鱼"}, block=True)
+balance = on_command("balance", aliases={"余额"}, block=True)
 switch = on_command(
     "fish_switch",
     aliases={"开关钓鱼"},
     permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER,
+    block=True,
 )
-update_def = on_command("update", permission=SUPERUSER)
+update_def = on_command("update", permission=SUPERUSER, block=True)
 
 
 @update_def.handle()

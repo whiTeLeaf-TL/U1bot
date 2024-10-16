@@ -12,7 +12,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 faker = Faker(locale="zh_CN")
-fakeinfo = on_command("伪造信息")
+fakeinfo = on_command("伪造信息", block=True)
 
 
 def generate_family():

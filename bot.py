@@ -30,5 +30,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
         raise IgnoredException("遇到双发，忽略")
 
 
+@run_preprocessor
+async def _(bot: Bot, event: GroupMessageEvent):
+    "防止机器人自言自语"
+    # 检测是否是机器人自己发的消息
+    event_qqid = str(event.user_id)
+    bot_qqid = bot.self_id
+    if event_qqid == bot_qqid:
+        raise IgnoredException("机器人自言自语，忽略")
+
+
 if __name__ == "__main__":
     nonebot.run()

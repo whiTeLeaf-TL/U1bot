@@ -31,20 +31,6 @@ elif isinstance(plugin_config.history_inform_time, list):
     hour = plugin_config.history_inform_time[0]["HOUR"]
     minute = plugin_config.history_inform_time[0]["MINUTE"]
 
-config_test = on_fullmatch("test")
-
-
-@config_test.handle()
-async def _():
-    await config_test.send(f"time={hour}:{minute}")
-    await config_test.send(
-        f"is_list={isinstance(plugin_config.history_inform_time, list)}"
-    )
-    await config_test.send(
-        f"is_str={isinstance(plugin_config.history_inform_time, str)}"
-    )
-    await config_test.send(f"is_None={plugin_config.history_inform_time is None}")
-
 
 history_matcher = on_fullmatch("历史上的今天")
 

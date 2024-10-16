@@ -24,8 +24,8 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-divine = on_command(cmd="占卜")
-tarot = on_command(cmd="塔罗牌")
+divine = on_command(cmd="占卜", block=True)
+tarot = on_command(cmd="塔罗牌", block=True)
 chain_reply_switch = on_regex(
     pattern=r"^(开启|启用|关闭|禁用)群聊转发(模式)?$", permission=SUPERUSER, block=True
 )
