@@ -9,7 +9,7 @@ import aiofiles
 import nonebot
 import ujson
 from cnocr import CnOcr
-from nonebot import logger, on_command, on_message
+from nonebot import get_plugin_config, logger, on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent, MessageEvent, Reply
 from nonebot.adapters.onebot.v11.helpers import (
@@ -18,12 +18,14 @@ from nonebot.adapters.onebot.v11.helpers import (
 )
 from nonebot.adapters.onebot.v11.utils import unescape
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
 from nonebot_plugin_apscheduler import scheduler
 
-from .config import ai_config
+from .config import Config, ai_config
 from .ofa_image_process import ImageCaptioningPipeline
 from .utils import (
+    call_tools,
     chat_with_gpt,
     extract_mface_summary,
     is_image_message,
@@ -31,7 +33,16 @@ from .utils import (
     replace_cq_with_caption,
 )
 
-config = nonebot.get_driver().config
+__plugin_meta__ = PluginMetadata(
+    name="aichat",
+    description="ai聊天",
+    usage="nope",
+    config=Config,
+)
+
+
+config = get_plugin_config(Config)
+
 
 datadir = ai_config.data_dir
 os.makedirs(datadir, exist_ok=True)
@@ -59,7 +70,7 @@ def is_use(event: GroupMessageEvent) -> bool:
     return event.group_id in ai_config.record_group and "[CQ:video" not in message
 
 
-clean_command = on_command("clean.session", permission=SUPERUSER)
+clean_command = on_command("clean.session", permission=SUPERUSER, block=True)
 record_msg = on_message(rule=is_record)
 handle_command = on_message(rule=is_use & to_me())
 
@@ -89,7 +100,9 @@ async def load_or_init_data(group_id: str) -> dict:
     async with file_locks[group_id]:
         async with aiofiles.open(file_path) as f:
             data = ujson.loads(await f.read())
-    if group_id in {"475214083", "966016220"}:
+    if group_id in {
+        "475214083",
+    }:
         data["keep_prompt"] = [
             {"role": "system", "content": ai_config.prompt},
             *ai_config.msglist_baiye,
@@ -131,10 +144,8 @@ async def create_process_text(
 
     # 处理文本中的 CQ 码
     text = await process_cq_code(text, event)
-
-    if event.to_me and not event.reply:
-        text = replace_at_message(text=f"@姚奕 {text}")
-
+    text = replace_at_message(text=text)
+    logger.info(f"{event.message!r}")
     if event.reply:
         return await process_reply(event.reply, text, time_now, nickname, user_id)
 
@@ -159,10 +170,11 @@ async def process_reply(
     """处理回复消息的格式化。"""
     reply_user_id = event.sender.user_id
     reply_nickname = event.sender.nickname
+    logger.info(f"{event.message!r}")
     reply_text = str(event.message).strip()
 
     reply_text = await process_cq_code(reply_text, event)
-
+    reply_text = replace_at_message(reply_text)
     return (
         f"{time_now} {nickname}({user_id}) 引用并回复了 "
         f"{reply_nickname}({reply_user_id}) 的消息：\n"
@@ -239,7 +251,6 @@ async def send_ai_msg(event: GroupMessageEvent, bot: Bot):
     time_question = time.time()
     group_id = str(event.group_id)
     unreplied_msg[group_id] = 0
-
     text = str(event.get_message()).strip()
     if not text:
         await bot.send(event, "讲话啊喂！")
@@ -254,17 +265,27 @@ async def send_ai_msg(event: GroupMessageEvent, bot: Bot):
     time_now = format_time(event.time)
     process_text = await create_process_text(event, text, time_now)
     process_text = "聊天记录：\n" + process_text
-    record.extend(
-        (
-            {"role": "user", "content": process_text},
-            {
-                "role": "user",
-                "content": """请用自己的人设，响应最近的消息，消息选取时间不要太大""",
-            },
-        )
-    )
-    response = await chat_with_gpt(keep_prompt + record, ai_config)
-    record.append({"role": "assistant", "content": response})
+    # record.extend(
+    #     (
+    #         {"role": "user", "content": process_text},
+    #         {
+    #             "role": "user",
+    #             "content": "请用自己的人设，响应最近的消息，消息选取时间不要太大",
+    #         },
+    #     )
+    # )
+    record.append({"role": "user", "content": process_text})
+    response, tools_call = await chat_with_gpt(keep_prompt + record, ai_config)
+    if tools_call:
+        if result := await call_tools(tools_call):
+            await bot.send(event, "处理中...")
+            record.append(result)
+            response, _ = await chat_with_gpt(keep_prompt + record, ai_config)
+            record.append({"role": "assistant", "content": response})
+            await process_response(event, bot, time_question, response)
+    else:
+        record.append({"role": "assistant", "content": response})
+        await process_response(event, bot, time_question, response)
 
     # 保持记录在50条以内
     record = add_element(record, ai_config.record_num)
@@ -272,6 +293,9 @@ async def send_ai_msg(event: GroupMessageEvent, bot: Bot):
     # 保存记录
     data["record"] = record
     await save_data(group_id, data)
+
+
+async def process_response(event, bot, time_question, response):
     if ai_config.sentences_divide:
         response = split_sentences(response)
         logger.info(response)
@@ -410,7 +434,7 @@ async def send_time_topic(temp_topic: str):
                 "content": f"现在时间：{time_now} 请你做该事件：{temp_topic}",
             }
         )
-        response = await chat_with_gpt(keep_prompt + record, ai_config)
+        response, tools_call = await chat_with_gpt(keep_prompt + record, ai_config)
         record.append({"role": "assistant", "content": response})
         data["record"] = record
         await bot.send_group_msg(group_id=group_id, message=response)
