@@ -30,7 +30,7 @@ async def get_reply(data: dict):
     )
 
 
-menu = on_command("菜单", aliases={"cd", "功能", "帮助", "help"})
+menu = on_command("菜单", aliases={"cd", "功能", "帮助", "help"}, block=True)
 
 with open(dir_path / "main.png", mode="rb") as file:
     img_bytes = file.read()

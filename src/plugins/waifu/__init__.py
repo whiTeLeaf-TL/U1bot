@@ -99,13 +99,14 @@ async def mo_reset_record():
     await Waifuyinppa1.all().delete()
     await Waifuyinppa2.all().delete()
 
-on_command("重置记录", permission=SUPERUSER).append_handler(mo_reset_record)
+
+on_command("重置记录", permission=SUPERUSER, block=True).append_handler(mo_reset_record)
 
 # 第一个触发时间：每天凌晨 0:00
 scheduler.add_job(reset_record, "cron", hour=0, minute=0, misfire_grace_time=120)
 
 
-waifu = on_command("娶群友")
+waifu = on_command("娶群友", block=True)
 
 
 @waifu.handle()
@@ -244,7 +245,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 # 分手
 if waifu_cd_bye > -1:
     cd_bye = {}
-    bye = on_command("离婚", aliases={"分手"})
+    bye = on_command("离婚", aliases={"分手"}, block=True)
 
     @bye.handle()
     async def _(event: GroupMessageEvent):
@@ -304,7 +305,7 @@ if waifu_cd_bye > -1:
 
 # 查看娶群友卡池
 
-waifu_list = on_command("查看群友卡池", aliases={"群友卡池"})
+waifu_list = on_command("查看群友卡池", aliases={"群友卡池"}, block=True)
 
 
 @waifu_list.handle()
@@ -333,7 +334,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 # 查看本群 CP
 
-cp_list = on_command("本群CP", aliases={"本群cp"})
+cp_list = on_command("本群CP", aliases={"本群cp"}, block=True)
 
 
 @cp_list.handle()
@@ -371,7 +372,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     )
 
 
-yinpa = on_command("透群友")
+yinpa = on_command("透群友", block=True)
 
 
 @yinpa.handle(
@@ -461,7 +462,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 # 查看涩涩记录
 
-yinpa_list = on_command("涩涩记录", aliases={"色色记录"})
+yinpa_list = on_command("涩涩记录", aliases={"色色记录"}, block=True)
 
 
 @yinpa_list.handle()

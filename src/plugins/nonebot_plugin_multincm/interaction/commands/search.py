@@ -216,9 +216,7 @@ def __register_searcher_matchers():
     def do_reg(searcher: Type[BaseSearcher], commands: Tuple[str, ...]):
         priv_cmd, *rest_cmds = commands
         matcher = on_command(
-            priv_cmd,
-            aliases=set(rest_cmds),
-            state={KEY_SEARCHER: searcher},
+            priv_cmd, aliases=set(rest_cmds), state={KEY_SEARCHER: searcher}, block=True
         )
         matcher.handle()(search_handler_0)
         matcher.handle()(search_handler_1)
