@@ -18,6 +18,7 @@ plugins = [
     # "nonebot_plugin_memes_api",
     "nonebot_plugin_localstore",
     "nonebot_plugin_session",
+    "nonebot_plugin_userinfo",
     "nonebot_plugin_saa",
     "nonebot_plugin_orm",
 ]
@@ -90,6 +91,7 @@ decord = "^0.6.0"
 tensorboardx = "^2.6.2.2"
 cnocr = "^2.3.0.3"
 openai = "^1.51.2"
+nonebot-plugin-userinfo = "^0.2.6"
 [tool.poetry.group.test.dependencies]
 pytest-asyncio = "^0.23.3"
 

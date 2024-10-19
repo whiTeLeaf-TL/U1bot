@@ -4199,6 +4199,29 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "ali"
 
 [[package]]
+name = "nonebot-plugin-userinfo"
+version = "0.2.6"
+description = "Nonebot2 用户信息获取插件"
+optional = false
+python-versions = ">=3.9,<4.0"
+files = [
+    {file = "nonebot_plugin_userinfo-0.2.6-py3-none-any.whl", hash = "sha256:79d2481af08a5ec77cf171c685eecd14eaf1ce4d5a1ec1fd22fbb0b85e06c260"},
+    {file = "nonebot_plugin_userinfo-0.2.6.tar.gz", hash = "sha256:0d1ce897e94a9d4c0b5300bc8f239a4676f9bb62c78a14e0f0527e5398ffc840"},
+]
+
+[package.dependencies]
+cachetools = ">=5.0.0,<6.0.0"
+emoji = ">=2.0.0,<3.0.0"
+httpx = ">=0.20.0,<1.0.0"
+nonebot2 = ">=2.3.0,<3.0.0"
+strenum = ">=0.4.15,<0.5.0"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "ali"
+
+[[package]]
 name = "nonebot-plugin-waiter"
 version = "0.8.0"
 description = "An alternative for got-and-reject in Nonebot"
@@ -9189,4 +9212,4 @@ reference = "ali"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ee4f14a8ddceae1f9eaa62108a356321d9f7700cbb75237863c88e210796a7d6"
+content-hash = "51a1deed14ab50b8d960ab69d31c397dc078125b20acdf2b21ee32c1a0c264a2"

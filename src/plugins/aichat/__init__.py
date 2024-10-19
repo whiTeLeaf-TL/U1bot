@@ -367,6 +367,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         and "[CQ:mface" not in text
         and "[CQ:image" not in text
         and group_id != "872031181"
+        and group_id != "713478803"
     ):
         unreplied_msg[group_id] = unreplied_msg.get(group_id, 0) + 1
         logger.info(f"unreplied_msg: {unreplied_msg}")
@@ -423,6 +424,7 @@ async def send_time_topic(temp_topic: str):
     bot = nonebot.get_bot()
     # 构建系统消息，发送到群里
     group_id_list: list = ["713478803", "475214083"]
+    # group_id_list: list = ["475214083"]
     for group_id in group_id_list:
         data = await load_or_init_data(group_id=group_id)
         keep_prompt: list = data.get("keep_prompt", [])

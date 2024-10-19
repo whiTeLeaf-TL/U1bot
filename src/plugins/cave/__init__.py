@@ -3,7 +3,7 @@ import random
 import re
 
 import requests
-from nonebot import get_driver, logger, on_command
+from nonebot import get_driver, logger, on_command, on_fullmatch
 from nonebot.adapters.onebot.v11 import (
     Bot,
     GroupMessageEvent,
@@ -30,7 +30,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-cave_main = on_command("回声洞",block=True)
+cave_main = on_fullmatch("回声洞", block=True)
 cave_add = on_command("投稿", aliases={"回声洞投稿"}, block=True)
 cave_am_add = on_command("匿名投稿", aliases={"回声洞匿名投稿"}, block=True)
 cave_history = on_command("查看回声洞记录", aliases={"回声洞记录"}, block=True)

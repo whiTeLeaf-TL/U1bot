@@ -1,4 +1,6 @@
-from nonebot import get_plugin_config, on_fullmatch, on_message
+from datetime import datetime
+
+from nonebot import get_plugin_config, logger, on_fullmatch, on_message
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 
@@ -19,12 +21,25 @@ coutmsg = on_message()
 
 @coutmsg.handle()
 async def _(event: GroupMessageEvent):
+    """
+    处理群消息事件以跟踪和提醒用户的聊天活动。
+
+    参数:
+        event (GroupMessageEvent): 包含群消息详细信息的事件对象。
+
+    功能:
+        - 检索或创建群组和用户的聊天时间记录。
+        - 更新用户的时间戳和消息计数。
+        - 如果上次记录的时间戳是前一天的，则重置每日数据。
+        - 计算消息之间的时间差并更新用户的聊天时长。
+        - 根据预定义的聊天时长里程碑向用户发送提醒。
+        - 将更新的聊天时间记录保存到数据库。
+    """
     group_id = event.group_id
     user_id = str(event.user_id)
     # 获取数据库
     chat_time, is_create = await ChatTimeDB.get_or_create(group_id=group_id)
     chat_time_total, is_create = await ChatTime.get_or_create(group_id=group_id)
-
     # 获取时间戳
     timestamp_map = chat_time.timestamp_map
     today_time_map = chat_time.today_time_map
@@ -33,40 +48,57 @@ async def _(event: GroupMessageEvent):
     # 获取用户的聊天时长和消息数
     user_time_map = chat_time_total.user_time_map
     user_message_map = chat_time_total.user_message_map
-
     # 获取现在的时间戳
     now_timestamp = event.time
-
     # 如果用户不在时间戳中，添加用户，或者数据是昨天的，重置数据
     if user_id not in timestamp_map:
+        # 用户第一次发送消息
+        timestamp_map[user_id] = now_timestamp
         user_time_map[user_id] = 0
         user_message_map[user_id] = 0
-        timestamp_map[user_id] = now_timestamp
         today_time_map[user_id] = 0
         today_message_map[user_id] = 0
-        today_remind_time[user_id] = [60, 120, 180, 240, 300]  # 分钟
-    elif now_timestamp - timestamp_map[user_id] >= 86400:
-        today_time_map[user_id] = 0
-        today_message_map[user_id] = 0
-        timestamp_map[user_id] = now_timestamp
-        today_remind_time[user_id] = [60, 120, 180, 240, 300]
-    # 如果与现在的时间戳相差不大于5分钟，消息数+1，记录数据库与现在的时间戳的差值加在在数据库中
+        today_remind_time[user_id] = [60, 120, 180, 240, 300, 360]  # 分钟
+    else:
+        # 用户已存在，检查是否为新的一天
+        if (
+            datetime.fromtimestamp(now_timestamp).date()
+            != datetime.fromtimestamp(timestamp_map[user_id]).date()
+        ):
+            timestamp_map[user_id] = now_timestamp
+            today_time_map[user_id] = 0
+            today_message_map[user_id] = 0
+            today_remind_time[user_id] = [60, 120, 180, 240, 300, 360]  # 分钟
+
+    # 检查时间差
     if now_timestamp - timestamp_map[user_id] <= config.interval:
         today_message_map[user_id] += 1
         user_message_map[user_id] += 1
-
-        # 计算时间差，加在数据库中为秒
         time_diff = now_timestamp - timestamp_map[user_id]
-
         today_time_map[user_id] += time_diff
         user_time_map[user_id] += time_diff
+
+    # 更新时间戳
     timestamp_map[user_id] = now_timestamp
 
-    # 如果在时间段内，发送消息提醒，并移除时间段
-    for remind_time in today_remind_time[user_id]:
-        if today_time_map[user_id] >= remind_time * 60:
-            await coutmsg.send(f"你今天已经水群{remind_time}分钟了！", at_sender=True)
-            today_remind_time[user_id].remove(remind_time)
+    # 发送消息提醒
+    today_time = today_time_map[user_id]
+    if reminders_to_remove := {
+        remind_time
+        for remind_time in today_remind_time[user_id]
+        if today_time >= remind_time * 60
+    }:
+        try:
+            await coutmsg.send(
+                f"你今天已经水群{today_time // 60}分{today_time % 60}秒了！",
+                at_sender=True,
+            )
+            # 清空今天的提醒时间
+            today_remind_time[user_id] = [
+                t for t in today_remind_time[user_id] if t not in reminders_to_remove
+            ]
+        except Exception as e:
+            logger.error(f"发送消息时出错: {e}")
 
     # 保存数据库
     await chat_time.save()
