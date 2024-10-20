@@ -3,7 +3,6 @@ import re
 import traceback
 from pathlib import Path
 
-import jinja2
 import ujson as json
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot as V11Bot
@@ -12,22 +11,14 @@ from nonebot.adapters.onebot.v11 import MessageSegment as V11MsgSeg
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
-from nonebot_plugin_htmlrender import html_to_pic
+from nonebot_plugin_htmlrender import md_to_pic
 
 dir_path = Path(__file__).parent
-template_path = dir_path / "template"
-env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(template_path), enable_async=True, autoescape=False
-)
 
+markdown_path = dir_path / "markdown"
 
-async def get_reply(data: dict):
-    template = env.get_template("index.html")
-    content = await template.render_async(data=data, url=template_path / "cover.webp")
-    return await html_to_pic(
-        content,
-        wait=0,
-    )
+async def get_reply(name: str):
+    return await md_to_pic(md_path=str(markdown_path / f"{name}.md"),css_path=str(dir_path / "dark.css"))
 
 
 menu = on_command("菜单", aliases={"cd", "功能", "帮助", "help"}, block=True)
@@ -41,9 +32,7 @@ cache_plugin_img: dict = {}
 
 with open(dir_path / "plugin.json", encoding="utf-8") as file:
     content = file.read()
-    plugin_list: dict[str, dict[str, str | dict[str, str | list[dict[str, str]]]]] = (
-        json.loads(content)
-    )
+    plugin_list: dict[str, str] = json.loads(content)
 
 
 @menu.handle()
@@ -58,33 +47,28 @@ async def _(bot: V11Bot, matcher: Matcher, arg: V11Msg = CommandArg()):
         return
 
     plugin_name: str = match_result["name"]
-
     if plugin_name.isdigit():
-        plugin_dict = plugin_list.get(plugin_name)
-        if not plugin_dict:
+        plugin_name_result = plugin_list.get(plugin_name)
+        if plugin_name_result is None:
             await matcher.finish("插件序号不存在")
     else:
-        for _, value in plugin_list.items():
-            if plugin_name in value["name"]:
-                plugin_dict = value
-        if not plugin_dict:
+        for _, value in plugin_list:
+            if plugin_name in value:
+                plugin_name_result = value
+        if not plugin_name_result:
             await matcher.finish("插件名过于模糊或不存在")
-    if isinstance(plugin_dict["name"], str):
-        plugin_name: str = plugin_dict["name"]
-    else:
-        plugin_name: str = "未知插件 (格式错误)"
 
-    if plugin_name not in cache_plugin_img:
+    if plugin_name_result not in cache_plugin_img:
         try:
-            result = await get_reply(plugin_dict)
-            if plugin_name not in cache_plugin_img and isinstance(result, bytes):
-                cache_plugin_img[plugin_name] = (
+            result = await get_reply(plugin_name_result)
+            if plugin_name_result not in cache_plugin_img and isinstance(result, bytes):
+                cache_plugin_img[plugin_name_result] = (
                     f"base64://{base64.b64encode(result).decode()}"
                 )
         except Exception:
             logger.warning(traceback.format_exc())
             await matcher.finish("出错了，请稍后再试")
-    result = cache_plugin_img[plugin_name]
+    result = cache_plugin_img[plugin_name_result]
 
     if isinstance(result, str) and not result.startswith("base64://"):
         await matcher.finish(result)

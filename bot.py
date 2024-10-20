@@ -2,7 +2,7 @@ import sys
 from typing import TYPE_CHECKING
 
 import nonebot
-from nonebot import get_bots, logger
+from nonebot import logger
 from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.exception import IgnoredException
@@ -13,32 +13,34 @@ if TYPE_CHECKING:
     # because loguru module do not have `Logger` class actually
     from loguru import Record
 nonebot.init()
+
+
 app = nonebot.get_asgi()
 driver = nonebot.get_driver()
 driver.register_adapter(ONEBOT_V11Adapter)
 
 
 nonebot.load_from_toml("pyproject.toml")
-from nonebot.message import run_preprocessor
+from nonebot.message import event_preprocessor
+
+from U1.database import Channel
 
 
-@run_preprocessor
+@event_preprocessor
 async def _(bot: Bot, event: GroupMessageEvent):
     "防止双发"
-    # 检测群是否有两个机器人，如果是则第一个机器人
     bot_qqid = bot.self_id
-    # 获取所有机器人,取出qq号
-    bots = get_bots()
-    bot_qqids: list[str] = [bot.self_id for bot in bots.values()]
-    group_members = await bot.get_group_member_list(group_id=event.group_id)
-    group_qqids: list[str] = [str(member["user_id"]) for member in group_members]
-    # 检查bot_qqid是否在group_qqids中,列出同类项
-    same_qqids = list(set(bot_qqids) & set(group_qqids))
-    if bot_qqid != same_qqids[0]:
-        raise IgnoredException("遇到双发，忽略")
+    channel = await Channel.get_or_none(id=str(event.group_id))
+    if channel is None:
+        await bot.send(
+            event, "我们正在尝试注册此群频道，此条信息发送完毕后将会自动注册"
+        )
+        raise IgnoredException("未找到频道，忽略")
+    if channel.assignee != bot_qqid:
+        raise IgnoredException("机器人不是频道指定的机器人，忽略")
 
 
-@run_preprocessor
+@event_preprocessor
 async def _(bot: Bot, event: GroupMessageEvent):
     "防止机器人自言自语"
     # 检测是否是机器人自己发的消息

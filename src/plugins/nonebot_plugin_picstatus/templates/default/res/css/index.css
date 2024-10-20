@@ -1,9 +1,9 @@
 /* Base */
 
 * {
-  --font-family: 'HarmonyOS Sans SC', 'Source Han Sans SC', 'Source Han Sans',
+  --font-family: "HarmonyOS Sans SC", "Source Han Sans SC", "Source Han Sans",
     sans-serif;
-  --monospace-font-family: 'JetBrains Mono', 'Cascadia Code', 'Consolas',
+  --monospace-font-family: "JetBrains Mono", "Cascadia Code", "Consolas",
     monospace;
 
   --primary-text-color: #3a3a3a;
@@ -204,7 +204,13 @@ span.label {
   word-break: break-word;
   line-height: 1.1;
 }
-
+.account .description .self_id {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  word-break: break-word;
+  line-height: 1.1;
+}
 /* Donut Chart */
 
 .donut-chart {

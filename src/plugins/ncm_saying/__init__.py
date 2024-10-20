@@ -22,11 +22,11 @@ async def hitokoto(matcher: Matcher, args: Message = CommandArg()):
     if args:
         return
     async with httpx.AsyncClient(verify=False) as client:
-        response = await client.get(
-            "https://v.api.aa1.cn/api/api-wenan-wangyiyunreping/index.php?aa1=json"
-        )
+        response = await client.get("https://api.uomg.com/api/comments.163?format=json")
     if response.is_error:
         logger.error("获取网抑云失败咯，请稍后再试...")
         return
     data = response.json()
-    await matcher.finish(data[0]["wangyiyunreping"])
+    await matcher.finish(
+        data["data"]["content"] + " ——网易云音乐热评《" + data["data"]["name"] + "》"
+    )
