@@ -1,14 +1,12 @@
-import ujson as json
 import math
 import traceback
 from http.cookies import SimpleCookie
 from pathlib import Path
-from typing import List, Optional, Union
 
+import aiohttp
 import bilireq
-import httpx
 import jinja2
-from bilireq.utils import get_homepage_cookies
+import ujson as json
 from nonebot.log import logger
 from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import html_to_pic
@@ -26,9 +24,12 @@ env = jinja2.Environment(
 )
 
 raw_cookie = ddcheck_config.bilibili_cookie
-cookie = SimpleCookie()
-cookie.load(raw_cookie)
-cookies = {key: value.value for key, value in cookie.items()}
+
+header1 = {
+    "content-type": "text/plain; charset=utf-8",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36 Core/1.94.186.400 QQBrowser/11.3.5195.400",
+    "cookie": raw_cookie,
+}
 
 
 async def update_vtb_list():
@@ -39,11 +40,11 @@ async def update_vtb_list():
         "https://hkapi.vtbs.moe/v1/short",
         "https://kr.vtbs.moe/v1/short",
     ]
-    async with httpx.AsyncClient() as client:
+    async with aiohttp.ClientSession() as session:
         for url in urls:
             try:
-                resp = await client.get(url, timeout=20)
-                result = resp.json()
+                async with session.get(url=url) as response:
+                    result = json.loads(await response.text())
                 if not result:
                     continue
                 for info in result:
@@ -54,7 +55,7 @@ async def update_vtb_list():
                     if info.get("mid", None) and info.get("uname", None):
                         vtb_list.append(info)
                 break
-            except httpx.TimeoutException:
+            except aiohttp.ConnectionTimeoutError:
                 logger.warning(f"Get {url} timeout")
             except Exception:
                 logger.exception(f"Error when getting {url}, ignore")
@@ -69,18 +70,18 @@ scheduler.add_job(
 )
 
 
-def load_vtb_list() -> List[dict]:
+def load_vtb_list() -> list[dict]:
     if vtb_list_path.exists():
         with vtb_list_path.open("r", encoding="utf-8") as f:
             try:
                 return json.load(f)
-            except json.decoder.JSONDecodeError:
+            except Exception:
                 logger.warning("vtb 列表解析错误，将重新获取")
                 vtb_list_path.unlink()
     return []
 
 
-def dump_vtb_list(vtb_list: List[dict]):
+def dump_vtb_list(vtb_list: list[dict]):
     data_path.mkdir(parents=True, exist_ok=True)
     json.dump(
         vtb_list,
@@ -91,37 +92,37 @@ def dump_vtb_list(vtb_list: List[dict]):
     )
 
 
-async def get_vtb_list() -> List[dict]:
+async def get_vtb_list() -> list[dict]:
     vtb_list = load_vtb_list()
     if not vtb_list:
         await update_vtb_list()
     return load_vtb_list()
 
 
-async def get_uid_by_name(name: str) -> Optional[int]:
+async def get_uid_by_name(name: str) -> int | None:
     url = "https://api.bilibili.com/x/web-interface/wbi/search/type"
     params = {"search_type": "bili_user", "keyword": name}
-    resp = await bilireq.utils.get(url, params=params, cookies=cookies)
+    resp = await bilireq.utils.get(url, params=params, headers=header1)
     for user in resp["result"]:
         if user["uname"] == name:
             return user["mid"]
 
 
-async def get_medals(uid: int) -> List[dict]:
+async def get_medals(uid: int) -> list[dict]:
     url = "https://api.live.bilibili.com/xlive/web-ucenter/user/MedalWall"
     params = {"target_id": uid}
-    resp = await bilireq.utils.get(url, params=params, cookies=cookies)
+    resp = await bilireq.utils.get(url, params=params, headers=header1)
     return resp["list"]
 
 
 async def get_user_info(uid: int) -> dict:
-    cookies.update(await get_homepage_cookies())
     url = "https://account.bilibili.com/api/member/getCardByMid"
     params = {"mid": uid}
-    async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(url, params=params, cookies=cookies)
-        result = resp.json()
-        return result["card"]
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=url, params=params, headers=header1) as response:
+            result = json.loads(await response.text())
+
+    return result["card"]
 
 
 def format_color(color: int) -> str:
@@ -144,7 +145,7 @@ def format_vtb_info(info: dict, medal_dict: dict) -> dict:
     return {"name": name, "uid": uid, "medal": medal}
 
 
-async def get_reply(name: str) -> Union[str, bytes]:
+async def get_reply(name: str) -> str | bytes:
     if name.isdigit():
         uid = int(name)
     else:
@@ -159,7 +160,7 @@ async def get_reply(name: str) -> Union[str, bytes]:
     try:
         user_info = await get_user_info(uid)
     except Exception:
-        logger.warning(traceback.format_exc())
+        logger.error(f"获取用户信息失败{traceback.format_exc()}")
         return "获取用户信息失败，请检查名称或稍后再试"
 
     attentions = user_info.get("attentions", [])
