@@ -1,8 +1,8 @@
+from nonebot_plugin_tortoise_orm import add_model
 from tortoise import fields
 from tortoise.models import Model
 
-from nonebot_plugin_tortoise_orm import add_model
-add_model("U1.database")
+add_model(__name__)
 
 
 class Channel(Model):

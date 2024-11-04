@@ -3986,50 +3986,6 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "ali"
 
 [[package]]
-name = "nonebot-plugin-cesaa"
-version = "0.4.1"
-description = "为 chatrecorder 添加 send-anything-anywhere 的 PlatformTarget 支持"
-optional = false
-python-versions = ">=3.9"
-files = [
-    {file = "nonebot_plugin_cesaa-0.4.1-py3-none-any.whl", hash = "sha256:87186d35178ced9b9629a02a26093826963b880274809a5f9a2ad90470de3ae4"},
-    {file = "nonebot_plugin_cesaa-0.4.1.tar.gz", hash = "sha256:1bb9150aa9eb766ce5b0e027308aa5ad4af9c1cd116f3a3d82ca7b83453cfd11"},
-]
-
-[package.dependencies]
-nonebot-plugin-chatrecorder = ">=0.6.0"
-nonebot-plugin-send-anything-anywhere = ">=0.6.0"
-nonebot2 = ">=2.2.0"
-
-[package.source]
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
-reference = "ali"
-
-[[package]]
-name = "nonebot-plugin-chatrecorder"
-version = "0.6.2"
-description = "适用于 Nonebot2 的聊天记录插件"
-optional = false
-python-versions = ">=3.9,<4.0"
-files = [
-    {file = "nonebot_plugin_chatrecorder-0.6.2-py3-none-any.whl", hash = "sha256:70df4bc7bf1a8d9a5e84f6bf8d0c473095a581150e118fb29c340a1abf5e39f3"},
-    {file = "nonebot_plugin_chatrecorder-0.6.2.tar.gz", hash = "sha256:4bdd892eb00e16f3d75e7edfc85b6bfd7e0fd17be82de164bd9b275cc1ea6974"},
-]
-
-[package.dependencies]
-nonebot-plugin-localstore = ">=0.6.0,<1.0.0"
-nonebot-plugin-orm = ">=0.7.0,<1.0.0"
-nonebot-plugin-session = ">=0.3.0,<0.4.0"
-nonebot-plugin-session-orm = ">=0.2.0,<0.3.0"
-nonebot2 = ">=2.3.0,<3.0.0"
-
-[package.source]
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
-reference = "ali"
-
-[[package]]
 name = "nonebot-plugin-datastore"
 version = "1.3.0"
 description = "适用于 Nonebot2 的数据存储插件"
@@ -4769,10 +4725,10 @@ files = [
 
 [package.dependencies]
 numpy = [
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.21.4", markers = "python_version >= \"3.10\" and platform_system == \"Darwin\" and python_version < \"3.11\""},
     {version = ">=1.21.2", markers = "platform_system != \"Darwin\" and python_version >= \"3.10\" and python_version < \"3.11\""},
     {version = ">=1.23.5", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 
 [package.source]
@@ -4798,10 +4754,10 @@ files = [
 
 [package.dependencies]
 numpy = [
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.21.4", markers = "python_version >= \"3.10\" and platform_system == \"Darwin\" and python_version < \"3.11\""},
     {version = ">=1.21.2", markers = "platform_system != \"Darwin\" and python_version >= \"3.10\" and python_version < \"3.11\""},
     {version = ">=1.23.5", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 
 [package.source]
@@ -4901,9 +4857,9 @@ files = [
 
 [package.dependencies]
 numpy = [
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
-    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -5600,8 +5556,8 @@ files = [
 annotated-types = ">=0.6.0"
 pydantic-core = "2.23.4"
 typing-extensions = [
-    {version = ">=4.6.1", markers = "python_version < \"3.13\""},
     {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
+    {version = ">=4.6.1", markers = "python_version < \"3.13\""},
 ]
 
 [package.extras]
@@ -9275,4 +9231,4 @@ reference = "ali"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "51a1deed14ab50b8d960ab69d31c397dc078125b20acdf2b21ee32c1a0c264a2"
+content-hash = "dd96ed9ffcf0b7fc0d003129d7a7a8123b7cd31cf6c31dc2105b614de33cf00e"

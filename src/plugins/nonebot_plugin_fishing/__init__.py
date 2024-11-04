@@ -1,7 +1,7 @@
 import asyncio
 import random
 
-from nonebot import get_driver, on_command, require
+from nonebot import get_driver, on_command
 from nonebot.adapters import Event, Message
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -34,8 +34,6 @@ from .data_source import (
     update_sql,
 )
 from .data_source import fish as fish_quality
-
-require("nonebot_plugin_orm")
 
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
