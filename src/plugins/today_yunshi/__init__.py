@@ -37,7 +37,7 @@ async def luck_result(user_id, focus: bool = False) -> str:
 
     if member_model is None:
         # 如果没有数据则创建数据
-        result, luckid = randomluck()
+        result, luckid = random_luck()
         await MemberData.create(user_id=user_id, luckid=luckid, time=datetime.now())
     elif (
         member_model.time.strftime("%Y-%m-%d") == time.strftime("%Y-%m-%d")
@@ -52,7 +52,7 @@ async def luck_result(user_id, focus: bool = False) -> str:
         )
     else:
         # 如果不是今天的数据则随机运势
-        result, luckid = randomluck()
+        result, luckid = random_luck()
         logger.info(f"member_model.luckid2: {member_model.luckid}")
         member_model.luckid = luckid
         member_model.time = datetime.now()
@@ -60,13 +60,10 @@ async def luck_result(user_id, focus: bool = False) -> str:
     return result
 
 
-def randomluck():
+def random_luck():
     """
     随机获取运势信息。
 
-    Args:
-        arg (str): 参数。
-        memberdata (dict): 成员数据。
 
     Returns:
         tuple: 运势信息和选择的运势编号。
