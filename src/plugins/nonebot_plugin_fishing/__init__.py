@@ -120,7 +120,7 @@ async def _backpack(bot: Bot, event: MessageEvent):
     user_id = event.get_user_id()
     fmt = await get_backpack(user_id)
     return (
-        fmt
+        await backpack.send(fmt)
         if isinstance(fmt, str)
         else await send_forward_msg(bot, event, Bot_NICKNAME, bot.self_id, fmt)
     )

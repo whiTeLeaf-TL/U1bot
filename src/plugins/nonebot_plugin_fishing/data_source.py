@@ -1,16 +1,15 @@
-import aiofiles
 import random
 import time
 from os import path
 from pathlib import Path
-from typing import List, Optional
-from nonebot import logger
+
+import aiofiles
 import ujson as json
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot_plugin_orm import get_session
 from sqlalchemy import bindparam, select, update
-from ..today_yunshi.models import MemberData
 
+from ..today_yunshi.models import MemberData
 from .config import config
 from .model import FishingRecord, FishingSwitch
 
@@ -95,8 +94,8 @@ MAX_WEIGHT_INCREASE = 30  # 设置权重增加上限
 
 
 async def get_weight(
-    user_id: str, fish_quality: List[str]
-) -> tuple[List[int], bool, Optional[int]]:
+    user_id: str, fish_quality: list[str]
+) -> tuple[list[int], bool, int | None]:
     """
     根据用户运势调整鱼的权重，并返回相应的权重值。
 
@@ -114,12 +113,12 @@ async def get_weight(
         if luck is not None and luck.time.strftime("%Y-%m-%d") == time.strftime(
             "%Y-%m-%d"
         ):
-            async with aiofiles.open(luckpath, "r", encoding="utf-8") as f:
+            async with aiofiles.open(luckpath, encoding="utf-8") as f:
                 luckdata = json.loads(await f.read())
                 luck_star_num = (
                     luckdata.get(str(luck.luckid), {}).get("星级", "").count("★")
                 )
-    except (IOError, json.JSONDecodeError) as e:
+    except (OSError, json.JSONDecodeError) as e:
         print(f"Error reading or parsing luck data: {e}")
 
     adjustment_made = False
@@ -133,7 +132,7 @@ async def get_weight(
     return [fish[key]["weight"] for key in fish_quality], adjustment_made, luck_star_num
 
 
-async def choice(user_id: str) -> tuple[str, int, bool, Optional[int]]:
+async def choice(user_id: str) -> tuple[str, int, bool, int | None]:
     """
     根据用户的运势选择鱼的品质并生成相应的钓鱼结果。
 
@@ -182,7 +181,7 @@ async def save_fish(user_id: str, fish_name: str, fish_long: int) -> None:
         records = await session.execute(select(FishingRecord))
         for record in records.scalars():
             if record.user_id == user_id:
-                loads_fishes: dict[str, List[int]] = json.loads(record.fishes)
+                loads_fishes: dict[str, list[int]] = json.loads(record.fishes)
                 try:
                     loads_fishes[fish_name].append(fish_long)
                 except KeyError:
@@ -230,21 +229,6 @@ async def get_stats(user_id: str) -> str:
         )
 
 
-def print_backpack(backpack: dict[str, List[int]]) -> list:
-    """输出背包内容"""
-    backpack_list = list(backpack.items())
-
-    return [
-        "\n".join(
-            [
-                f"{fish_name}:\n  个数:{len(fish_info)}\n  总长度:{sum(fish_info)}"
-                for fish_name, fish_info in backpack_list[i : i + 20]
-            ]
-        )
-        for i in range(0, len(backpack_list), 20)
-    ]
-
-
 async def get_backpack(user_id: str) -> str | list:
     """从数据库查询背包内容"""
     session = get_session()
@@ -253,9 +237,34 @@ async def get_backpack(user_id: str) -> str | list:
         for fishes_record in fishes_records.scalars():
             if fishes_record.user_id == user_id:
                 load_fishes = json.loads(fishes_record.fishes)
-                return (
-                    print_backpack(load_fishes) if load_fishes else "你的背包里空无一物"
-                )
+                if not load_fishes:
+                    return "你的背包里空无一物"
+
+                sorted_fishes = {
+                    quality: {
+                        fish_name: fish_info
+                        for fish_name, fish_info in load_fishes.items()
+                        if get_quality(fish_name) == quality
+                    }
+                    for quality in [
+                        "腐烂",
+                        "发霉",
+                        "普通",
+                        "金",
+                        "虚空",
+                        "隐火",
+                    ]
+                }
+                backpack_list = []
+                for quality, fishes in sorted_fishes.items():
+                    if fishes:
+                        quality_list = [f"{quality} 鱼:"]
+                        quality_list.extend(
+                            f"  {fish_name}:\n    个数: {len(fish_info)}\n    总长度: {sum(fish_info)}"
+                            for fish_name, fish_info in fishes.items()
+                        )
+                        backpack_list.append("\n".join(quality_list))
+                return backpack_list or "你的背包里空无一物"
         return "你的背包里空无一物"
 
 
