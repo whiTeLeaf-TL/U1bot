@@ -1,3 +1,4 @@
+import asyncio
 import sys
 from typing import TYPE_CHECKING
 
@@ -32,11 +33,16 @@ async def _(bot: Bot, event: GroupMessageEvent):
     bot_qqid = bot.self_id
     channel = await Channel.get_or_none(id=str(event.group_id))
     if channel is None:
-        await bot.send(
-            event, "我们正在尝试注册此群频道，此条信息发送完毕后将会自动注册"
-        )
-        raise IgnoredException("未找到频道，忽略")
-    if channel.assignee != bot_qqid:
+        attempts = 0
+        while attempts < 3:
+            channel = await Channel.get_or_none(id=str(event.group_id))
+            if channel is not None:
+                break
+            attempts += 1
+            if attempts == 3:
+                raise IgnoredException("未找到频道，忽略")
+            await asyncio.sleep(0.5)
+    if channel is not None and channel.assignee != bot_qqid:
         raise IgnoredException("机器人不是频道指定的机器人，忽略")
 
 
