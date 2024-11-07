@@ -41,6 +41,8 @@ async def _(bot: Bot, event: RequestEvent):
         )
         await bot.set_friend_add_request(flag=event.flag, approve=True)
     elif isinstance(event, GroupRequestEvent):
+        if event.sub_type != "invite":
+            return
         nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
             "nickname"
         ]
