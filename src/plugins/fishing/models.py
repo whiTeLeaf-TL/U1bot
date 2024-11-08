@@ -14,7 +14,7 @@ class FishingRecord(Model):
     count_coin = fields.FloatField(default=0)
 
     class Meta:
-        table = "nonebot_plugin_fishing_fishingrecord"
+        table = "fishing_fishingrecord"
 
 
 class FishingSwitch(Model):
@@ -22,4 +22,4 @@ class FishingSwitch(Model):
     switch = fields.BooleanField(default=True)
 
     class Meta:
-        table = "nonebot_plugin_fishing_fishingswitch"
+        table = "fishing_fishingswitch"

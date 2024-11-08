@@ -56,7 +56,7 @@ async def _(matcher: Matcher, event: MessageEvent):
 async def _(event: GroupMessageEvent):
     arg: str = event.get_plaintext()
 
-    if arg[:2] == "开启" or arg[:2] == "启用":
+    if arg[:2] in ["开启", "启用"]:
         tarot_manager.switch_chain_reply(True)
         msg = "占卜群聊转发模式已开启~"
     else:

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, List, Set, Union
+from typing import Any
 
 import httpx
 import nonebot
@@ -14,23 +14,25 @@ except ModuleNotFoundError:
 
 
 class PluginConfig(BaseModel, extra=Extra.ignore):
-    '''
-        Path of tarot images resource
-    '''
+    """
+    Path of tarot images resource
+    """
+
     tarot_path: Path = Path(__file__).parent / "resource"
     chain_reply: bool = True
     tarot_auto_update: bool = False
-    nickname: Set[str] = {"Bot"}
+    nickname: set[str] = {"Bot"}
 
-    '''
+    """
         DO NOT CHANGE THIS VALUE IN ANY .ENV FILES
-    '''
-    tarot_official_themes: List[str] = ["BilibiliTarot", "TouhouTarot"]
+    """
+    tarot_official_themes: list[str] = ["BilibiliTarot", "TouhouTarot"]
 
 
 driver = nonebot.get_driver()
 tarot_config: PluginConfig = PluginConfig.parse_obj(
-    driver.config.dict(exclude_unset=True))
+    driver.config.dict(exclude_unset=True)
+)
 
 
 class DownloadError(Exception):
@@ -38,7 +40,6 @@ class DownloadError(Exception):
 
 
 class ResourceError(Exception):
-
     def __init__(self, msg: str):
         self.msg = msg
 
@@ -52,8 +53,13 @@ class EventNotSupport(Exception):
     pass
 
 
-async def download_url(name: str, is_json: bool = False) -> Union[Dict[str, Any], bytes, None]:
-    url: str = "https://raw.fgit.ml/MinatoAquaCrews/nonebot_plugin_tarot/master/nonebot_plugin_tarot/" + name
+async def download_url(
+    name: str, is_json: bool = False
+) -> dict[str, Any] | bytes | None:
+    url: str = (
+        "https://raw.fgit.ml/MinatoAquaCrews/nonebot_plugin_tarot/master/nonebot_plugin_tarot/"
+        + name
+    )
 
     async with httpx.AsyncClient() as client:
         for i in range(3):
@@ -65,8 +71,7 @@ async def download_url(name: str, is_json: bool = False) -> Union[Dict[str, Any]
                 return response.json() if is_json else response.content
 
             except Exception:
-                logger.warning(
-                    f"Error occurred when downloading {url}, {i+1}/3")
+                logger.warning(f"Error occurred when downloading {url}, {i+1}/3")
 
     logger.warning("Abort downloading")
     return None
@@ -74,9 +79,9 @@ async def download_url(name: str, is_json: bool = False) -> Union[Dict[str, Any]
 
 @driver.on_startup
 async def tarot_version_check() -> None:
-    '''
-        Get the latest version of tarot.json from repo
-    '''
+    """
+    Get the latest version of tarot.json from repo
+    """
     if not tarot_config.tarot_path.exists():
         tarot_config.tarot_path.mkdir(parents=True, exist_ok=True)
 
@@ -90,7 +95,9 @@ async def tarot_version_check() -> None:
 
     # Auto update check on startup if TAROT_AUTO_UPDATE
     if tarot_config.tarot_auto_update:
-        response: Dict[str, Any] = await download_url("tarot.json", is_json=True)
+        response = await download_url("tarot.json", is_json=True)
+        if not isinstance(response, dict):
+            response = None
     else:
         response = None
 
@@ -102,32 +109,28 @@ async def tarot_version_check() -> None:
         try:
             version: float = response.get("version", 0)
         except KeyError:
-            logger.warning(
-                "Tarot text resource downloaded incompletely! Please check!")
+            logger.warning("Tarot text resource downloaded incompletely! Please check!")
             raise DownloadError
 
         # Update when there is a newer version
         if version > cur_version:
             with tarot_json_path.open("w", encoding="utf-8") as f:
                 json.dump(response, f, ensure_ascii=False, indent=4)
-                logger.info(
-                    f"Updated tarot.json, version: {cur_version} -> {version}")
+                logger.info(f"Updated tarot.json, version: {cur_version} -> {version}")
 
 
 @cached(ttl=180)
-async def get_tarot(_theme: str, _type: str, _name: str) -> Union[bytes, None]:
-    '''
-        Downloads tarot image and stores cache temporarily
-        if downloading failed, return None
-    '''
-    logger.info(
-        f"Downloading tarot image {_theme}/{_type}/{_name} from repo")
+async def get_tarot(_theme: str, _type: str, _name: str) -> bytes | None | dict:
+    """
+    Downloads tarot image and stores cache temporarily
+    if downloading failed, return None
+    """
+    logger.info(f"Downloading tarot image {_theme}/{_type}/{_name} from repo")
 
-    resource: str = "resource/" + f"{_theme}/{_type}/{_name}"
+    resource: str = f"resource/{_theme}/{_type}/{_name}"
     data = await download_url(resource)
 
     if data is None:
-        logger.warning(
-            f"Downloading tarot image {_theme}/{_type}/{_name} failed!")
+        logger.warning(f"Downloading tarot image {_theme}/{_type}/{_name} failed!")
 
     return data
