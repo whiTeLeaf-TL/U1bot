@@ -1,11 +1,7 @@
 # ruff: noqa: E402
 
-from nonebot import get_driver, require
-from nonebot.plugin import PluginMetadata, inherit_supported_adapters
-
-require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_alconna")
-require("nonebot_plugin_userinfo")
+from nonebot import get_driver
+from nonebot.plugin import PluginMetadata
 
 from . import __main__ as __main__, misc_statistics as misc_statistics
 from .bg_provider import bg_preloader
@@ -58,9 +54,5 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/lgc-NB2Dev/nonebot-plugin-picstatus",
     config=ConfigModel,
-    supported_adapters=inherit_supported_adapters(
-        "nonebot_plugin_alconna",
-        "nonebot_plugin_userinfo",
-    ),
     extra={"License": "MIT", "Author": "student_2333"},
 )

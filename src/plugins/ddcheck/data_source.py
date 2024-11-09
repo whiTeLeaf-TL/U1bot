@@ -1,6 +1,5 @@
 import math
 import traceback
-from http.cookies import SimpleCookie
 from pathlib import Path
 
 import aiohttp
@@ -55,8 +54,6 @@ async def update_vtb_list():
                     if info.get("mid", None) and info.get("uname", None):
                         vtb_list.append(info)
                 break
-            except aiohttp.ConnectionTimeoutError:
-                logger.warning(f"Get {url} timeout")
             except Exception:
                 logger.exception(f"Error when getting {url}, ignore")
     dump_vtb_list(vtb_list)

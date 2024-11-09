@@ -23,7 +23,6 @@ from nonebot.rule import to_me
 from nonebot_plugin_apscheduler import scheduler
 
 from .config import Config, ai_config
-from .ofa_image_process import ImageCaptioningPipeline
 from .utils import (
     call_tools,
     chat_with_gpt,
@@ -50,7 +49,6 @@ truncate_probs = [0.1, 0.1]
 MAX_LEN = 12
 bracket_probs = [0.25, 0.3]
 unreplied_msg: dict[str, int] = {}
-image_captioning_pipeline = ImageCaptioningPipeline()
 
 
 def is_record(event: GroupMessageEvent) -> bool:
@@ -159,7 +157,7 @@ async def process_cq_code(text: str, event: MessageEvent | Reply) -> str:
     elif "[CQ:image" in text:
         is_image, image_url = is_image_message(event, True)
         if is_image and ai_config.enable_ofa_image:
-            caption: str = await image_captioning_pipeline.generate_caption(image_url)
+            caption: str = "图片"
             text = replace_cq_with_caption(text, caption)
     return text
 

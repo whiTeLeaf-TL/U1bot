@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional, Tuple, Type, cast
+from typing import cast
 
 from cookit.loguru import warning_suppress
 from cookit.nonebot.alconna import RecallContext
@@ -40,7 +40,7 @@ JUMP_PAGE_PREFIX = ("page", "p", "跳页", "页")
 
 async def handle_song_or_list(
     result: GeneralSongOrList,
-    matcher: Optional[Matcher] = None,
+    matcher: Matcher | None = None,
     send_init_info: bool = False,
 ):
     if not matcher:
@@ -107,7 +107,7 @@ async def handle_song_or_list(
                 return song_list
 
             if msg.isdigit():
-                if not song_list.index_valid((index := int(msg) - 1)):
+                if not song_list.index_valid(index := int(msg) - 1):
                     await tip_illegal("序号输入有误，请重新输入")
                     continue
                 try:
@@ -126,7 +126,7 @@ async def handle_song_or_list(
             )
 
     async def handle_page(
-        song_list: Optional[GeneralSongList],
+        song_list: GeneralSongList | None,
         result: GeneralGetPageReturn,
     ) -> GeneralSongList:
         if result is None:
@@ -207,13 +207,13 @@ async def search_handler_2(
     keyword: str = ArgPlainText(KEY_KEYWORD),
 ):
     keyword = keyword.strip()
-    searcher_type = cast(Type[GeneralSearcher], state[KEY_SEARCHER])
+    searcher_type = cast(type[GeneralSearcher], state[KEY_SEARCHER])
     searcher: GeneralSongList = searcher_type(keyword)
     await handle_song_or_list(searcher, matcher)
 
 
 def __register_searcher_matchers():
-    def do_reg(searcher: Type[BaseSearcher], commands: Tuple[str, ...]):
+    def do_reg(searcher: type[BaseSearcher], commands: tuple[str, ...]):
         priv_cmd, *rest_cmds = commands
         matcher = on_command(
             priv_cmd, aliases=set(rest_cmds), state={KEY_SEARCHER: searcher}, block=True

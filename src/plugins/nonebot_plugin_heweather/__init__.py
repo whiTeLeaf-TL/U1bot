@@ -1,11 +1,6 @@
-from nonebot import require
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.plugin import PluginMetadata, inherit_supported_adapters
-
-require("nonebot_plugin_alconna")
-require("nonebot_plugin_htmlrender")
-
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_alconna import Alconna, Args, UniMessage, on_alconna
 
 from .config import DEBUG, QWEATHER_APIKEY, QWEATHER_APITYPE, Config
@@ -19,7 +14,6 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/kexue-z/nonebot-plugin-heweather",
     config=Config,
-    supported_adapters=inherit_supported_adapters("nonebot_plugin_alconna"),
 )
 
 

@@ -86,7 +86,6 @@ class Config(BaseModel):
     data_dir: str = "./data/satori_ai"
     temperature: float = 1
     enable_ofa_image: bool = False
-    ofa_image_model_path: str = "damo/ofa_image-caption_meme_large_zh"
     time_topic: dict[str, str] = {
         "7": "（发起一个早晨问候）",
         "12": "（发起一个中午问候）",
@@ -102,11 +101,4 @@ class Config(BaseModel):
 
 
 ai_config: Config = get_plugin_config(config=Config)
-
-
-if ai_config.enable_ofa_image:
-    from .ofa_image_process import ImageCaptioningPipeline
-
-    ImageCaptioningPipeline.load_model(model_path=ai_config.ofa_image_model_path)
-
 
