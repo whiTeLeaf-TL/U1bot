@@ -12,6 +12,7 @@ plugins = [
     "nonebot_plugin_apscheduler",
     "nonebot_plugin_htmlrender",
     "nonebot_plugin_alconna",
+    "nonebot_plugin_localstore",
     "nonebot_plugin_tortoise_orm",
 ]
 plugin_dirs = ["src/plugins"]
@@ -39,6 +40,7 @@ faker = "^30.8.2"
 cookit = "^0.8.1"
 bilireq = "^0.2.13"
 pyncm = "^1.6.17"
+nonebot-plugin-localstore = "^0.7.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

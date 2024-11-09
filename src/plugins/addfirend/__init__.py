@@ -55,7 +55,7 @@ async def _(bot: Bot, event: RequestEvent):
                 group_id=event.group_id, no_cache=True
             )
         except Exception:
-            logger.error("获取群信息失败", exc_info=True)
+            logger.exception("获取群信息失败")
         approve = group_info["member_count"] >= 10
         msg = (
             "⚠收到一条拉群邀请:\n"
