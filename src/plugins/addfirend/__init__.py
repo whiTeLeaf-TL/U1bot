@@ -56,7 +56,7 @@ async def _(bot: Bot, event: RequestEvent):
             )
         except Exception:
             logger.exception("获取群信息失败")
-        approve = group_info["member_count"] >= 10
+        approve = group_info["member_count"] > 15 or event.group_id == 966016220
         msg = (
             "⚠收到一条拉群邀请:\n"
             f"flag: {event.flag}\n"
@@ -75,7 +75,7 @@ async def _(bot: Bot, event: RequestEvent):
             await bot.send_group_msg(
                 group_id=event.group_id,
                 message=(
-                    "由于机器人的群数量过多，对新的群要求人数10人以上，请见谅，正在退出中！"
+                    "由于机器人的群数量过多，对新的群要求人数超过15人以上，请见谅，正在退出中！"
                 ),
             )
             await asyncio.sleep(1)

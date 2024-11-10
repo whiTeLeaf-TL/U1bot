@@ -1,6 +1,7 @@
 import re
 
 import ujson as json
+from nonebot import logger
 from nonebot.adapters.onebot.v11.event import MessageEvent, Reply
 from openai import OpenAI
 
@@ -62,6 +63,24 @@ async def chat_with_gpt(
         return result.choices[0].message.content, tools_call[0].to_dict()
     # logger.info(f"工具调用：{result!s}")
     return result.choices[0].message.content, None
+
+
+async def get_intent(message: str, botid: str, config: Config = ai_config) -> bool:
+    result = client.chat.completions.create(
+        model=config.appoint_model,
+        messages=[
+            {
+                "role": "system",
+                "content": f"你是一个助手，你自己的消息ID是({botid})，根据群聊对话情感判断是否该回复群聊中的消息，注意如果对方还有讲话的意图就不需要回复。",
+            },
+            {
+                "role": "user",
+                "content": f"判断以下消息的意图，并回复'需要回复'或'不需要回复': {message}",
+            },
+        ],
+    )
+    logger.info(f"意图判断：{result.choices[0].message.content!s}")
+    return "需要回复" in str(result.choices[0].message.content)
 
 
 async def call_tools(tool_calls: dict) -> dict | None:

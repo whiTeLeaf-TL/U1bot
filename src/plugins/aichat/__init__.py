@@ -27,6 +27,7 @@ from .utils import (
     call_tools,
     chat_with_gpt,
     extract_mface_summary,
+    get_intent,
     is_image_message,
     replace_at_message,
     replace_cq_with_caption,
@@ -365,7 +366,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         and "[CQ:mface" not in text
         and "[CQ:image" not in text
         and group_id != "872031181"
-        and group_id != "713478803"
+        # and group_id != "713478803"
     ):
         unreplied_msg[group_id] = unreplied_msg.get(group_id, 0) + 1
         logger.info(f"unreplied_msg: {unreplied_msg}")
@@ -374,9 +375,14 @@ async def _(event: GroupMessageEvent, bot: Bot):
         reply_prob = dynamic_reply_probability(group_id)
         logger.info(f"reply_prob: {reply_prob}")
         # 未回复消息超过随机设定的阈值时，决定是否回复
-        if unreplied_msg[group_id] >= 5 and random.random() < reply_prob:
-            unreplied_msg[group_id] = 0
-            await send_ai_msg(event, bot)  # 调用 AI 回复函数
+        if unreplied_msg[group_id] > 3 and random.random() < reply_prob:
+            history = await get_history(bot, group_id)
+            history_text = "".join(
+                f"{msg.get_user_id()}: {msg.get_message()}\n" for msg in history
+            )
+            if await get_intent(history_text, bot.self_id):
+                unreplied_msg[group_id] = 0
+                await send_ai_msg(event, bot)  # 调用 AI 回复函数
             return
         elif unreplied_msg[group_id] <= 3 and is_question(text):
             unreplied_msg[group_id] = 0
@@ -410,12 +416,13 @@ def dynamic_reply_probability(group_id: str) -> float:
 
 
 async def get_history(
-    bot: Bot, group_id: str, cout: int = 50
+    bot: Bot, group_id: str, cout: int = 30
 ) -> list[GroupMessageEvent]:
-    data: list[GroupMessageEvent] = await bot.call_api(
-        "get_group_msg_history", group_id=group_id, count=cout
-    )
-    return data
+    data: list[dict] = (await bot.get_group_msg_history(group_id=group_id, count=cout))[
+        "messages"
+    ]
+    new_data: list[GroupMessageEvent] = [GroupMessageEvent(**i) for i in data]
+    return new_data
 
 
 async def send_time_topic(temp_topic: str):
