@@ -161,7 +161,7 @@ class Tarot:
         # 3. Get the text and image
         flag, body = await self._get_text_and_image(theme, card_info_list[0])
 
-        return f"回应是{body}" if flag else body
+        return MessageSegment.text("回应是") + body if flag else body
 
     def switch_chain_reply(self, new_state: bool) -> None:
         """

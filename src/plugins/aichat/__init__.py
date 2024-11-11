@@ -384,7 +384,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                 unreplied_msg[group_id] = 0
                 await send_ai_msg(event, bot)  # 调用 AI 回复函数
             return
-        elif unreplied_msg[group_id] <= 3 and is_question(text):
+        elif unreplied_msg[group_id] <= 2 and is_question(text):
             unreplied_msg[group_id] = 0
             await send_ai_msg(event, bot)  # 调用 AI 回复函数
             return

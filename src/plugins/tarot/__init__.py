@@ -1,4 +1,4 @@
-from nonebot import on_command, on_regex
+from nonebot import logger, on_command, on_regex
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent, MessageEvent
 from nonebot.matcher import Matcher
@@ -42,14 +42,14 @@ async def general_divine(bot: Bot, matcher: Matcher, event: MessageEvent):
 
 
 @tarot.handle()
-async def _(matcher: Matcher, event: MessageEvent):
+async def _(event: MessageEvent):
     arg: str = event.get_plaintext()
 
     if "帮助" in arg[-2:]:
-        await matcher.finish(__tarot_usages__)
+        await tarot.finish(__tarot_usages__)
 
     msg = await tarot_manager.onetime_divine()
-    await matcher.finish(msg)
+    await tarot.finish(msg)
 
 
 @chain_reply_switch.handle()
