@@ -1,15 +1,12 @@
 from datetime import date
 
 import httpx
-import nonebot
 import ujson as json
 from nonebot import get_driver, on_fullmatch, require
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.plugin import PluginMetadata
-from nonebot_plugin_apscheduler import scheduler
 from nonebot_plugin_htmlrender import text_to_pic
 
-from .config import Config
 
 require("nonebot_plugin_apscheduler")
 
@@ -17,20 +14,7 @@ __plugin_meta__ = PluginMetadata(
     name="历史上的今天",
     description="让我们看看今天在过去都发生了什么吧!",
     usage="指令:历史上的今天",
-    config=Config,
 )
-
-plugin_config = Config.parse_obj(get_driver().config.dict())
-if plugin_config.history_inform_time is None:
-    hour: int = 7
-    minute: int = 35
-elif isinstance(plugin_config.history_inform_time, str):
-    strhour, strminute = plugin_config.history_inform_time.split(" ")
-    hour, minute = int(strhour), int(strminute)
-elif isinstance(plugin_config.history_inform_time, list):
-    hour = plugin_config.history_inform_time[0]["HOUR"]
-    minute = plugin_config.history_inform_time[0]["MINUTE"]
-
 
 history_matcher = on_fullmatch("历史上的今天")
 
@@ -105,28 +89,3 @@ async def get_history_info() -> MessageSegment:
                 else f"{s}{str_year} {str_title}\n"
             )
         return MessageSegment.image(await text_to_pic(s))
-
-
-# 消息发送
-# async def send_msg_today_in_histoty():
-#     msg = await get_history_info()
-#     for qq in plugin_config.history_qq_friends:
-#         await nonebot.get_bot().send_private_msg(user_id=qq, message=Message(msg))
-
-#     for qq_group in plugin_config.history_qq_groups:
-#         await nonebot.get_bot().send_group_msg(group_id=qq_group, message=Message(msg))
-
-# 定时任务
-# for index, time in enumerate(plugin_config.history_inform_time):
-#     nonebot.logger.info("id:{},time:{}".format(index, time))
-#     scheduler.add_job(send_msg_today_in_histoty, 'cron', hour=time.hour, minute=time.minute)
-
-
-# 定时任务
-@scheduler.scheduled_job("cron", hour=hour, minute=minute)
-async def _():
-    msg = await get_history_info()
-    for qq in plugin_config.history_qq_friends:
-        await nonebot.get_bot().send_private_msg(user_id=qq, message=msg)
-    for qq_group in plugin_config.history_qq_groups:
-        await nonebot.get_bot().send_group_msg(group_id=qq_group, message=msg)
