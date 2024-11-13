@@ -83,8 +83,8 @@ async def _():
 
 
 @cave_add.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    key = str(args).strip()
+async def _(bot: Bot, event: MessageEvent):
+    key = str(event.get_message()).strip().replace("投稿", "", 1)
     # 仅私聊
     urllist = extract_image_urls(event.get_message())
     if len(urllist) > 1:
@@ -111,9 +111,10 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
 
 @cave_am_add.handle()
-async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def _(bot: Bot, event: MessageEvent):
     "匿名发布回声洞"
-    key = str(args).strip()
+    key = str(event.get_message()).strip().replace("投稿", "", 1)
+
     # 仅私聊
     urllist = extract_image_urls(event.get_message())
     if len(urllist) > 1:
