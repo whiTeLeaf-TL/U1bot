@@ -66,12 +66,14 @@ async def _():
     all_caves = await cave_models.all()
     new_cave = []
     # 重新排列并创建新的对象
-    for index, cave in enumerate(all_caves, start=1):
+    for cave in all_caves:
         details = cave.details
         user_id = cave.user_id
         time = cave.time
         anonymous = cave.anonymous
         new_cave.append((details, user_id, time, anonymous))
+    # 按照time排序
+    new_cave = sorted(new_cave, key=lambda x: x[2], reverse=False)
     await cave_models.all().delete()
 
     for index, (details, user_id, time, anonymous) in enumerate(new_cave, start=1):
