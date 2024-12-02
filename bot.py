@@ -39,7 +39,6 @@ from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.exception import IgnoredException
 
-
 nonebot.init()
 app = nonebot.get_asgi()
 driver = nonebot.get_driver()
@@ -56,11 +55,11 @@ from U1.database import Channel
 async def _(bot: Bot, event: GroupMessageEvent):
     "防止双发"
     bot_qqid = bot.self_id
-    channel = await Channel.get_or_none(id=str(event.group_id))
+    channel = await Channel.get_or_none(guildId=str(event.group_id))
     if channel is None:
         attempts = 0
         while attempts < 3:
-            channel = await Channel.get_or_none(id=str(event.group_id))
+            channel = await Channel.get_or_none(guildId=str(event.group_id))
             if channel is not None:
                 break
             attempts += 1

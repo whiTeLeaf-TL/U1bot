@@ -71,7 +71,7 @@ def is_use(event: GroupMessageEvent) -> bool:
 
 clean_command = on_command("clean.session", permission=SUPERUSER, block=True)
 record_msg = on_message(rule=is_record)
-handle_command = on_message(rule=is_use & to_me())
+handle_command = on_message(rule=is_use & to_me(), block=True)
 
 
 async def load_or_init_data(group_id: str) -> dict:
@@ -366,7 +366,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         and "[CQ:mface" not in text
         and "[CQ:image" not in text
         and group_id != "872031181"
-        # and group_id != "713478803"
+        and group_id != "713478803"
     ):
         unreplied_msg[group_id] = unreplied_msg.get(group_id, 0) + 1
         logger.info(f"unreplied_msg: {unreplied_msg}")

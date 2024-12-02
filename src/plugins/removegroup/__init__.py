@@ -13,10 +13,12 @@ def condition(group_info):
     group_name: str = group_info["group_name"]
     return (
         member_count < 15
-        or (("机器人" in group_name or "ai" in group_name or "test" in group_name) and len(group_name) < 8)
+        or (
+            ("机器人" in group_name or "ai" in group_name or "test" in group_name)
+            and len(group_name) < 8
+        )
         or group_name.count("、") >= 2
-        or group_info['group_id'] == '966016220'
-    )
+    ) and group_info["group_id"] != 966016220
 
 
 @rlist.handle()
