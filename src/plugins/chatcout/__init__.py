@@ -36,7 +36,7 @@ async def _(event: GroupMessageEvent):
         - 将更新的聊天时间记录保存到数据库。
     """
     group_id = event.group_id
-    user_id = str(event.user_id)
+    user_id = event.get_user_id()
     # 获取数据库
     chat_time, is_create = await ChatTimeDB.get_or_create(group_id=group_id)
     chat_time_total, is_create = await ChatTime.get_or_create(group_id=group_id)
@@ -58,7 +58,7 @@ async def _(event: GroupMessageEvent):
         user_message_map[user_id] = 0
         today_time_map[user_id] = 0
         today_message_map[user_id] = 0
-        today_remind_time[user_id] = [60, 120, 180, 240, 300, 360]  # 分钟
+        today_remind_time[user_id] = [180, 240, 300, 360]  # 分钟
     else:
         # 用户已存在，检查是否为新的一天
         if (
@@ -68,7 +68,7 @@ async def _(event: GroupMessageEvent):
             timestamp_map[user_id] = now_timestamp
             today_time_map[user_id] = 0
             today_message_map[user_id] = 0
-            today_remind_time[user_id] = [60, 120, 180, 240, 300, 360]  # 分钟
+            today_remind_time[user_id] = [180, 240, 300, 360]  # 分钟
 
     # 检查时间差
     if now_timestamp - timestamp_map[user_id] <= config.interval:

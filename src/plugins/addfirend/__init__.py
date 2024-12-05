@@ -52,6 +52,12 @@ async def _(bot: Bot, event: RequestEvent):
     elif isinstance(event, GroupRequestEvent):
         if event.sub_type != "invite":
             return
+        # 必须是好友，不能是临时对话
+
+        # 获取好友列表对比
+        friend_list = await bot.get_friend_list()
+        if event.user_id not in [friend["user_id"] for friend in friend_list]:
+            return
         nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
             "nickname"
         ]

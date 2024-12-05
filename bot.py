@@ -53,31 +53,28 @@ from U1.database import Channel
 
 @event_preprocessor
 async def _(bot: Bot, event: GroupMessageEvent):
+    "防止机器人自言自语"
+    # 检测是否是机器人自己发的消息
+    bots = nonebot.get_bots()
+    if event.get_user_id() in bots.keys():
+        raise IgnoredException("机器人自己发的消息，忽略")
     "防止双发"
     bot_qqid = bot.self_id
+    if event.to_me:
+        return
     channel = await Channel.get_or_none(guildId=str(event.group_id))
     if channel is None:
         attempts = 0
         while attempts < 3:
             channel = await Channel.get_or_none(guildId=str(event.group_id))
             if channel is not None:
-                break
+                break  # 重试直到找到频道
             attempts += 1
             if attempts == 3:
                 raise IgnoredException("未找到频道，忽略")
             await asyncio.sleep(0.5)
     if channel is not None and channel.assignee != bot_qqid:
         raise IgnoredException("机器人不是频道指定的机器人，忽略")
-
-
-@event_preprocessor
-async def _(bot: Bot, event: GroupMessageEvent):
-    "防止机器人自言自语"
-    # 检测是否是机器人自己发的消息
-    event_qqid = str(event.user_id)
-    bot_qqid = bot.self_id
-    if event_qqid == bot_qqid:
-        raise IgnoredException("机器人自言自语，忽略")
 
 
 if __name__ == "__main__":
