@@ -90,7 +90,7 @@ async def _(event: GroupMessageEvent):
     }:
         try:
             await coutmsg.send(
-                f"你今天已经水群{today_time // 60}分{today_time % 60}秒了！",
+                f"你今天已经水群{today_time // 60}分{today_time % 60}秒了~",
                 at_sender=True,
             )
             # 清空今天的提醒时间
