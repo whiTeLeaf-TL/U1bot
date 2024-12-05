@@ -29,31 +29,9 @@ def format_time(_time: int) -> str:
 
 @addfriend.handle()
 async def _(bot: Bot, event: RequestEvent):
-    if bot.self_id in special_qqid and isinstance(event, FriendRequestEvent):
-        nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
-            "nickname"
-        ]
-        try:
-            group_list = await bot.get_group_member_list(group_id=713478803)
-        except Exception:
-            logger.exception("获取群列表失败")
-        approve = event.user_id in [member["user_id"] for member in group_list]
-        msg = (
-            "⚠收到一条好友请求:\n"
-            f"flag: {event.flag}\n"
-            f"user: {event.user_id}\n"
-            f"name: {nickname}\n"
-            f"time: {format_time(event.time)}\n"
-            f"自动同意/拒绝(是否在用户群): {approve}\n"
-            f"验证信息:\n"
-            f"{event.comment}"
-        )
-        await bot.set_friend_add_request(flag=event.flag, approve=approve)
-    elif isinstance(event, GroupRequestEvent):
+    if isinstance(event, GroupRequestEvent):
         if event.sub_type != "invite":
             return
-        # 必须是好友，不能是临时对话
-
         # 获取好友列表对比
         friend_list = await bot.get_friend_list()
         if event.user_id not in [friend["user_id"] for friend in friend_list]:
@@ -95,6 +73,26 @@ async def _(bot: Bot, event: RequestEvent):
             )
             await asyncio.sleep(1)
             await bot.set_group_leave(group_id=event.group_id)
+    elif bot.self_id in special_qqid and isinstance(event, FriendRequestEvent):
+        nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
+            "nickname"
+        ]
+        try:
+            group_list = await bot.get_group_member_list(group_id=713478803)
+        except Exception:
+            logger.exception("获取群列表失败")
+        approve = event.user_id in [member["user_id"] for member in group_list]
+        msg = (
+            "⚠收到一条好友请求:\n"
+            f"flag: {event.flag}\n"
+            f"user: {event.user_id}\n"
+            f"name: {nickname}\n"
+            f"time: {format_time(event.time)}\n"
+            f"自动同意/拒绝(是否在用户群): {approve}\n"
+            f"验证信息:\n"
+            f"{event.comment}"
+        )
+        await bot.set_friend_add_request(flag=event.flag, approve=approve)
     elif bot.self_id not in special_qqid and isinstance(event, FriendRequestEvent):
         nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
             "nickname"
@@ -111,5 +109,7 @@ async def _(bot: Bot, event: RequestEvent):
             f"{event.comment}"
         )
         await bot.set_friend_add_request(flag=event.flag, approve=approve)
+    else:
+        return
     for super_id in SUPERUSER_list:
         await bot.send_private_msg(user_id=int(super_id), message=msg)
