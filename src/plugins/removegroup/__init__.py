@@ -3,7 +3,6 @@
 
 from nonebot import logger, on_command
 from nonebot.adapters.onebot.v11 import Bot
-from sympy import loggamma
 
 # 事件响应函数
 rlist = on_command("removegrouplist")

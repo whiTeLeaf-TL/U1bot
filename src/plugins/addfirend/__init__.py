@@ -35,6 +35,7 @@ async def _(bot: Bot, event: RequestEvent):
         # 获取好友列表对比
         friend_list = await bot.get_friend_list()
         if event.user_id not in [friend["user_id"] for friend in friend_list]:
+            await addfriend.finish("我们还是先成为好友再带我去别的地方吧~")
             return
         nickname = (await bot.get_stranger_info(user_id=event.user_id, no_cache=True))[
             "nickname"

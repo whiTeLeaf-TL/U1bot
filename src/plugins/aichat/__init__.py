@@ -8,7 +8,6 @@ import time
 import aiofiles
 import nonebot
 import ujson
-from cnocr import CnOcr
 from nonebot import get_plugin_config, logger, on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent, MessageEvent, Reply

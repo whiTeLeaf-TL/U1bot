@@ -84,17 +84,26 @@ async def _():
     await cave_update.finish("更新成功！")
 
 
+async def condition(event: MessageEvent, key: str) -> tuple[bool, str | None]:
+    "判断是否符合投稿条件"
+    urllist = extract_image_urls(event.get_message())
+    if len(urllist) > 1:
+        return False, "只能投一张图哦"
+    if not isinstance(event, PrivateMessageEvent):
+        return False, "别搞啊，只能私聊我才能投稿啊！"
+    if not key:
+        return False, "不输入内容，小子你是想让我投稿什么？空气咩？"
+    if len(key) < 6:
+        return False, "字数太少了！"
+    return True, None
+
+
 @cave_add.handle()
 async def _(bot: Bot, event: MessageEvent):
     key = str(event.get_message()).strip().replace("投稿", "", 1)
-    # 仅私聊
-    urllist = extract_image_urls(event.get_message())
-    if len(urllist) > 1:
-        await cave_add.finish("只能投一张图哦")
-    if not isinstance(event, PrivateMessageEvent):
-        await cave_add.finish("别搞啊，只能私聊我才能投稿啊！")
-    if not key:
-        await cave_add.finish("不输入内容，小子你是想让我投稿什么？空气咩？")
+    result = await condition(event, key)
+    if result[0] is False:  # 审核
+        await cave_add.finish(result[1])
     is_image = await is_image_message(event)
     details = is_image[1] if is_image[0] else key
     caves = await cave_models.create(details=details, user_id=event.user_id)
@@ -115,16 +124,10 @@ async def _(bot: Bot, event: MessageEvent):
 @cave_am_add.handle()
 async def _(bot: Bot, event: MessageEvent):
     "匿名发布回声洞"
-    key = str(event.get_message()).strip().replace("投稿", "", 1)
-
-    # 仅私聊
-    urllist = extract_image_urls(event.get_message())
-    if len(urllist) > 1:
-        await cave_add.finish("只能投一张图哦")
-    if not isinstance(event, PrivateMessageEvent):
-        await cave_add.finish("别搞啊，只能私聊我才能投稿啊！")
-    if not key:
-        await cave_add.finish("不输入内容，小子你是想让我投稿什么？空气咩？")
+    key = str(event.get_message()).strip().replace("匿名投稿", "", 1)
+    result = await condition(event, key)
+    if result[0] is False:  # 审核
+        await cave_add.finish(result[1])
     is_image = await is_image_message(event)
     details = is_image[1] if is_image[0] else key
     caves = await cave_models.create(
