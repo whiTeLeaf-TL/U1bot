@@ -17,10 +17,6 @@ def default_filter(record: "Record"):
     log_level = record["extra"].get("nonebot_log_level", "INFO")
     levelno = logger.level(log_level).no if isinstance(log_level, str) else log_level
 
-    # 过滤掉 module 为 src.plugins.chatcout 的日志
-    if "src.plugins.chatcout" in record["message"]:
-        return False
-
     return record["level"].no >= levelno
 
 
@@ -46,9 +42,15 @@ driver.register_adapter(ONEBOT_V11Adapter)
 
 
 nonebot.load_from_toml("pyproject.toml")
+from async_lru import alru_cache
 from nonebot.message import event_preprocessor
 
 from U1.database import Channel
+
+
+@alru_cache(maxsize=128)
+async def get_channel(group_id: str):
+    return await Channel.get_or_none(guildId=group_id)
 
 
 @event_preprocessor
@@ -62,11 +64,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
     bot_qqid = bot.self_id
     if event.to_me:
         return
-    channel = await Channel.get_or_none(guildId=str(event.group_id))
+    channel = await get_channel(str(event.group_id))
     if channel is None:
         attempts = 0
         while attempts < 3:
-            channel = await Channel.get_or_none(guildId=str(event.group_id))
+            channel = await get_channel(str(event.group_id))
             if channel is not None:
                 break  # 重试直到找到频道
             attempts += 1
