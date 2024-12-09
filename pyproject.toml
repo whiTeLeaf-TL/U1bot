@@ -41,6 +41,7 @@ cookit = "^0.8.1"
 bilireq = "^0.2.13"
 pyncm = "^1.6.17"
 nonebot-plugin-localstore = "^0.7.1"
+async-lru = "^2.0.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
