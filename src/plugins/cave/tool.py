@@ -14,7 +14,6 @@ async def url_to_base64(image_url) -> str:
     async with aiohttp.ClientSession() as session:
         async with session.get(image_url, ssl=ssl_context) as response:
             image_data = await response.read()
-            print(image_data)
             return base64.b64encode(image_data).decode("utf-8")
 
 
@@ -53,11 +52,35 @@ def replace_cq_with_caption(text: str, base64_image: str) -> str:
     """
     # 反转义
     text = unescape(text)
+    potential_matches = re.finditer(r"\[CQ:image", text)
+    result = []
+    last_pos = 0
+    replacement_template = f"[CQ:image,file=base64://{base64_image}]"
 
-    # 匹配包含 URL 或 file 的 [CQ:image] 标签，处理 subType=1 结尾
-    pattern = r"\[CQ:image(?:,.*?url=(https?://[^,]+|file=[^,]+).*?subType=\d+)?\]"
-    # 替换匹配到的 [CQ:image] 标签
-    return re.sub(pattern, f"[CQ:image,file=base64://{base64_image}]", text)
+    for match in potential_matches:
+        start = match.start()
+        result.append(text[last_pos:start])  # 添加上次匹配结束到这次匹配开始的部分
+        # 从匹配位置开始逐字符解析，寻找完整的 [CQ:image,...]
+        i = start
+        depth = 0
+        while i < len(text):
+            if text[i] == "[":
+                depth += 1
+            elif text[i] == "]":
+                depth -= 1
+                if depth == 0:
+                    # 匹配到完整的 [CQ:image,...]
+                    result.append(replacement_template)
+                    last_pos = i + 1  # 更新最后的结束位置
+                    break
+            i += 1
+        else:
+            # 如果没能闭合，直接保留原始文本
+            last_pos = start
+
+    # 添加剩余未处理的部分
+    result.append(text[last_pos:])
+    return "".join(result)
 
 
 async def is_image_message(
@@ -77,6 +100,7 @@ async def is_image_message(
         )
 
     for msg in data.message:
+        print(msg)
         if msg.type == "image" and (image_url := msg.data.get("url", "")):
             return True, replace_cq_with_caption(
                 str(data.message), await url_to_base64(image_url)

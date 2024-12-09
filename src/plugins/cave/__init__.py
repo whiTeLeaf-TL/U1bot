@@ -100,12 +100,12 @@ async def condition(event: MessageEvent, key: str) -> tuple[bool, str | None]:
 
 @cave_add.handle()
 async def _(bot: Bot, event: MessageEvent):
-    key = str(event.get_message()).strip().replace("投稿", "", 1)
-    result = await condition(event, key)
+    is_image = await is_image_message(event)
+    details = is_image[1] if is_image[0] else str(event.get_message())
+    details = details.replace("投稿", "", 1).strip()
+    result = await condition(event, details)
     if result[0] is False:  # 审核
         await cave_add.finish(result[1])
-    is_image = await is_image_message(event)
-    details = is_image[1] if is_image[0] else key
     caves = await cave_models.create(details=details, user_id=event.user_id)
     result = f"预览：\n编号:{caves.id}\n"
     result += "----------------------\n"
@@ -124,12 +124,12 @@ async def _(bot: Bot, event: MessageEvent):
 @cave_am_add.handle()
 async def _(bot: Bot, event: MessageEvent):
     "匿名发布回声洞"
-    key = str(event.get_message()).strip().replace("匿名投稿", "", 1)
-    result = await condition(event, key)
+    is_image = await is_image_message(event)
+    details = is_image[1] if is_image[0] else str(event.get_message())
+    details = details.replace("匿名投稿", "", 1).strip()
+    result = await condition(event, details)
     if result[0] is False:  # 审核
         await cave_add.finish(result[1])
-    is_image = await is_image_message(event)
-    details = is_image[1] if is_image[0] else key
     caves = await cave_models.create(
         details=details, user_id=event.user_id, anonymous=True
     )
