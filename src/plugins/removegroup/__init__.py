@@ -3,9 +3,10 @@
 
 from nonebot import logger, on_command
 from nonebot.adapters.onebot.v11 import Bot
+from nonebot.permission import SUPERUSER
 
 # 事件响应函数
-rlist = on_command("removegrouplist")
+rlist = on_command("removegrouplist", permission=SUPERUSER)
 
 
 def condition(group_info):
@@ -75,7 +76,7 @@ async def _(bot: Bot):
     await rlist.finish("已发送所有群信息")
 
 
-rgroup = on_command("removegroup")
+rgroup = on_command("removegroup", permission=SUPERUSER)
 
 
 @rgroup.handle()
